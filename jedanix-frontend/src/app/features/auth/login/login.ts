@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../core/services/auth.service';
@@ -19,6 +20,7 @@ import { rutaInicioDeRol } from '../../../core/utils/menu-rol';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
     MatProgressSpinnerModule,
   ],
   templateUrl: './login.html',
@@ -31,11 +33,16 @@ export class Login {
 
   protected readonly cargando = signal(false);
   protected readonly errorMensaje = signal<string | null>(null);
+  protected readonly verClave = signal(false);
 
   protected readonly formulario = this.fb.nonNullable.group({
     correo_institucional: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
   });
+
+  protected alternarClave(): void {
+    this.verClave.update((visible) => !visible);
+  }
 
   enviar(): void {
     if (this.formulario.invalid) {

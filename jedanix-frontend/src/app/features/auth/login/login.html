@@ -1,14 +1,61 @@
-<div class="login-contenedor">
+<div class="login-fondo" aria-hidden="true">
+  <span class="forma forma-1"></span>
+  <span class="forma forma-2"></span>
+  <span class="forma forma-3"></span>
+  <span class="anillo anillo-1"></span>
+  <span class="anillo anillo-2"></span>
+  <span class="cuadricula"></span>
+</div>
+
+<div class="login-pagina">
+  <section class="login-marca">
+    <div class="marca-logo">
+      <span class="logo">J</span>
+      <span class="marca-nombre">JEDANIX</span>
+    </div>
+
+    <h1>Gestión de prácticas académicas</h1>
+    <p class="marca-texto">
+      Un solo lugar para postularte, hacer el seguimiento semanal y cerrar tu práctica.
+    </p>
+
+    <ul class="beneficios">
+      <li>
+        <span class="icono-beneficio"><mat-icon>assignment_turned_in</mat-icon></span>
+        <span>
+          <strong>Solicitudes en línea</strong>
+          Postúlate a las empresas receptoras y consulta el estado de tu solicitud.
+        </span>
+      </li>
+      <li>
+        <span class="icono-beneficio"><mat-icon>event_note</mat-icon></span>
+        <span>
+          <strong>Seguimiento semanal</strong>
+          Registra tus avances y recibe la calificación y las observaciones.
+        </span>
+      </li>
+      <li>
+        <span class="icono-beneficio"><mat-icon>workspace_premium</mat-icon></span>
+        <span>
+          <strong>Cierre formal</strong>
+          Completa tus horas y obtén la aprobación final de tu práctica.
+        </span>
+      </li>
+    </ul>
+  </section>
+
   <mat-card class="login-tarjeta">
     <mat-card-header>
-      <mat-card-title>JEDANIX</mat-card-title>
-      <mat-card-subtitle>Gestión de Prácticas Académicas</mat-card-subtitle>
+      <span class="logo logo-movil">J</span>
+      <mat-card-title>Iniciar sesión</mat-card-title>
+      <mat-card-subtitle>Ingresa con tu correo institucional</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
       <form [formGroup]="formulario" (ngSubmit)="enviar()" class="login-formulario">
         <mat-form-field appearance="outline">
           <mat-label>Correo institucional</mat-label>
+          <mat-icon matPrefix>mail</mat-icon>
           <input
             matInput
             type="email"
@@ -25,19 +72,29 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Contraseña</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
           <input
             matInput
-            type="password"
+            [type]="verClave() ? 'text' : 'password'"
             formControlName="password"
             autocomplete="current-password"
           />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="alternarClave()"
+            [attr.aria-label]="verClave() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <mat-icon>{{ verClave() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
           @if (formulario.controls.password.hasError('required')) {
             <mat-error>La contraseña es obligatoria.</mat-error>
           }
         </mat-form-field>
 
         @if (errorMensaje(); as mensaje) {
-          <p class="login-error">{{ mensaje }}</p>
+          <p class="login-error"><mat-icon>error</mat-icon>{{ mensaje }}</p>
         }
 
         <button
@@ -50,10 +107,18 @@
           @if (cargando()) {
             <mat-spinner diameter="20"></mat-spinner>
           } @else {
-            Ingresar
+            <span class="contenido-boton">
+              Ingresar
+              <mat-icon class="icono-fin">arrow_forward</mat-icon>
+            </span>
           }
         </button>
       </form>
+
+      <p class="login-ayuda">
+        <mat-icon>info</mat-icon>
+        ¿No tienes cuenta? Solicítala al Director: no existe registro propio.
+      </p>
     </mat-card-content>
   </mat-card>
 </div>

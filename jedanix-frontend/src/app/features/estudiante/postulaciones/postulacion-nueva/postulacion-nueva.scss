@@ -17,7 +17,7 @@
     padding: 8px 16px 8px 8px;
     border-radius: 999px;
     border: 1px solid var(--jx-borde);
-    background: #fff;
+    background: var(--jx-superficie);
     color: var(--mat-sys-on-surface-variant);
     font-weight: 500;
   }
@@ -28,7 +28,7 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: #e3f1f4;
+    background: #c3e4ec;
     color: var(--jx-cyan-900);
     font-size: 0.85rem;
   }
@@ -36,7 +36,7 @@
   li.activo {
     border-color: var(--jx-cyan-500);
     color: var(--jx-cyan-900);
-    background: linear-gradient(90deg, #e0fbff, #ffffff);
+    background: linear-gradient(90deg, #aee3ef, #d4eef4);
     box-shadow: 0 4px 12px rgba(0, 188, 212, 0.2);
 
     .numero {

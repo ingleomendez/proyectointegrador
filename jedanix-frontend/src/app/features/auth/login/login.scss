@@ -1,41 +1,414 @@
-.login-contenedor {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+:host {
+  display: block;
   min-height: 100vh;
-  padding: 16px;
-  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
   background:
-    radial-gradient(60% 50% at 15% 10%, rgba(0, 229, 255, 0.35), transparent 70%),
-    radial-gradient(50% 50% at 90% 90%, rgba(0, 151, 167, 0.45), transparent 70%),
-    linear-gradient(160deg, #e0f7fa, #b2ebf2);
+    radial-gradient(70% 60% at 0% 0%, rgba(0, 229, 255, 0.35), transparent 65%),
+    radial-gradient(60% 60% at 100% 100%, rgba(0, 188, 212, 0.4), transparent 65%),
+    linear-gradient(135deg, #00323b 0%, #005f6e 38%, #00899a 72%, #0aa9bd 100%);
+  background-size: 140% 140%;
+  animation: fondo-mueve 18s ease-in-out infinite alternate;
 }
 
+@keyframes fondo-mueve {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes flota {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(26px, -34px) scale(1.08);
+  }
+}
+
+@keyframes gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes entra-izquierda {
+  from {
+    opacity: 0;
+    transform: translateX(-34px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes entra-arriba {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== Fondo decorativo ===== */
+.login-fondo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.forma {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(56px);
+  animation: flota 14s ease-in-out infinite;
+}
+
+.forma-1 {
+  width: 420px;
+  height: 420px;
+  top: -120px;
+  left: -90px;
+  background: rgba(0, 229, 255, 0.45);
+}
+
+.forma-2 {
+  width: 360px;
+  height: 360px;
+  right: -80px;
+  bottom: -100px;
+  background: rgba(38, 198, 218, 0.5);
+  animation-delay: -5s;
+}
+
+.forma-3 {
+  width: 240px;
+  height: 240px;
+  top: 55%;
+  left: 38%;
+  background: rgba(167, 243, 255, 0.28);
+  animation-delay: -9s;
+}
+
+.anillo {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(167, 243, 255, 0.3);
+  animation: gira 60s linear infinite;
+}
+
+.anillo-1 {
+  width: 560px;
+  height: 560px;
+  top: -190px;
+  right: 6%;
+}
+
+.anillo-2 {
+  width: 380px;
+  height: 380px;
+  bottom: -150px;
+  left: 18%;
+  animation-direction: reverse;
+  animation-duration: 80s;
+}
+
+// Cuadrícula tenue que se desvanece hacia los bordes.
+.cuadricula {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(70% 70% at 50% 50%, #000 30%, transparent 100%);
+}
+
+/* ===== Disposición ===== */
+.login-pagina {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: 56px;
+  max-width: 1120px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 32px 40px;
+  box-sizing: border-box;
+}
+
+/* ===== Panel de marca ===== */
+.login-marca {
+  color: #fff;
+  animation: entra-izquierda 0.8s cubic-bezier(0.22, 0.8, 0.3, 1) backwards;
+
+  h1 {
+    margin: 28px 0 14px;
+    font-size: 2.6rem;
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    text-shadow: 0 4px 24px rgba(0, 30, 36, 0.35);
+  }
+}
+
+.marca-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 15px;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #00323b;
+  background: linear-gradient(135deg, #a7f3ff, #00e5ff);
+  box-shadow: 0 6px 20px rgba(0, 229, 255, 0.5);
+}
+
+.marca-nombre {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+}
+
+.marca-texto {
+  max-width: 480px;
+  margin: 0 0 32px;
+  font-size: 1.08rem;
+  line-height: 1.55;
+  color: rgba(230, 251, 255, 0.92);
+}
+
+.beneficios {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 500px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    font-size: 0.92rem;
+    line-height: 1.4;
+    color: rgba(230, 251, 255, 0.9);
+    transition:
+      transform 0.2s ease,
+      background 0.2s ease,
+      border-color 0.2s ease;
+
+    &:hover {
+      transform: translateX(8px);
+      background: rgba(255, 255, 255, 0.17);
+      border-color: rgba(0, 229, 255, 0.5);
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 1rem;
+      color: #fff;
+    }
+  }
+}
+
+.icono-beneficio {
+  display: grid;
+  place-items: center;
+  flex: 0 0 46px;
+  height: 46px;
+  border-radius: 13px;
+  color: #00323b;
+  background: linear-gradient(135deg, #a7f3ff, #26c6da);
+  box-shadow: 0 4px 14px rgba(0, 229, 255, 0.35);
+}
+
+/* ===== Tarjeta del formulario ===== */
 .login-tarjeta {
   width: 100%;
-  max-width: 400px;
-  padding: 16px 12px 8px;
-  border-radius: 20px;
+  max-width: 430px;
+  justify-self: end;
+  padding: 28px 24px 18px;
+  box-sizing: border-box;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
   border-top: 5px solid #00e5ff;
-  box-shadow: 0 18px 48px rgba(0, 96, 100, 0.25);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 45%),
+    rgba(222, 243, 248, 0.93);
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 30px 70px rgba(0, 30, 36, 0.4),
+    0 0 0 8px rgba(255, 255, 255, 0.07);
+  animation: entra-arriba 0.8s 0.15s cubic-bezier(0.22, 0.8, 0.3, 1) backwards;
+
+  &:hover {
+    transform: none;
+  }
+
+  mat-card-header {
+    display: block;
+    padding-bottom: 12px;
+  }
+
+  mat-card-title {
+    font-size: 1.7rem;
+    font-weight: 600;
+  }
+
+  mat-card-subtitle {
+    margin-top: 4px;
+    font-size: 0.98rem;
+  }
+}
+
+// El logo dentro de la tarjeta solo se ve en pantallas angostas.
+.logo-movil {
+  display: none;
+  margin-bottom: 14px;
 }
 
 .login-formulario {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  padding-top: 8px;
 }
 
 .login-error {
-  color: var(--mat-sys-error);
-  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0 0 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border-left: 4px solid var(--mat-sys-error);
+  background: rgba(255, 218, 214, 0.85);
+  color: #8a1c10;
+  font-size: 0.9rem;
+  animation: entra-arriba 0.3s ease backwards;
+
+  mat-icon {
+    flex: 0 0 auto;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .login-boton {
   margin-top: 8px;
-  height: 40px;
+  height: 48px;
+  font-size: 1rem;
+  letter-spacing: 0.03em;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.contenido-boton {
+  display: inline-flex;
+  align-items: center;
+}
+
+.login-boton .icono-fin {
+  margin: 0 0 0 8px;
+  transition: transform 0.2s ease;
+}
+
+.login-boton:hover:not([disabled]) .icono-fin {
+  transform: translateX(5px);
+}
+
+.login-ayuda {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--jx-borde);
+  font-size: 0.82rem;
+  color: var(--mat-sys-on-surface-variant);
+
+  mat-icon {
+    flex: 0 0 auto;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--jx-cyan-700);
+  }
+}
+
+/* ===== Pantallas angostas: solo la tarjeta, con la marca arriba ===== */
+@media (max-width: 900px) {
+  .login-pagina {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding: 28px 16px;
+  }
+
+  .login-marca {
+    text-align: center;
+
+    .marca-logo {
+      justify-content: center;
+    }
+
+    h1 {
+      margin-top: 18px;
+      font-size: 1.7rem;
+    }
+
+    .marca-texto {
+      margin: 0 auto;
+      font-size: 0.98rem;
+    }
+  }
+
+  .beneficios {
+    display: none;
+  }
+
+  .login-tarjeta {
+    justify-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-marca .marca-texto {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host,
+  .forma,
+  .anillo {
+    animation: none;
+  }
 }

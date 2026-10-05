@@ -1,0 +1,27 @@
+<h1>Bienvenido, {{ authService.usuario()?.nombreCompleto }}</h1>
+<p class="subtitulo">Este es tu panel de Estudiante.</p>
+
+<div class="grilla-accesos">
+  @for (acceso of accesos; track acceso.titulo) {
+    @if (acceso.ruta) {
+      <a [routerLink]="acceso.ruta" class="tarjeta-enlace">
+        <mat-card class="tarjeta-acceso">
+          <mat-card-content>
+            <mat-icon class="icono-acceso">{{ acceso.icono }}</mat-icon>
+            <h2>{{ acceso.titulo }}</h2>
+            <p>{{ acceso.descripcion }}</p>
+          </mat-card-content>
+        </mat-card>
+      </a>
+    } @else {
+      <mat-card class="tarjeta-acceso tarjeta-deshabilitada">
+        <mat-card-content>
+          <mat-icon class="icono-acceso">{{ acceso.icono }}</mat-icon>
+          <h2>{{ acceso.titulo }}</h2>
+          <p>{{ acceso.descripcion }}</p>
+          <span class="etiqueta-proximamente">Próximamente</span>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</div>

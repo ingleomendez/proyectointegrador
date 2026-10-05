@@ -1,0 +1,24 @@
+# --- Secretos (nunca subir) ---
+.env
+**/.env
+
+# --- Dependencias y compilados ---
+node_modules/
+**/node_modules/
+.angular/
+dist/
+__pycache__/
+**/__pycache__/
+*.pyc
+.venv/
+venv/
+
+# --- Archivos subidos en pruebas ---
+uploads/
+**/uploads/
+
+# --- Editor / sistema ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

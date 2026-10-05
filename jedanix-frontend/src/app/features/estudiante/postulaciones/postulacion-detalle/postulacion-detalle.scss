@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+
+.enlace-volver {
+  margin-bottom: 8px;
+}
+
+.estado-actual {
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: -8px;
+}
+
+.estado-carga {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.mensaje-error {
+  color: var(--mat-sys-error);
+}
+
+.mensaje-vacio {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.tarjeta-seccion {
+  width: 100%;
+  margin-top: 16px;
+}

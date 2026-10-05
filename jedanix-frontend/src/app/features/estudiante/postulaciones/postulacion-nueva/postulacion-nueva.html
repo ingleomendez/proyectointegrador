@@ -1,0 +1,134 @@
+<a mat-button [routerLink]="['/estudiante/empresas', empresaId]" class="enlace-volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver al detalle de la empresa
+</a>
+
+@if (cargando()) {
+  <div class="estado-carga">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (empresa(); as datos) {
+  <h1>Postularme a {{ datos.nombre }}</h1>
+  <p class="subtitulo">
+    Responde la bitácora y carga los documentos requeridos en formato PDF.
+    Puedes guardar como borrador y completarlo luego, o enviar la solicitud
+    formalmente.
+  </p>
+
+  <form [formGroup]="formulario" class="formulario-postulacion">
+    <mat-card class="tarjeta-seccion">
+      <mat-card-header>
+        <mat-card-title>Bitácora</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (respuestas.length === 0) {
+          <p class="mensaje-vacio">Esta empresa no tiene preguntas configuradas.</p>
+        }
+        <div formArrayName="respuestas">
+          @for (grupo of respuestas.controls; track $index) {
+            <div [formGroupName]="$index" class="campo-pregunta">
+              <mat-form-field appearance="outline" class="campo-ancho">
+                <mat-label>{{ grupo.get('enunciado')?.value }}</mat-label>
+                <textarea matInput formControlName="respuesta_texto" rows="2"></textarea>
+                @if (grupo.get('respuesta_texto')?.hasError('required')) {
+                  <mat-error>Esta pregunta es obligatoria.</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="tarjeta-seccion">
+      <mat-card-header>
+        <mat-card-title>Documentos requeridos</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (documentos.length === 0) {
+          <p class="mensaje-vacio">Esta empresa no exige documentos adicionales.</p>
+        }
+        <div formArrayName="documentos">
+          @for (grupo of documentos.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="campo-documento">
+              <p class="nombre-documento">{{ grupo.get('nombre_documento')?.value }}</p>
+
+              <input
+                #inputArchivo
+                type="file"
+                accept="application/pdf"
+                class="input-archivo-oculto"
+                (change)="onArchivoSeleccionado(i, inputArchivo.files)"
+              />
+
+              <div class="fila-archivo">
+                <button
+                  mat-stroked-button
+                  type="button"
+                  [disabled]="estaSubiendo(i)"
+                  (click)="inputArchivo.click()"
+                >
+                  <mat-icon>upload_file</mat-icon>
+                  {{ nombreArchivoCargado(i) ? 'Cambiar PDF' : 'Seleccionar PDF' }}
+                </button>
+
+                @if (estaSubiendo(i)) {
+                  <span class="estado-subida">
+                    <mat-spinner diameter="18"></mat-spinner>
+                    Subiendo...
+                  </span>
+                } @else if (nombreArchivoCargado(i); as nombre) {
+                  <span class="archivo-cargado">
+                    <mat-icon inline>check_circle</mat-icon>
+                    {{ nombre }}
+                  </span>
+                }
+              </div>
+
+              @if (errorArchivo(i); as mensaje) {
+                <p class="mensaje-error">{{ mensaje }}</p>
+              }
+              @if (
+                grupo.get('archivo')?.hasError('required') &&
+                grupo.get('archivo')?.touched &&
+                !errorArchivo(i)
+              ) {
+                <p class="mensaje-error">Debes cargar este documento.</p>
+              }
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    @if (errorEnvio(); as mensaje) {
+      <p class="mensaje-error">{{ mensaje }}</p>
+    }
+
+    <div class="acciones-formulario">
+      <button
+        mat-stroked-button
+        type="button"
+        [disabled]="enviando()"
+        (click)="guardarBorrador()"
+      >
+        Guardar como borrador
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        [disabled]="enviando()"
+        (click)="enviarSolicitud()"
+      >
+        @if (enviando()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Enviar solicitud formalmente
+        }
+      </button>
+    </div>
+  </form>
+}

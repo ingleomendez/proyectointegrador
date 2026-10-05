@@ -1,0 +1,33 @@
+.login-contenedor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--mat-sys-surface-container-low);
+}
+
+.login-tarjeta {
+  width: 100%;
+  max-width: 380px;
+  padding: 8px;
+}
+
+.login-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.login-error {
+  color: var(--mat-sys-error);
+  font-size: 0.9rem;
+  margin: 0 0 8px;
+}
+
+.login-boton {
+  margin-top: 8px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

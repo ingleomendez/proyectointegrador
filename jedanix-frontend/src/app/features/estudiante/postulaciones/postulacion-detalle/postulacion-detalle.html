@@ -1,0 +1,76 @@
+<a mat-button routerLink="/estudiante/postulaciones" class="enlace-volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver a mis postulaciones
+</a>
+
+@if (cargando()) {
+  <div class="estado-carga">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+} @else if (errorMensaje(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (postulacion(); as datos) {
+  <h1>{{ datos.empresa.nombre }}</h1>
+  <p class="estado-actual">
+    Estado: <strong>{{ datos.estado }}</strong>
+  </p>
+
+  @if (datos.estado === PostulacionEstadoEnum.BORRADOR) {
+    <p class="mensaje-vacio">
+      Esta postulación está guardada como borrador. Cuando esté completa, envíala
+      formalmente para que el Director pueda revisarla.
+    </p>
+    @if (errorEnvio(); as mensaje) {
+      <p class="mensaje-error">{{ mensaje }}</p>
+    }
+    <button mat-flat-button color="primary" [disabled]="enviando()" (click)="enviarBorrador()">
+      @if (enviando()) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        Enviar solicitud formalmente
+      }
+    </button>
+  }
+
+  @if (datos.motivo_rechazo) {
+    <p class="mensaje-error">Motivo de rechazo: {{ datos.motivo_rechazo }}</p>
+  }
+
+  @if (datos.observacion_cierre) {
+    <p class="mensaje-vacio">Observación de cierre: {{ datos.observacion_cierre }}</p>
+  }
+
+  <mat-card class="tarjeta-seccion">
+    <mat-card-header>
+      <mat-card-title>Tus respuestas</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (datos.respuestas_bitacora.length === 0) {
+        <p class="mensaje-vacio">Sin respuestas registradas.</p>
+      } @else {
+        <mat-list>
+          @for (respuesta of datos.respuestas_bitacora; track respuesta.id) {
+            <mat-list-item>{{ respuesta.respuesta_texto }}</mat-list-item>
+          }
+        </mat-list>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="tarjeta-seccion">
+    <mat-card-header>
+      <mat-card-title>Documentos</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (datos.documentos_postulacion.length === 0) {
+        <p class="mensaje-vacio">Sin documentos cargados.</p>
+      } @else {
+        <mat-list>
+          @for (documento of datos.documentos_postulacion; track documento.id) {
+            <mat-list-item>{{ documento.archivo }}</mat-list-item>
+          }
+        </mat-list>
+      }
+    </mat-card-content>
+  </mat-card>
+}

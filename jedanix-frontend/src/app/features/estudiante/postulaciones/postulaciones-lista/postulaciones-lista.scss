@@ -1,0 +1,34 @@
+:host {
+  display: block;
+}
+
+.enlace-volver {
+  margin-bottom: 8px;
+}
+
+.subtitulo {
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: -8px;
+}
+
+.estado-carga {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.mensaje-error {
+  color: var(--mat-sys-error);
+}
+
+.mensaje-vacio {
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 16px;
+}
+
+.grilla-postulaciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}

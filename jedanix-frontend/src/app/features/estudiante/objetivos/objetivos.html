@@ -1,0 +1,83 @@
+<a mat-button routerLink="/" class="enlace-volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver al inicio
+</a>
+
+<h1>Objetivos de práctica</h1>
+<p class="subtitulo">
+  Plantea los objetivos de tu práctica para que tu Docente Asesor los revise.
+</p>
+
+@if (cargando()) {
+  <div class="estado-carga">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+} @else if (sinPractica()) {
+  <p class="mensaje-vacio">
+    Aún no tienes una práctica matriculada. Primero debes postularte y que tu
+    solicitud sea aprobada.
+  </p>
+  <a mat-flat-button color="primary" routerLink="/estudiante/postulaciones">
+    Ver mi postulación
+  </a>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else {
+  @if (objetivo(); as datos) {
+    <mat-card class="tarjeta-estado">
+      <mat-card-content>
+        @switch (datos.estado) {
+          @case (ObjetivoEstadoEnum.PENDIENTE_DE_APROBACION) {
+            <span class="chip chip-pendiente">Pendiente de aprobación</span>
+            <p class="texto-ayuda">
+              Tu Docente Asesor aún no ha revisado tus objetivos.
+            </p>
+          }
+          @case (ObjetivoEstadoEnum.APROBADOS) {
+            <span class="chip chip-aprobado">
+              <mat-icon inline>check_circle</mat-icon>
+              Aprobados
+            </span>
+            <p class="texto-ayuda">Ya puedes registrar tus avances semanales.</p>
+          }
+          @case (ObjetivoEstadoEnum.RECHAZADOS) {
+            <span class="chip chip-rechazado">Rechazados</span>
+            @if (datos.observacion_docente) {
+              <p class="observacion">
+                <strong>Observación del Docente Asesor:</strong>
+                {{ datos.observacion_docente }}
+              </p>
+            }
+            <p class="texto-ayuda">Corrige el contenido y vuelve a enviarlo.</p>
+          }
+        }
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <p class="texto-ayuda">Redacta el contenido de los objetivos de tu práctica.</p>
+  }
+
+  <mat-form-field appearance="outline" class="campo-contenido">
+    <mat-label>Objetivos de la práctica</mat-label>
+    <textarea matInput [formControl]="contenido" rows="10"></textarea>
+    @if (contenido.invalid && contenido.touched) {
+      <mat-error>Debes redactar el contenido de tus objetivos.</mat-error>
+    }
+  </mat-form-field>
+
+  @if (errorEnvio(); as mensaje) {
+    <p class="mensaje-error">{{ mensaje }}</p>
+  }
+
+  @if (puedeEditar) {
+    <button mat-flat-button color="primary" [disabled]="enviando()" (click)="enviar()">
+      @if (enviando()) {
+        Enviando...
+      } @else if (objetivo()) {
+        Reenviar objetivos
+      } @else {
+        Enviar objetivos
+      }
+    </button>
+  }
+}

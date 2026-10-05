@@ -1,0 +1,42 @@
+.enlace-volver {
+  margin-bottom: 8px;
+}
+
+.subtitulo {
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: -8px;
+}
+
+.estado-carga {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.mensaje-error {
+  color: var(--mat-sys-error);
+}
+
+.mensaje-vacio {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.grilla-empresas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.tarjeta-empresa {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.detalle-responsable {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.9rem;
+}

@@ -1,0 +1,20 @@
+<mat-toolbar color="primary">
+  <a routerLink="/" class="marca">JEDANIX</a>
+  <span class="espaciador"></span>
+  @if (authService.usuario(); as usuario) {
+    <span class="usuario-info">{{ usuario.nombreCompleto }} · {{ usuario.rol }}</span>
+  }
+  <button
+    mat-icon-button
+    type="button"
+    (click)="cerrarSesion()"
+    aria-label="Cerrar sesión"
+    title="Cerrar sesión"
+  >
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<main class="contenido">
+  <router-outlet></router-outlet>
+</main>

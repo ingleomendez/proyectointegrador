@@ -1,0 +1,93 @@
+:host {
+  display: block;
+}
+
+.enlace-volver {
+  margin-bottom: 8px;
+}
+
+.subtitulo {
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: -8px;
+}
+
+.estado-carga {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.mensaje-error {
+  color: var(--mat-sys-error);
+}
+
+.mensaje-vacio {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.campo-documento {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.nombre-documento {
+  font-weight: 500;
+  margin: 0 0 8px;
+}
+
+.input-archivo-oculto {
+  display: none;
+}
+
+.fila-archivo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.estado-subida {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.9rem;
+}
+
+.archivo-cargado {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--mat-sys-primary);
+  font-size: 0.9rem;
+}
+
+.formulario-postulacion {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.tarjeta-seccion {
+  width: 100%;
+}
+
+.campo-pregunta {
+  margin-bottom: 8px;
+}
+
+.campo-ancho {
+  width: 100%;
+}
+
+.acciones-formulario {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-bottom: 32px;
+}

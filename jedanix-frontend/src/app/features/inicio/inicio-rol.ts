@@ -4,11 +4,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AuthService } from '../../core/services/auth.service';
+import { EstadoEstudianteService } from '../../core/services/estado-estudiante.service';
 import { accesosDeRol, NOMBRE_ROL } from '../../core/utils/menu-rol';
 
-/** Panel de inicio compartido por Director, Coordinador y Docente Asesor:
- * las tarjetas salen del menú del rol (`accesosDeRol`). El Estudiante
- * conserva su propio `Inicio`. */
+/** Panel de inicio de los cuatro roles: las tarjetas salen del mismo menú que la
+ * barra lateral (`accesosDeRol`), así los nombres y la visibilidad coinciden con
+ * los casos de uso (para el Estudiante dependen de su estado de práctica). */
 @Component({
   selector: 'app-inicio-rol',
   imports: [RouterLink, MatCardModule, MatIconModule],
@@ -17,6 +18,7 @@ import { accesosDeRol, NOMBRE_ROL } from '../../core/utils/menu-rol';
 })
 export class InicioRol {
   protected readonly authService = inject(AuthService);
+  private readonly estadoEstudiante = inject(EstadoEstudianteService);
 
   protected readonly nombreRol = computed(() => {
     const usuario = this.authService.usuario();
@@ -25,6 +27,6 @@ export class InicioRol {
 
   protected readonly accesos = computed(() => {
     const usuario = this.authService.usuario();
-    return usuario ? accesosDeRol(usuario.rol) : [];
+    return usuario ? accesosDeRol(usuario.rol, this.estadoEstudiante.contexto()) : [];
   });
 }

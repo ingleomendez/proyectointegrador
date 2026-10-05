@@ -1,6 +1,6 @@
-<a mat-button routerLink="/estudiante/avances" class="enlace-volver">
+<a mat-button routerLink="/estudiante/seguimiento" class="enlace-volver">
   <mat-icon inline>arrow_back</mat-icon>
-  Volver a mis avances
+  Volver a Seguimiento Prácticas
 </a>
 
 @if (cargando()) {
@@ -13,7 +13,7 @@
     <span
       class="chip"
       [class.chip-aprobado]="a.estado === AvanceEstadoEnum.ACEPTADO"
-      [class.chip-rechazado]="a.estado === AvanceEstadoEnum.OBSERVADO"
+      [class.chip-observado]="a.estado === AvanceEstadoEnum.OBSERVADO"
       [class.chip-pendiente]="a.estado === AvanceEstadoEnum.PENDIENTE_DE_REVISION"
     >
       {{ etiqueta(a.estado) }}
@@ -22,7 +22,7 @@
   </p>
 
   @if (a.estado === AvanceEstadoEnum.OBSERVADO) {
-    <a mat-flat-button color="primary" [routerLink]="['/estudiante/avances', a.id, 'corregir']">
+    <a mat-flat-button color="primary" [routerLink]="['/estudiante/seguimiento', a.id, 'corregir']">
       Corregir avance
     </a>
   }

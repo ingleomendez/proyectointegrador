@@ -1,6 +1,6 @@
-<a mat-button routerLink="/estudiante/empresas" class="enlace-volver">
+<a mat-button routerLink="/estudiante/solicitud" class="enlace-volver">
   <mat-icon inline>arrow_back</mat-icon>
-  Volver al listado
+  Volver al listado de empresas
 </a>
 
 @if (cargando()) {
@@ -19,15 +19,7 @@
       <div class="fila-datos">
         <div>
           <span class="etiqueta">Horas requeridas</span>
-          <p>{{ datos.horas_requeridas }} horas</p>
-        </div>
-        <div>
-          <span class="etiqueta">Coordinador</span>
-          <p>{{ datos.coordinador.nombre_completo }}</p>
-        </div>
-        <div>
-          <span class="etiqueta">Docente Asesor</span>
-          <p>{{ datos.docente_asesor.nombre_completo }}</p>
+          <p class="valor-grande">{{ datos.horas_requeridas }} horas</p>
         </div>
       </div>
 
@@ -38,24 +30,8 @@
 
   <mat-card class="tarjeta-seccion">
     <mat-card-header>
-      <mat-card-title>Bitácora que vas a responder</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      @if (datos.preguntas_bitacora.length === 0) {
-        <p class="mensaje-vacio">Esta empresa todavía no tiene preguntas configuradas.</p>
-      } @else {
-        <mat-list>
-          @for (pregunta of datos.preguntas_bitacora; track pregunta.id) {
-            <mat-list-item>{{ pregunta.enunciado }}</mat-list-item>
-          }
-        </mat-list>
-      }
-    </mat-card-content>
-  </mat-card>
-
-  <mat-card class="tarjeta-seccion">
-    <mat-card-header>
-      <mat-card-title>Documentos que vas a necesitar</mat-card-title>
+      <mat-card-title>Documentos requeridos</mat-card-title>
+      <mat-card-subtitle>Los cargarás en formato PDF durante la postulación.</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       @if (datos.documentos_requeridos.length === 0) {
@@ -70,12 +46,22 @@
     </mat-card-content>
   </mat-card>
 
-  <a
-    mat-flat-button
-    color="primary"
-    class="boton-postularme"
-    [routerLink]="['/estudiante/postulaciones/nueva', datos.id]"
-  >
-    Postularme
-  </a>
+  @if (enTramite(); as solicitud) {
+    <p class="mensaje-vacio">
+      Ya tienes una solicitud en trámite con {{ solicitud.empresa.nombre }}, por eso no puedes
+      postularte a otra empresa por ahora.
+    </p>
+    <a mat-flat-button color="primary" [routerLink]="['/estudiante/solicitud', solicitud.id]">
+      Ver estado de mi solicitud
+    </a>
+  } @else {
+    <a
+      mat-flat-button
+      color="primary"
+      class="boton-postularme"
+      [routerLink]="['/estudiante/solicitud/postular', datos.id]"
+    >
+      Postularme
+    </a>
+  }
 }

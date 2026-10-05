@@ -86,3 +86,24 @@
   background: var(--mat-sys-error-container);
   color: var(--mat-sys-on-error-container);
 }
+
+.aviso-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 720px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border-left: 4px solid var(--jx-acento);
+  background: #e0fbff;
+  color: var(--jx-cyan-950);
+}
+
+.celda-resumen {
+  max-width: 320px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.fila-no-reportada td {
+  background: #fff7f7;
+}

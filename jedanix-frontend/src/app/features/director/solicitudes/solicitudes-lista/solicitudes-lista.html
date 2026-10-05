@@ -1,10 +1,5 @@
-<a mat-button routerLink="/director" class="volver">
-  <mat-icon inline>arrow_back</mat-icon>
-  Volver al inicio
-</a>
-
-<h1>Solicitudes de práctica</h1>
-<p class="subtitulo">Postulaciones pendientes de aprobación, agrupadas por empresa.</p>
+<h1>Solicitudes Prácticas</h1>
+<p class="subtitulo">Solicitudes de matrícula pendientes de aprobación, agrupadas por empresa receptora.</p>
 
 @if (cargando()) {
   <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
@@ -13,31 +8,44 @@
 } @else if (grupos().length === 0) {
   <p class="mensaje-vacio">No hay solicitudes pendientes de aprobación.</p> <!-- 2.1.a -->
 } @else {
+  <p class="mensaje-vacio">Selecciona una empresa receptora para ver sus solicitudes.</p>
   @for (grupo of grupos(); track grupo.empresaId) {
-    <h2>{{ grupo.empresaNombre }} <span class="chip chip-pendiente">{{ grupo.solicitudes.length }} pendiente(s)</span></h2>
-    <div class="tabla-contenedor">
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>Estudiante</th>
-            <th>Correo</th>
-            <th>Fecha de envío</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (s of grupo.solicitudes; track s.id) {
-            <tr>
-              <td>{{ s.estudiante.nombre_completo }}</td>
-              <td>{{ s.estudiante.correo_institucional }}</td>
-              <td>{{ s.fecha_postulacion ? (s.fecha_postulacion | date: 'dd/MM/yyyy HH:mm') : '—' }}</td>
-              <td class="acciones">
-                <a mat-flat-button color="primary" [routerLink]="['/director/solicitudes', s.id]">Revisar</a>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+    <section class="grupo-empresa">
+      <button
+        type="button"
+        class="grupo-cabecera"
+        [attr.aria-expanded]="abiertas().has(grupo.empresaId)"
+        (click)="alternar(grupo.empresaId)"
+      >
+        <mat-icon>{{ abiertas().has(grupo.empresaId) ? 'expand_less' : 'expand_more' }}</mat-icon>
+        <span class="grupo-nombre">{{ grupo.empresaNombre }}</span>
+        <span class="chip chip-pendiente">{{ grupo.solicitudes.length }} pendiente(s)</span>
+      </button>
+
+      @if (abiertas().has(grupo.empresaId)) {
+        <div class="tabla-contenedor">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Estudiante</th>
+                <th>Fecha de envío</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of grupo.solicitudes; track s.id) {
+                <tr>
+                  <td>{{ s.estudiante.nombre_completo }}</td>
+                  <td>{{ s.fecha_postulacion ? (s.fecha_postulacion | date: 'dd/MM/yyyy HH:mm') : '—' }}</td>
+                  <td class="acciones">
+                    <a mat-flat-button color="primary" [routerLink]="['/director/solicitudes', s.id]">Revisar solicitud</a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
   }
 }

@@ -1,6 +1,6 @@
 <a mat-button routerLink="/director/empresas" class="volver">
   <mat-icon inline>arrow_back</mat-icon>
-  Volver a empresas
+  Volver a Empresas Receptoras
 </a>
 
 @if (cargando()) {
@@ -69,7 +69,7 @@
   </mat-card>
 
   <mat-card class="tarjeta-pagina">
-    <mat-card-header><mat-card-title>Bitácora de postulación</mat-card-title></mat-card-header>
+    <mat-card-header><mat-card-title>Bitácora</mat-card-title></mat-card-header>
     <mat-card-content>
       @if (e.preguntas_bitacora.length === 0) {
         <p class="mensaje-vacio">Esta empresa no tiene preguntas de bitácora.</p>

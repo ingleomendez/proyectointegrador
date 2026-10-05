@@ -1,6 +1,6 @@
-<a mat-button [routerLink]="['/estudiante/empresas', empresaId]" class="enlace-volver">
+<a mat-button routerLink="/estudiante/solicitud" class="enlace-volver">
   <mat-icon inline>arrow_back</mat-icon>
-  Volver al detalle de la empresa
+  Volver a Solicitud de práctica
 </a>
 
 @if (cargando()) {
@@ -10,125 +10,253 @@
 } @else if (errorCarga(); as mensaje) {
   <p class="mensaje-error">{{ mensaje }}</p>
 } @else if (empresa(); as datos) {
-  <h1>Postularme a {{ datos.nombre }}</h1>
-  <p class="subtitulo">
-    Responde la bitácora y carga los documentos requeridos en formato PDF.
-    Puedes guardar como borrador y completarlo luego, o enviar la solicitud
-    formalmente.
-  </p>
+  <h1>{{ datos.nombre }}</h1>
+  <p class="subtitulo">Solicitud de práctica</p>
 
-  <form [formGroup]="formulario" class="formulario-postulacion">
-    <mat-card class="tarjeta-seccion">
-      <mat-card-header>
-        <mat-card-title>Bitácora</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        @if (respuestas.length === 0) {
-          <p class="mensaje-vacio">Esta empresa no tiene preguntas configuradas.</p>
-        }
-        <div formArrayName="respuestas">
-          @for (grupo of respuestas.controls; track $index) {
-            <div [formGroupName]="$index" class="campo-pregunta">
-              <mat-form-field appearance="outline" class="campo-ancho">
-                <mat-label>{{ grupo.get('enunciado')?.value }}</mat-label>
-                <textarea matInput formControlName="respuesta_texto" rows="2"></textarea>
-                @if (grupo.get('respuesta_texto')?.hasError('required')) {
-                  <mat-error>Esta pregunta es obligatoria.</mat-error>
-                }
-              </mat-form-field>
-            </div>
+  <ol class="pasos" aria-label="Etapas de la solicitud">
+    <li [class.activo]="vista() === 'documentos'" [class.hecho]="vista() !== 'documentos' && editable()">
+      <span class="numero">1</span> Documentos
+    </li>
+    <li [class.activo]="vista() === 'bitacora'" [class.hecho]="vista() === 'estado' && editable()">
+      <span class="numero">2</span> Bitácora
+    </li>
+    <li [class.activo]="vista() === 'estado'">
+      <span class="numero">3</span> Estado de la solicitud
+    </li>
+  </ol>
+
+  @switch (vista()) {
+    <!-- ============ Vista 1: Documentos (pasos 11-16) ============ -->
+    @case ('documentos') {
+      <mat-card class="tarjeta-seccion">
+        <mat-card-header>
+          <mat-card-title>Documentos requeridos</mat-card-title>
+          <mat-card-subtitle>
+            Carga cada documento en formato PDF (máximo 10 MB).
+            {{ documentosCargados() }} de {{ documentos().length }} cargados.
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          @if (documentos().length === 0) {
+            <p class="mensaje-vacio">Esta empresa no exige documentos adicionales.</p>
           }
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="tarjeta-seccion">
-      <mat-card-header>
-        <mat-card-title>Documentos requeridos</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        @if (documentos.length === 0) {
-          <p class="mensaje-vacio">Esta empresa no exige documentos adicionales.</p>
-        }
-        <div formArrayName="documentos">
-          @for (grupo of documentos.controls; track $index; let i = $index) {
-            <div [formGroupName]="i" class="campo-documento">
-              <p class="nombre-documento">{{ grupo.get('nombre_documento')?.value }}</p>
+          @for (doc of documentos(); track doc.documentoId; let i = $index) {
+            <div class="campo-documento" [class.faltante]="documentoFaltante(doc)">
+              <p class="nombre-documento">{{ doc.nombre }}</p>
 
               <input
-                #inputArchivo
+                #archivoInput
                 type="file"
-                accept="application/pdf"
+                accept="application/pdf,.pdf"
                 class="input-archivo-oculto"
-                (change)="onArchivoSeleccionado(i, inputArchivo.files)"
+                (change)="onArchivoSeleccionado(i, archivoInput)"
               />
 
               <div class="fila-archivo">
                 <button
                   mat-stroked-button
                   type="button"
-                  [disabled]="estaSubiendo(i)"
-                  (click)="inputArchivo.click()"
+                  [disabled]="doc.subiendo"
+                  (click)="archivoInput.click()"
                 >
                   <mat-icon>upload_file</mat-icon>
-                  {{ nombreArchivoCargado(i) ? 'Cambiar PDF' : 'Seleccionar PDF' }}
+                  {{ doc.ruta ? 'Cambiar PDF' : 'Seleccionar PDF' }}
                 </button>
 
-                @if (estaSubiendo(i)) {
+                @if (doc.subiendo) {
                   <span class="estado-subida">
                     <mat-spinner diameter="18"></mat-spinner>
                     Subiendo...
                   </span>
-                } @else if (nombreArchivoCargado(i); as nombre) {
+                } @else if (doc.ruta) {
                   <span class="archivo-cargado">
                     <mat-icon inline>check_circle</mat-icon>
-                    {{ nombre }}
+                    {{ doc.nombreArchivo }}
                   </span>
                 }
               </div>
 
-              @if (errorArchivo(i); as mensaje) {
+              @if (doc.error; as mensaje) {
                 <p class="mensaje-error">{{ mensaje }}</p>
-              }
-              @if (
-                grupo.get('archivo')?.hasError('required') &&
-                grupo.get('archivo')?.touched &&
-                !errorArchivo(i)
-              ) {
+              } @else if (documentoFaltante(doc)) {
                 <p class="mensaje-error">Debes cargar este documento.</p>
               }
             </div>
           }
-        </div>
-      </mat-card-content>
-    </mat-card>
+        </mat-card-content>
+      </mat-card>
 
-    @if (errorEnvio(); as mensaje) {
-      <p class="mensaje-error">{{ mensaje }}</p>
+      @if (errorAccion(); as mensaje) {
+        <p class="mensaje-error">{{ mensaje }}</p>
+      }
+
+      <div class="acciones-formulario">
+        <button mat-stroked-button type="button" [disabled]="procesando()" (click)="guardarYSalir()">
+          Guardar y salir
+        </button>
+        <button mat-flat-button color="primary" type="button" (click)="continuar()">
+          Continuar
+          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        </button>
+      </div>
     }
 
-    <div class="acciones-formulario">
-      <button
-        mat-stroked-button
-        type="button"
-        [disabled]="enviando()"
-        (click)="guardarBorrador()"
-      >
-        Guardar como borrador
-      </button>
-      <button
-        mat-flat-button
-        color="primary"
-        type="button"
-        [disabled]="enviando()"
-        (click)="enviarSolicitud()"
-      >
-        @if (enviando()) {
-          <mat-spinner diameter="20"></mat-spinner>
-        } @else {
-          Enviar solicitud formalmente
+    <!-- ============ Vista 2: Bitácora (pasos 17-20) ============ -->
+    @case ('bitacora') {
+      <mat-card class="tarjeta-seccion">
+        <mat-card-header>
+          <mat-card-title>Bitácora</mat-card-title>
+          <mat-card-subtitle>
+            Responde las preguntas de la empresa. {{ respuestasDadas() }} de
+            {{ respuestas().length }} respondidas.
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          @if (respuestas().length === 0) {
+            <p class="mensaje-vacio">Esta empresa no tiene preguntas configuradas.</p>
+          }
+          @for (pregunta of datos.preguntas_bitacora; track pregunta.id; let i = $index) {
+            <div class="campo-pregunta">
+              <mat-form-field appearance="outline" class="campo-ancho">
+                <mat-label>{{ pregunta.enunciado }}</mat-label>
+                <textarea
+                  matInput
+                  rows="3"
+                  [value]="respuestas()[i]"
+                  (input)="actualizarRespuesta(i, $any($event.target).value)"
+                ></textarea>
+              </mat-form-field>
+              @if (respuestaFaltante(i)) {
+                <p class="mensaje-error">Esta pregunta es obligatoria.</p>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      @if (errorAccion(); as mensaje) {
+        <p class="mensaje-error">{{ mensaje }}</p>
+      }
+
+      <div class="acciones-formulario">
+        <button mat-button type="button" (click)="atras()">
+          <mat-icon>arrow_back</mat-icon>
+          Atrás
+        </button>
+        <span class="espaciador"></span>
+        <button mat-stroked-button type="button" [disabled]="procesando()" (click)="guardarYSalir()">
+          Guardar y salir
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          [disabled]="procesando()"
+          (click)="enviarSolicitud()"
+        >
+          @if (procesando()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Enviar solicitud
+          }
+        </button>
+      </div>
+    }
+
+    <!-- ============ Vista 3: Estado de la solicitud (pasos 25-26) ============ -->
+    @case ('estado') {
+      <mat-card class="tarjeta-seccion tarjeta-estado">
+        <mat-card-content>
+          @if (postulacion(); as sol) {
+            <div class="cabecera-estado">
+              <span class="chip" [class]="'chip ' + claseChip(sol.estado)">
+                {{ etiquetaEstado(sol.estado) }}
+              </span>
+              @if (sol.fecha_postulacion) {
+                <span class="fecha">Enviada el {{ sol.fecha_postulacion | date: 'dd/MM/yyyy HH:mm' }}</span>
+              }
+            </div>
+
+            @switch (sol.estado) {
+              @case (PostulacionEstadoEnum.BORRADOR) {
+                <p>
+                  Tu solicitud está guardada como borrador y todavía no ha sido enviada. Llevas
+                  {{ documentosCargados() }} de {{ documentos().length }} documentos cargados y
+                  {{ respuestasDadas() }} de {{ respuestas().length }} preguntas respondidas.
+                </p>
+                <button mat-flat-button color="primary" type="button" (click)="retomar()">
+                  Continuar solicitud
+                </button>
+              }
+              @case (PostulacionEstadoEnum.PENDIENTE_DE_APROBACION) {
+                <p>
+                  Tu solicitud fue enviada y está pendiente de aprobación. El Director la revisará y
+                  te notificará su decisión.
+                </p>
+              }
+              @case (PostulacionEstadoEnum.APROBADA) {
+                <p>
+                  ¡Tu solicitud fue aprobada! Ya estás matriculado en esta empresa. Consulta los
+                  datos de tu práctica y plantea tus objetivos.
+                </p>
+                <a mat-flat-button color="primary" routerLink="/estudiante/mi-practica">
+                  Ir a Mi Práctica
+                </a>
+              }
+              @case (PostulacionEstadoEnum.RECHAZADA) {
+                <p class="mensaje-error">
+                  Tu solicitud fue rechazada.
+                  @if (sol.motivo_rechazo) {
+                    <br /><strong>Motivo:</strong> {{ sol.motivo_rechazo }}
+                  }
+                </p>
+                <a mat-flat-button color="primary" routerLink="/estudiante/solicitud">
+                  Solicitar otra práctica
+                </a>
+              }
+              @case (PostulacionEstadoEnum.FINALIZADA) {
+                <p>Tu práctica en esta empresa fue cerrada formalmente.</p>
+              }
+            }
+          }
+        </mat-card-content>
+      </mat-card>
+
+      @if (postulacion(); as sol) {
+        @if (sol.estado !== PostulacionEstadoEnum.BORRADOR) {
+          <mat-card class="tarjeta-seccion">
+            <mat-card-header>
+              <mat-card-title>Documentos enviados</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @for (doc of documentos(); track doc.documentoId) {
+                <p class="linea-resumen">
+                  <strong>{{ doc.nombre }}:</strong>
+                  @if (doc.ruta) {
+                    <a [href]="urlArchivo(doc.ruta)" target="_blank" rel="noopener">{{ doc.nombreArchivo }}</a>
+                  } @else {
+                    <span class="mensaje-vacio">Sin archivo</span>
+                  }
+                </p>
+              }
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="tarjeta-seccion">
+            <mat-card-header>
+              <mat-card-title>Respuestas de la bitácora</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @for (pregunta of datos.preguntas_bitacora; track pregunta.id) {
+                <div class="linea-resumen">
+                  <strong>{{ pregunta.enunciado }}</strong>
+                  <p class="respuesta">{{ respuestaDe(pregunta.id) || 'Sin respuesta' }}</p>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
         }
-      </button>
-    </div>
-  </form>
+      }
+    }
+  }
 }

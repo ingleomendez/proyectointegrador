@@ -1,9 +1,9 @@
 <a mat-button routerLink="/director/empresas" class="volver">
   <mat-icon inline>arrow_back</mat-icon>
-  Volver a empresas
+  Volver a Empresas Receptoras
 </a>
 
-<h1>{{ esEdicion ? 'Editar empresa' : 'Nueva empresa receptora' }}</h1>
+<h1>{{ esEdicion ? 'Editar empresa' : 'Registrar nueva empresa' }}</h1>
 
 @if (cargando()) {
   <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
@@ -11,6 +11,7 @@
   <p class="mensaje-error">{{ mensaje }}</p>
 } @else {
   <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario-columna">
+    <h2>Datos generales</h2>
     <mat-form-field appearance="outline">
       <mat-label>Nombre de la empresa</mat-label>
       <input matInput formControlName="nombre" />
@@ -35,9 +36,10 @@
       <mat-error>Ingresa un número de horas mayor que cero.</mat-error>
     </mat-form-field>
 
+    <h2>Responsables</h2>
     <div class="fila-campos">
       <mat-form-field appearance="outline">
-        <mat-label>Coordinador</mat-label>
+        <mat-label>Coordinador de Práctica</mat-label>
         <mat-select formControlName="coordinador_id">
           @for (u of coordinadores(); track u.id) {
             <mat-option [value]="u.id">{{ u.nombre_completo }}</mat-option>
@@ -64,7 +66,7 @@
     </div>
 
     @if (!esEdicion) {
-      <h2>Bitácora de postulación</h2>
+      <h2>Bitácora</h2>
       <p class="subtitulo">Preguntas que el estudiante responderá al postularse (al menos una).</p>
       <div formArrayName="preguntas_bitacora">
         @for (pregunta of preguntas.controls; track $index) {
@@ -120,7 +122,7 @@
       <div class="barra-acciones">
         <button mat-stroked-button type="button" (click)="agregarDocumento()">
           <mat-icon>add</mat-icon>
-          Agregar documento
+          Agregar documento requerido
         </button>
       </div>
     } @else {
@@ -135,7 +137,7 @@
 
     <div class="barra-acciones">
       <button mat-flat-button color="primary" type="submit" [disabled]="guardando()">
-        {{ guardando() ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Crear empresa' }}
+        {{ guardando() ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Guardar empresa' }}
       </button>
       <a mat-button routerLink="/director/empresas">Cancelar</a>
     </div>

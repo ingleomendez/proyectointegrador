@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+
+.banner-cierre {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 8px 0 22px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  color: #00323b;
+  background: linear-gradient(120deg, #b2ebf2, #e0f9fc);
+  border: 1px solid #4dd0e1;
+  box-shadow: 0 6px 18px rgba(0, 172, 193, 0.18);
+
+  mat-icon {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+    color: #00838f;
+  }
+
+  div {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.banner-ok {
+  background: #e8f5e9;
+  border-color: #81c784;
+
+  mat-icon {
+    color: #2e7d32;
+  }
+}
+
+.banner-neutro {
+  background: #f1fafb;
+  border-color: var(--jx-borde, #cfe8ec);
+  box-shadow: none;
+
+  mat-icon {
+    color: #607d8b;
+  }
+}
+
+.rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 0 18px;
+}
+
+.horas {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}

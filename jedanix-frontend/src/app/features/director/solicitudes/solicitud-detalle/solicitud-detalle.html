@@ -1,6 +1,6 @@
 <a mat-button routerLink="/director/solicitudes" class="volver">
   <mat-icon inline>arrow_back</mat-icon>
-  Volver a solicitudes
+  Volver a Solicitudes Prácticas
 </a>
 
 @if (cargando()) {
@@ -33,6 +33,8 @@
       <dl class="datos">
         <dt>Nombre</dt>
         <dd>{{ p.estudiante.nombre_completo }}</dd>
+        <dt>Programa académico</dt>
+        <dd>{{ estudiante()?.programa_academico ?? '—' }}</dd>
         <dt>Correo institucional</dt>
         <dd>{{ p.estudiante.correo_institucional }}</dd>
         <dt>Fecha de envío</dt>
@@ -85,7 +87,7 @@
       <div class="barra-acciones">
         <button mat-flat-button color="primary" type="button" (click)="elegir('aprobar')">
           <mat-icon>check</mat-icon>
-          Aprobar
+          Aceptar
         </button>
         <button mat-stroked-button type="button" (click)="elegir('rechazar')">
           <mat-icon>close</mat-icon>
@@ -96,7 +98,7 @@
       <div class="aviso-confirmacion">
         @if (decision() === 'aprobar') {
           <p>
-            ¿Confirmas la aprobación? {{ p.estudiante.nombre_completo }} quedará matriculado en
+            ¿Confirmas la aceptación? {{ p.estudiante.nombre_completo }} quedará matriculado en
             {{ p.empresa.nombre }} y se le notificará.
           </p>
         } @else {
@@ -112,7 +114,7 @@
         }
         <div class="barra-acciones">
           <button mat-flat-button color="primary" type="button" [disabled]="procesando()" (click)="confirmar()">
-            {{ procesando() ? 'Registrando...' : decision() === 'aprobar' ? 'Confirmar aprobación' : 'Confirmar rechazo' }}
+            {{ procesando() ? 'Registrando...' : decision() === 'aprobar' ? 'Confirmar aceptación' : 'Confirmar rechazo' }}
           </button>
           <button mat-button type="button" [disabled]="procesando()" (click)="elegir(null)">Cancelar</button>
         </div>

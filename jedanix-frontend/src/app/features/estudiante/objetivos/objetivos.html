@@ -1,8 +1,3 @@
-<a mat-button routerLink="/" class="enlace-volver">
-  <mat-icon inline>arrow_back</mat-icon>
-  Volver al inicio
-</a>
-
 <h1>Objetivos de práctica</h1>
 <p class="subtitulo">
   Plantea los objetivos de tu práctica para que tu Docente Asesor los revise.
@@ -17,8 +12,8 @@
     Aún no tienes una práctica matriculada. Primero debes postularte y que tu
     solicitud sea aprobada.
   </p>
-  <a mat-flat-button color="primary" routerLink="/estudiante/postulaciones">
-    Ver mi postulación
+  <a mat-flat-button color="primary" routerLink="/estudiante/solicitud">
+    Ir a Solicitud de práctica
   </a>
 } @else if (errorCarga(); as mensaje) {
   <p class="mensaje-error">{{ mensaje }}</p>

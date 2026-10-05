@@ -4,16 +4,19 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 import { MatChipsModule } from '@angular/material/chips';
+import { catchError, forkJoin, of } from 'rxjs';
 
 import { EmpresaService } from '../../../../core/services/empresa.service';
+import { PostulacionService } from '../../../../core/services/postulacion.service';
 import { EmpresaReceptoraOut } from '../../../../core/models/empresa.model';
+import { PostulacionEstadoEnum } from '../../../../core/models/enums.model';
+import { PostulacionOut } from '../../../../core/models/postulacion.model';
 
-/** CU-06, pasos 6-7: el Estudiante revisa el detalle completo de una empresa
- * (requisitos, horas, bitácora y documentos que va a tener que diligenciar)
- * antes de decidir postularse. El botón "Postularme" lleva al formulario de
- * postulación (postulacion-nueva) para esta misma empresa. */
+/** CU-06, pasos 6-9: detalle de la empresa elegida (requisitos generales, horas
+ * requeridas y documentos requeridos). El botón "Postularme" (paso 9) abre el
+ * proceso de postulación; si el estudiante ya tiene una solicitud en trámite no
+ * se ofrece (no puede enviar otra mientras esté en trámite). */
 @Component({
   selector: 'app-empresa-detalle',
   imports: [
@@ -22,7 +25,6 @@ import { EmpresaReceptoraOut } from '../../../../core/models/empresa.model';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatIconModule,
-    MatListModule,
     MatChipsModule,
   ],
   templateUrl: './empresa-detalle.html',
@@ -31,16 +33,28 @@ import { EmpresaReceptoraOut } from '../../../../core/models/empresa.model';
 export class EmpresaDetalle {
   private readonly route = inject(ActivatedRoute);
   private readonly empresaService = inject(EmpresaService);
+  private readonly postulacionService = inject(PostulacionService);
 
   protected readonly empresa = signal<EmpresaReceptoraOut | null>(null);
+  protected readonly enTramite = signal<PostulacionOut | null>(null);
   protected readonly cargando = signal(true);
   protected readonly errorMensaje = signal<string | null>(null);
 
   constructor() {
     const empresaId = Number(this.route.snapshot.paramMap.get('id'));
-    this.empresaService.obtener(empresaId).subscribe({
-      next: (datos) => {
-        this.empresa.set(datos);
+    forkJoin({
+      empresa: this.empresaService.obtener(empresaId),
+      postulaciones: this.postulacionService.listarMias().pipe(catchError(() => of([]))),
+    }).subscribe({
+      next: ({ empresa, postulaciones }) => {
+        this.empresa.set(empresa);
+        this.enTramite.set(
+          postulaciones.find(
+            (p) =>
+              p.estado === PostulacionEstadoEnum.BORRADOR ||
+              p.estado === PostulacionEstadoEnum.PENDIENTE_DE_APROBACION,
+          ) ?? null,
+        );
         this.cargando.set(false);
       },
       error: (error) => {

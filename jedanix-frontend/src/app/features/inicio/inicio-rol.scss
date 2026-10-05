@@ -2,11 +2,35 @@
   display: block;
 }
 
+.bienvenida {
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  border-radius: 20px;
+  color: #fff;
+  background:
+    radial-gradient(80% 120% at 100% 0%, rgba(0, 229, 255, 0.45), transparent 60%),
+    linear-gradient(135deg, #006978, #0097a7);
+  box-shadow: 0 10px 28px rgba(0, 131, 143, 0.28);
+
+  h1 {
+    color: #fff;
+    margin: 0;
+
+    &::after {
+      background: linear-gradient(90deg, #a7f3ff, #fff);
+    }
+  }
+
+  .subtitulo {
+    margin: 12px 0 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
 .grilla-accesos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
 }
 
 .tarjeta-enlace {
@@ -16,17 +40,63 @@
 
 .tarjeta-acceso {
   height: 100%;
-  transition: box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+
+  h2 {
+    margin: 14px 0 6px;
+    font-size: 1.15rem;
+  }
+
+  p {
+    margin: 0 0 14px;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
 }
 
 .tarjeta-enlace:hover .tarjeta-acceso {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  border-color: var(--jx-cyan-300);
+  box-shadow: 0 12px 28px rgba(0, 151, 167, 0.22);
 }
 
-.icono-acceso {
-  font-size: 32px;
-  width: 32px;
-  height: 32px;
-  color: var(--mat-sys-primary);
-  margin-bottom: 8px;
+.icono-caja {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--jx-cyan-500), var(--jx-cyan-800));
+  box-shadow: 0 6px 14px rgba(0, 172, 193, 0.35);
+}
+
+.ir {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  color: var(--jx-cyan-800);
+}
+
+.tarjeta-deshabilitada {
+  opacity: 0.65;
+  background: #f6fbfc;
+
+  .icono-caja {
+    background: #9bb8be;
+    box-shadow: none;
+  }
+}
+
+.nota-bloqueo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  color: var(--mat-sys-on-surface-variant);
 }

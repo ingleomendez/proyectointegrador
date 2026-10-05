@@ -9,9 +9,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of, switchMap } from 'rxjs';
 
-import { AvanceSemanalListItem } from '../../../../core/models/avance.model';
+import { AvanceSemanalListItem, AvanceSemanalOut } from '../../../../core/models/avance.model';
 import { EmpresaReceptoraOut } from '../../../../core/models/empresa.model';
 import { AvanceEstadoEnum, PostulacionEstadoEnum } from '../../../../core/models/enums.model';
 import { PostulacionOut } from '../../../../core/models/postulacion.model';
@@ -20,12 +20,14 @@ import { EmpresaService } from '../../../../core/services/empresa.service';
 import { PostulacionService } from '../../../../core/services/postulacion.service';
 import { mensajeDeError } from '../../../../core/utils/errores';
 import { etiquetaEstadoAvance } from '../../../../core/utils/semana';
+import { detallesDeAvances } from '../../../revision/revision.util';
 
 type Decision = 'finalizar' | 'rechazar' | null;
 
 /**
- * CU-05 (Director): cierre formal de una práctica. Muestra las horas
- * aceptadas frente a las requeridas y el resumen de avances. El backend solo
+ * CU-05 (Director): cierre formal de una práctica ("Aprobar cierre" /
+ * "Rechazar cierre"). Muestra las horas aceptadas frente a las requeridas y los
+ * avances con la calificación del Coordinador y la observación del Docente. El backend solo
  * permite finalizar cuando las horas aceptadas alcanzan las requeridas
  * (excepción 5.1.a); rechazar el cierre exige una observación (9.1.a.1).
  */
@@ -56,13 +58,15 @@ export class CierrePractica {
   protected readonly AvanceEstadoEnum = AvanceEstadoEnum;
   protected readonly etiqueta = etiquetaEstadoAvance;
 
-  private readonly postulacionId = Number(this.route.snapshot.paramMap.get('id'));
+  protected readonly postulacionId = Number(this.route.snapshot.paramMap.get('id'));
 
   protected readonly cargando = signal(true);
   protected readonly errorCarga = signal<string | null>(null);
   protected readonly postulacion = signal<PostulacionOut | null>(null);
   protected readonly empresa = signal<EmpresaReceptoraOut | null>(null);
   protected readonly avances = signal<AvanceSemanalListItem[]>([]);
+  /** Observación del Docente Asesor por avance (CU-05, paso 7). */
+  protected readonly observaciones = signal<Map<number, string>>(new Map());
   protected readonly decision = signal<Decision>(null);
   protected readonly procesando = signal(false);
   protected readonly errorDecision = signal<string | null>(null);
@@ -105,11 +109,27 @@ export class CierrePractica {
         this.postulacion.set(postulacion);
         forkJoin({
           empresa: this.empresaService.obtener(postulacion.empresa.id),
-          avances: this.avanceService.listarDePostulacion(this.postulacionId),
+          avances: this.avanceService.listarDePostulacion(this.postulacionId).pipe(
+            switchMap((lista) => {
+              const ordenados = [...lista].sort((a, b) =>
+                a.semana_calendario.localeCompare(b.semana_calendario),
+              );
+              return detallesDeAvances(this.avanceService, ordenados).pipe(
+                switchMap((detalles: AvanceSemanalOut[]) => of({ ordenados, detalles })),
+              );
+            }),
+          ),
         }).subscribe({
           next: ({ empresa, avances }) => {
             this.empresa.set(empresa);
-            this.avances.set(avances);
+            this.avances.set(avances.ordenados);
+            this.observaciones.set(
+              new Map(
+                avances.detalles
+                  .filter((d) => d.observacion_docente_asesor)
+                  .map((d) => [d.id, d.observacion_docente_asesor as string]),
+              ),
+            );
             this.cargando.set(false);
           },
           error: (error) => {

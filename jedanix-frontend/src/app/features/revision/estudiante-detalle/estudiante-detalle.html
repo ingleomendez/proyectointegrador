@@ -1,0 +1,123 @@
+<a mat-button [routerLink]="[rutaBase, 'estudiantes']" class="volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver a Estudiantes
+</a>
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (postulacion(); as p) {
+  <h1>{{ p.estudiante.nombre_completo }}</h1>
+  <p class="subtitulo">{{ p.estudiante.correo_institucional }} · {{ p.empresa.nombre }}</p>
+
+  @if (mensajeExito(); as mensaje) {
+    <p class="mensaje-exito"><mat-icon inline>check_circle</mat-icon> {{ mensaje }}</p>
+  }
+
+  <!-- CU-11, pasos 14-21 (solo Docente Asesor) -->
+  @if (!esCoordinador) {
+    @for (o of objetivos(); track o.id) {
+      <mat-card class="tarjeta-pagina">
+        <mat-card-header>
+          <mat-card-title>Objetivos de la práctica — pendientes de aprobación</mat-card-title>
+          <mat-card-subtitle>Enviados el {{ o.fecha_envio | date: 'dd/MM/yyyy HH:mm' }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="contenido-objetivo">{{ o.contenido }}</p>
+
+          @if (decision()?.objetivoId === o.id) {
+            <div class="aviso-confirmacion">
+              @if (decision()?.tipo === 'aprobar') {
+                <p>¿Confirmas la aprobación? El estudiante podrá registrar avances semanales.</p>
+              } @else {
+                <p>Indica qué debe mejorar o cambiar el estudiante.</p>
+                <mat-form-field appearance="outline" class="campo-completo">
+                  <mat-label>Observación</mat-label>
+                  <textarea matInput rows="3" [formControl]="observacion"></textarea>
+                  <mat-error>La observación es obligatoria al rechazar.</mat-error>
+                </mat-form-field>
+              }
+              @if (errorDecision(); as mensaje) {
+                <p class="mensaje-error">{{ mensaje }}</p>
+              }
+              <div class="barra-acciones">
+                <button mat-flat-button color="primary" type="button" [disabled]="procesando()" (click)="confirmar(o)">
+                  {{ procesando() ? 'Registrando...' : decision()?.tipo === 'aprobar' ? 'Confirmar aprobación' : 'Confirmar rechazo' }}
+                </button>
+                <button mat-button type="button" [disabled]="procesando()" (click)="cancelar()">Cancelar</button>
+              </div>
+            </div>
+          } @else {
+            <div class="barra-acciones">
+              <button mat-flat-button color="primary" type="button" (click)="elegir(o.id, 'aprobar')">
+                <mat-icon>check</mat-icon>
+                Aprobar
+              </button>
+              <button mat-stroked-button type="button" (click)="elegir(o.id, 'rechazar')">
+                <mat-icon>close</mat-icon>
+                Rechazar
+              </button>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+
+  <h2>Historial de avances</h2>
+  @if (filas().length === 0) {
+    <!-- 5.1.a: estudiante sin avances registrados -->
+    <p class="mensaje-vacio">Este estudiante aún no ha registrado avances.</p>
+  } @else {
+    <p class="mensaje-vacio">
+      {{ pendientes() }} avance(s) pendiente(s) {{ esCoordinador ? 'de calificar' : 'de observación' }}.
+    </p>
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Semana</th>
+            <th>Fecha de envío</th>
+            <th>Estado</th>
+            <th>{{ esCoordinador ? 'Calificación' : 'Observación del Docente Asesor' }}</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of filas(); track f.avance.id) {
+            <tr>
+              <td>{{ f.avance.semana_calendario | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ f.avance.fecha_envio | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <span
+                  class="chip"
+                  [class.chip-aprobado]="f.avance.estado === AvanceEstadoEnum.ACEPTADO"
+                  [class.chip-observado]="f.avance.estado === AvanceEstadoEnum.OBSERVADO"
+                  [class.chip-pendiente]="f.avance.estado === AvanceEstadoEnum.PENDIENTE_DE_REVISION"
+                >
+                  {{ etiqueta(f.avance.estado) }}
+                </span>
+              </td>
+              <td>
+                @if (esCoordinador) {
+                  {{ f.avance.calificacion_coordinador ?? '—' }}
+                } @else {
+                  {{ f.observado ? 'Registrada' : 'Sin observación' }}
+                }
+              </td>
+              <td>
+                <a
+                  mat-stroked-button
+                  [routerLink]="[rutaBase, 'estudiantes', p.id, 'avances', f.avance.id]"
+                >
+                  {{ textoAccion(f) }}
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

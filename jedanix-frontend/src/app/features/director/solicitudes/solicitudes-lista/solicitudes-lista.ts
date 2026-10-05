@@ -15,12 +15,14 @@ interface GrupoEmpresa {
   solicitudes: PostulacionListItem[];
 }
 
-/** CU-03 (Director), pasos 1-5: solicitudes pendientes de aprobación,
- * agrupadas por empresa receptora. */
+/** CU-03 (Director), pasos 1-5: opción "Solicitudes Prácticas". Solicitudes
+ * pendientes de aprobación agrupadas por empresa receptora; al elegir una
+ * empresa se despliegan sus solicitudes con nombre del estudiante y fecha de envío. */
 @Component({
   selector: 'app-solicitudes-lista',
   imports: [DatePipe, RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './solicitudes-lista.html',
+  styleUrl: './solicitudes-lista.scss',
 })
 export class SolicitudesLista {
   private readonly postulacionService = inject(PostulacionService);
@@ -40,8 +42,29 @@ export class SolicitudesLista {
       grupo.solicitudes.push(s);
       mapa.set(s.empresa.id, grupo);
     }
-    return [...mapa.values()];
+    // Dentro de cada empresa, primero las más antiguas (las que llevan más tiempo esperando).
+    for (const grupo of mapa.values()) {
+      grupo.solicitudes.sort((a, b) =>
+        (a.fecha_postulacion ?? '').localeCompare(b.fecha_postulacion ?? ''),
+      );
+    }
+    return [...mapa.values()].sort((a, b) => a.empresaNombre.localeCompare(b.empresaNombre));
   });
+
+  /** Empresas desplegadas (paso 4: el Director elige una empresa para ver sus solicitudes). */
+  protected readonly abiertas = signal<ReadonlySet<number>>(new Set());
+
+  protected alternar(empresaId: number): void {
+    this.abiertas.update((actual) => {
+      const nuevo = new Set(actual);
+      if (nuevo.has(empresaId)) {
+        nuevo.delete(empresaId);
+      } else {
+        nuevo.add(empresaId);
+      }
+      return nuevo;
+    });
+  }
 
   constructor() {
     this.postulacionService.listarPendientes().subscribe({

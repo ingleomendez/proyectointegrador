@@ -1,16 +1,30 @@
-<h1>Bienvenido, {{ authService.usuario()?.nombreCompleto }}</h1>
-<p class="subtitulo">Este es tu panel de {{ nombreRol() }}.</p>
+<section class="bienvenida">
+  <h1>Bienvenido, {{ authService.usuario()?.nombreCompleto }}</h1>
+  <p class="subtitulo">Este es tu panel de {{ nombreRol() }}. Elige una opción para comenzar.</p>
+</section>
 
 <div class="grilla-accesos">
   @for (acceso of accesos(); track acceso.ruta) {
-    <a [routerLink]="acceso.ruta" class="tarjeta-enlace">
-      <mat-card class="tarjeta-acceso">
+    @if (acceso.deshabilitado) {
+      <mat-card class="tarjeta-acceso tarjeta-deshabilitada">
         <mat-card-content>
-          <mat-icon class="icono-acceso">{{ acceso.icono }}</mat-icon>
+          <span class="icono-caja"><mat-icon>{{ acceso.icono }}</mat-icon></span>
           <h2>{{ acceso.etiqueta }}</h2>
           <p>{{ acceso.descripcion }}</p>
+          <span class="nota-bloqueo"><mat-icon inline>lock</mat-icon> {{ acceso.ayuda }}</span>
         </mat-card-content>
       </mat-card>
-    </a>
+    } @else {
+      <a [routerLink]="acceso.ruta" class="tarjeta-enlace">
+        <mat-card class="tarjeta-acceso">
+          <mat-card-content>
+            <span class="icono-caja"><mat-icon>{{ acceso.icono }}</mat-icon></span>
+            <h2>{{ acceso.etiqueta }}</h2>
+            <p>{{ acceso.descripcion }}</p>
+            <span class="ir">Abrir <mat-icon inline>arrow_forward</mat-icon></span>
+          </mat-card-content>
+        </mat-card>
+      </a>
+    }
   }
 </div>

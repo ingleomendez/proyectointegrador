@@ -60,6 +60,7 @@ export class AvanceRevision {
   protected readonly esCoordinador = this.rol === RolEnum.COORDINADOR;
   protected readonly rutaBase = rutaInicioDeRol(this.rol);
   private readonly avanceId = Number(this.route.snapshot.paramMap.get('id'));
+  protected readonly postulacionId = this.route.snapshot.paramMap.get('postulacionId');
 
   protected readonly cargando = signal(true);
   protected readonly errorCarga = signal<string | null>(null);

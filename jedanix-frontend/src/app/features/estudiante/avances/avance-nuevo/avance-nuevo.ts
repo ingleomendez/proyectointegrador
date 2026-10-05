@@ -200,7 +200,7 @@ export class AvanceNuevo {
     this.errorEnvio.set(null);
     this.enviando.set(true);
     this.avanceService.registrar(payload).subscribe({
-      next: (avance) => this.router.navigate(['/estudiante/avances', avance.id]),
+      next: (avance) => this.router.navigate(['/estudiante/seguimiento', avance.id]),
       error: (error: HttpErrorResponse) => {
         const detalle = error.error?.detail;
         this.errorEnvio.set(

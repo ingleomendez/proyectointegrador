@@ -1,6 +1,6 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,14 +21,19 @@ import { AvanceService } from '../../../core/services/avance.service';
 import { EmpresaService } from '../../../core/services/empresa.service';
 import { ObjetivoService } from '../../../core/services/objetivo.service';
 import { PostulacionService } from '../../../core/services/postulacion.service';
+import { etiquetaEstadoPostulacion } from '../../../core/utils/estados';
 
-type Vista = 'cargando' | 'error' | 'sin-practica' | 'en-tramite' | 'matriculado';
+type Vista = 'cargando' | 'error' | 'sin-practica' | 'en-tramite' | 'matriculado' | 'finalizada';
 
 /**
  * CU-07 (Estudiante): consulta de solo lectura de "Mi Práctica". Se arma en
  * el frontend a partir de endpoints que ya existen (postulaciones, empresa,
  * avances y objetivos). Las horas acumuladas cuentan solo los avances
  * ACEPTADOS por el Coordinador (las horas "oficiales" de la práctica).
+ *
+ * Casos: sin práctica (2.1.a, campos en blanco y enlace a "Solicitud de
+ * práctica"), solicitud en trámite (2.1.b), práctica matriculada y práctica
+ * finalizada (misma información, solo lectura).
  *
  * Nota: el modelo de empresa no tiene teléfono ni dirección, que CU-07 paso 9
  * menciona; se omiten hasta que exista ese dato en `empresas_receptoras`.
@@ -37,6 +42,7 @@ type Vista = 'cargando' | 'error' | 'sin-practica' | 'en-tramite' | 'matriculado
   selector: 'app-mi-practica',
   imports: [
     DatePipe,
+    NgTemplateOutlet,
     RouterLink,
     MatButtonModule,
     MatCardModule,
@@ -52,8 +58,14 @@ export class MiPractica {
   private readonly empresaService = inject(EmpresaService);
   private readonly avanceService = inject(AvanceService);
   private readonly objetivoService = inject(ObjetivoService);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly ObjetivoEstadoEnum = ObjetivoEstadoEnum;
+  protected readonly PostulacionEstadoEnum = PostulacionEstadoEnum;
+  protected readonly etiquetaEstado = etiquetaEstadoPostulacion;
+
+  /** Mensaje cuando el estudiante llegó aquí redirigido desde "Solicitud de práctica" (CU-06, 2.1.a). */
+  protected readonly avisoMatriculado = this.route.snapshot.queryParamMap.get('aviso') === 'matriculado';
 
   protected readonly vista = signal<Vista>('cargando');
   protected readonly postulacion = signal<PostulacionOut | null>(null);
@@ -98,21 +110,28 @@ export class MiPractica {
   private resolverVista(postulaciones: PostulacionOut[]): void {
     const matriculada = postulaciones.find((p) => p.estado === PostulacionEstadoEnum.APROBADA);
     if (matriculada) {
-      this.cargarPractica(matriculada);
+      this.cargarPractica(matriculada, 'matriculado');
       return;
     }
-    const pendiente = postulaciones.find(
-      (p) => p.estado === PostulacionEstadoEnum.PENDIENTE_DE_APROBACION,
+    const enTramite = postulaciones.find(
+      (p) =>
+        p.estado === PostulacionEstadoEnum.PENDIENTE_DE_APROBACION ||
+        p.estado === PostulacionEstadoEnum.BORRADOR,
     );
-    if (pendiente) {
-      this.postulacion.set(pendiente);
+    if (enTramite) {
+      this.postulacion.set(enTramite);
       this.vista.set('en-tramite');
+      return;
+    }
+    const finalizada = postulaciones.find((p) => p.estado === PostulacionEstadoEnum.FINALIZADA);
+    if (finalizada) {
+      this.cargarPractica(finalizada, 'finalizada');
       return;
     }
     this.vista.set('sin-practica');
   }
 
-  private cargarPractica(matriculada: PostulacionOut): void {
+  private cargarPractica(matriculada: PostulacionOut, vista: 'matriculado' | 'finalizada'): void {
     this.postulacion.set(matriculada);
     forkJoin({
       empresa: this.empresaService.obtener(matriculada.empresa.id),
@@ -124,7 +143,7 @@ export class MiPractica {
         this.empresa.set(empresa);
         this.avances.set(avances);
         this.objetivo.set(objetivo);
-        this.vista.set('matriculado');
+        this.vista.set(vista);
       },
       error: () => this.vista.set('error'),
     });

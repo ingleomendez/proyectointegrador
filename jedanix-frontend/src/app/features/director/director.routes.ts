@@ -64,6 +64,13 @@ export const DIRECTOR_ROUTES: Routes = [
   {
     path: 'matriculados/:id',
     loadComponent: () =>
+      import('./matriculados/matriculado-detalle/matriculado-detalle').then(
+        (m) => m.MatriculadoDetalle,
+      ),
+  },
+  {
+    path: 'matriculados/:id/cierre',
+    loadComponent: () =>
       import('./matriculados/cierre-practica/cierre-practica').then((m) => m.CierrePractica),
   },
 ];

@@ -1,6 +1,6 @@
-<a mat-button routerLink="/director/matriculados" class="volver">
+<a mat-button [routerLink]="['/director/matriculados', postulacionId]" class="volver">
   <mat-icon inline>arrow_back</mat-icon>
-  Volver a matriculados
+  Volver al detalle del estudiante
 </a>
 
 @if (cargando()) {
@@ -8,7 +8,7 @@
 } @else if (errorCarga(); as mensaje) {
   <p class="mensaje-error">{{ mensaje }}</p>
 } @else if (postulacion(); as p) {
-  <h1>Cierre de práctica</h1>
+  <h1>Cierre formal de práctica</h1>
   <p class="subtitulo">
     {{ p.estudiante.nombre_completo }} · {{ p.empresa.nombre }} ·
     @if (p.estado === PostulacionEstadoEnum.FINALIZADA) {
@@ -57,7 +57,8 @@
                 <th>Semana (lunes)</th>
                 <th>Horas</th>
                 <th>Estado</th>
-                <th>Calificación</th>
+                <th>Calificación del Coordinador</th>
+                <th>Observación del Docente Asesor</th>
               </tr>
             </thead>
             <tbody>
@@ -69,13 +70,14 @@
                     <span
                       class="chip"
                       [class.chip-aprobado]="a.estado === AvanceEstadoEnum.ACEPTADO"
-                      [class.chip-rechazado]="a.estado === AvanceEstadoEnum.OBSERVADO"
+                      [class.chip-observado]="a.estado === AvanceEstadoEnum.OBSERVADO"
                       [class.chip-pendiente]="a.estado === AvanceEstadoEnum.PENDIENTE_DE_REVISION"
                     >
                       {{ etiqueta(a.estado) }}
                     </span>
                   </td>
                   <td>{{ a.calificacion_coordinador ?? '—' }}</td>
+                  <td>{{ observaciones().get(a.id) ?? '—' }}</td>
                 </tr>
               }
             </tbody>
@@ -99,7 +101,7 @@
       <div class="barra-acciones">
         <button mat-flat-button color="primary" type="button" [disabled]="!cumpleHoras()" (click)="elegir('finalizar')">
           <mat-icon>verified</mat-icon>
-          Finalizar práctica
+          Aprobar cierre
         </button>
         <button mat-stroked-button type="button" (click)="elegir('rechazar')">
           <mat-icon>undo</mat-icon>
@@ -126,7 +128,7 @@
         }
         <div class="barra-acciones">
           <button mat-flat-button color="primary" type="button" [disabled]="procesando()" (click)="confirmar()">
-            {{ procesando() ? 'Registrando...' : decision() === 'finalizar' ? 'Confirmar cierre' : 'Confirmar rechazo' }}
+            {{ procesando() ? 'Registrando...' : decision() === 'finalizar' ? 'Confirmar aprobación del cierre' : 'Confirmar rechazo del cierre' }}
           </button>
           <button mat-button type="button" [disabled]="procesando()" (click)="elegir(null)">Cancelar</button>
         </div>

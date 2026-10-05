@@ -1,6 +1,6 @@
-<a mat-button [routerLink]="[rutaBase, 'avances']" class="volver">
+<a mat-button [routerLink]="[rutaBase, 'estudiantes', postulacionId]" class="volver">
   <mat-icon inline>arrow_back</mat-icon>
-  Volver a avances
+  Volver al estudiante
 </a>
 
 @if (cargando()) {
@@ -14,7 +14,7 @@
     <span
       class="chip"
       [class.chip-aprobado]="a.estado === AvanceEstadoEnum.ACEPTADO"
-      [class.chip-rechazado]="a.estado === AvanceEstadoEnum.OBSERVADO"
+      [class.chip-observado]="a.estado === AvanceEstadoEnum.OBSERVADO"
       [class.chip-pendiente]="a.estado === AvanceEstadoEnum.PENDIENTE_DE_REVISION"
     >
       {{ etiqueta(a.estado) }}

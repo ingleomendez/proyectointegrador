@@ -1,12 +1,6 @@
-<a mat-button routerLink="/" class="enlace-volver">
-  <mat-icon inline>arrow_back</mat-icon>
-  Volver al inicio
-</a>
-
-<h1>Empresas disponibles</h1>
+<h1>Solicitud de práctica</h1>
 <p class="subtitulo">
-  Estas son las empresas receptoras activas en las que puedes postularte a una
-  práctica.
+  Elige una de las empresas receptoras disponibles para iniciar tu solicitud de práctica.
 </p>
 
 @if (cargando()) {
@@ -15,33 +9,49 @@
   </div>
 } @else if (errorMensaje(); as mensaje) {
   <p class="mensaje-error">{{ mensaje }}</p>
-} @else if (empresas().length === 0) {
-  <p class="mensaje-vacio">
-    Por ahora no hay empresas receptoras activas. Vuelve a consultar más
-    adelante.
-  </p>
 } @else {
-  <div class="grilla-empresas">
-    @for (empresa of empresas(); track empresa.id) {
-      <mat-card class="tarjeta-empresa">
-        <mat-card-header>
-          <mat-card-title>{{ empresa.nombre }}</mat-card-title>
-          <mat-card-subtitle>
-            Coordinador: {{ empresa.coordinador.nombre_completo }}
-          </mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <p class="detalle-responsable">
-            <mat-icon inline>school</mat-icon>
-            Docente Asesor: {{ empresa.docente_asesor.nombre_completo }}
-          </p>
-        </mat-card-content>
-        <mat-card-actions>
-          <a mat-button color="primary" [routerLink]="['/estudiante/empresas', empresa.id]">
-            Ver detalle
-          </a>
-        </mat-card-actions>
-      </mat-card>
-    }
-  </div>
+  @if (enTramite(); as solicitud) {
+    <mat-card class="aviso-tramite">
+      <mat-card-content>
+        <mat-icon>pending_actions</mat-icon>
+        <div class="texto-aviso">
+          <strong>Ya tienes una solicitud en trámite con {{ solicitud.empresa.nombre }}.</strong>
+          <span>
+            Estado: {{ etiquetaEstado(solicitud.estado) }}. Mientras esté en trámite no puedes
+            enviar una nueva solicitud a otra empresa.
+          </span>
+        </div>
+        <a mat-flat-button color="primary" [routerLink]="['/estudiante/solicitud', solicitud.id]">
+          Ver estado de la solicitud
+        </a>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (empresas().length === 0) {
+    <p class="mensaje-vacio">
+      No hay oportunidades de práctica disponibles en este momento. Vuelve a consultar más
+      adelante.
+    </p>
+  } @else {
+    <div class="grilla-empresas">
+      @for (empresa of empresas(); track empresa.id) {
+        <mat-card class="tarjeta-empresa">
+          <mat-card-header>
+            <mat-card-title>{{ empresa.nombre }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (empresa.descripcion) {
+              <p class="descripcion">{{ resumen(empresa.descripcion) }}</p>
+            }
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-flat-button color="primary" [routerLink]="['/estudiante/solicitud/empresa', empresa.id]">
+              Ver detalle
+            </a>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
 }

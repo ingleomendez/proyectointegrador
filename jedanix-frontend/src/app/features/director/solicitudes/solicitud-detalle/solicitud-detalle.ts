@@ -8,13 +8,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { catchError, forkJoin, of } from 'rxjs';
 
 import { EmpresaReceptoraOut } from '../../../../core/models/empresa.model';
 import { PostulacionEstadoEnum } from '../../../../core/models/enums.model';
 import { PostulacionOut } from '../../../../core/models/postulacion.model';
+import { UsuarioOut } from '../../../../core/models/usuario.model';
 import { ArchivoService } from '../../../../core/services/archivo.service';
 import { EmpresaService } from '../../../../core/services/empresa.service';
 import { PostulacionService } from '../../../../core/services/postulacion.service';
+import { UsuarioService } from '../../../../core/services/usuario.service';
 import { mensajeDeError } from '../../../../core/utils/errores';
 
 type Decision = 'aprobar' | 'rechazar' | null;
@@ -44,6 +47,7 @@ type Decision = 'aprobar' | 'rechazar' | null;
 export class SolicitudDetalle {
   private readonly postulacionService = inject(PostulacionService);
   private readonly empresaService = inject(EmpresaService);
+  private readonly usuarioService = inject(UsuarioService);
   private readonly route = inject(ActivatedRoute);
   protected readonly archivoService = inject(ArchivoService);
 
@@ -54,6 +58,8 @@ export class SolicitudDetalle {
   protected readonly errorCarga = signal<string | null>(null);
   protected readonly postulacion = signal<PostulacionOut | null>(null);
   protected readonly empresa = signal<EmpresaReceptoraOut | null>(null);
+  /** Datos completos del estudiante (programa académico, paso 8); opcional si no se pudo consultar. */
+  protected readonly estudiante = signal<UsuarioOut | null>(null);
   protected readonly decision = signal<Decision>(null);
   protected readonly procesando = signal(false);
   protected readonly errorDecision = signal<string | null>(null);
@@ -90,9 +96,15 @@ export class SolicitudDetalle {
     this.postulacionService.obtener(this.postulacionId).subscribe({
       next: (postulacion) => {
         this.postulacion.set(postulacion);
-        this.empresaService.obtener(postulacion.empresa.id).subscribe({
-          next: (empresa) => {
+        forkJoin({
+          empresa: this.empresaService.obtener(postulacion.empresa.id),
+          estudiante: this.usuarioService
+            .obtener(postulacion.estudiante.id)
+            .pipe(catchError(() => of(null))),
+        }).subscribe({
+          next: ({ empresa, estudiante }) => {
             this.empresa.set(empresa);
+            this.estudiante.set(estudiante);
             this.cargando.set(false);
           },
           error: (error) => {

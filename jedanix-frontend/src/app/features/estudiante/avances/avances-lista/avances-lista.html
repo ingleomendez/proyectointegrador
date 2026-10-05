@@ -1,9 +1,4 @@
-<a mat-button routerLink="/" class="enlace-volver">
-  <mat-icon inline>arrow_back</mat-icon>
-  Volver al inicio
-</a>
-
-<h1>Avances semanales</h1>
+<h1>Seguimiento Prácticas</h1>
 <p class="subtitulo">Registra tu avance de cada semana y consulta cómo fue revisado.</p>
 
 @switch (vista()) {
@@ -14,66 +9,113 @@
     <p class="mensaje-error">No se pudieron cargar tus avances. Intenta de nuevo.</p>
   }
   @case ('sin-practica') {
-    <p class="mensaje-vacio">Aún no tienes una práctica matriculada, por eso no puedes registrar avances.</p>
-    <a mat-flat-button color="primary" routerLink="/estudiante/postulaciones">Ver mi postulación</a>
+    <p class="mensaje-vacio">
+      Aún no tienes una práctica matriculada, por eso no puedes registrar avances.
+    </p>
+    <a mat-flat-button color="primary" routerLink="/estudiante/solicitud">Ir a Solicitud de práctica</a>
   }
   @case ('objetivos-pendientes') {
     <p class="mensaje-vacio">
-      Primero debes plantear tus objetivos y que tu Docente Asesor los apruebe para poder registrar avances.
+      Primero debes plantear tus objetivos y obtener la aprobación de tu Docente Asesor para poder
+      registrar avances.
     </p>
     <a mat-flat-button color="primary" routerLink="/estudiante/objetivos">Ir a Objetivos</a>
   }
   @case ('listo') {
-    <div class="barra-acciones">
-      @if (yaEnviadoEstaSemana()) {
-        <button mat-flat-button color="primary" disabled>Registrar avance</button>
-        <span class="aviso">Ya enviaste el avance de esta semana.</span>
-      } @else {
-        <a mat-flat-button color="primary" routerLink="/estudiante/avances/nuevo">Registrar avance</a>
-      }
-    </div>
+    @if (finalizada()) {
+      <p class="aviso-info">
+        <mat-icon inline>lock</mat-icon>
+        Tu práctica fue finalizada: puedes consultar el historial, pero ya no se pueden registrar
+        avances.
+      </p>
+    } @else {
+      <div class="barra-acciones">
+        @if (yaEnviadoEstaSemana()) {
+          <button mat-flat-button color="primary" disabled>Registrar avance</button>
+          <span class="aviso">Ya enviaste el avance de esta semana.</span>
+        } @else {
+          <a mat-flat-button color="primary" routerLink="/estudiante/seguimiento/nuevo">
+            <mat-icon>add</mat-icon>
+            Registrar avance
+          </a>
+        }
+      </div>
+    }
 
-    @if (avances().length === 0) {
+    @if (errorDescarga(); as mensaje) {
+      <p class="mensaje-error">{{ mensaje }}</p>
+    }
+
+    @if (filas().length === 0) {
       <p class="mensaje-vacio">Todavía no has enviado ningún avance.</p>
     } @else {
-      <div class="contenedor-tabla">
+      <div class="tabla-contenedor">
         <table class="tabla">
           <thead>
             <tr>
-              <th>Semana (lunes)</th>
-              <th>Enviado</th>
-              <th>Horas</th>
+              <th>Semana</th>
+              <th>Resumen</th>
+              <th>Fecha y hora de envío</th>
               <th>Estado</th>
               <th>Calificación</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            @for (avance of avances(); track avance.id) {
-              <tr>
-                <td>{{ avance.semana_calendario | date: 'dd/MM/yyyy' }}</td>
-                <td>{{ avance.fecha_envio | date: 'dd/MM/yyyy HH:mm' }}</td>
-                <td>{{ totalHoras(avance) }}</td>
-                <td>
-                  <span
-                    class="chip"
-                    [class.chip-aprobado]="avance.estado === AvanceEstadoEnum.ACEPTADO"
-                    [class.chip-rechazado]="avance.estado === AvanceEstadoEnum.OBSERVADO"
-                    [class.chip-pendiente]="avance.estado === AvanceEstadoEnum.PENDIENTE_DE_REVISION"
-                  >
-                    {{ etiqueta(avance.estado) }}
-                  </span>
-                </td>
-                <td>{{ avance.calificacion_coordinador ?? '—' }}</td>
-                <td class="acciones">
-                  <a mat-button color="primary" [routerLink]="['/estudiante/avances', avance.id]">Ver</a>
-                  @if (avance.estado === AvanceEstadoEnum.OBSERVADO) {
-                    <a mat-button color="primary" [routerLink]="['/estudiante/avances', avance.id, 'corregir']">
-                      Corregir
+            @for (fila of filas(); track fila.semana) {
+              @if (fila.avance; as avance) {
+                <tr>
+                  <td>{{ fila.semana | date: 'dd/MM/yyyy' }}</td>
+                  <td class="celda-resumen">{{ resumen(avance) }}</td>
+                  <td>{{ avance.fecha_envio | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span
+                      class="chip"
+                      [class.chip-aprobado]="avance.estado === AvanceEstadoEnum.ACEPTADO"
+                      [class.chip-observado]="avance.estado === AvanceEstadoEnum.OBSERVADO"
+                      [class.chip-pendiente]="avance.estado === AvanceEstadoEnum.PENDIENTE_DE_REVISION"
+                    >
+                      {{ etiqueta(avance.estado) }}
+                    </span>
+                  </td>
+                  <td>{{ avance.calificacion_coordinador ?? '—' }}</td>
+                  <td class="acciones">
+                    <button
+                      mat-button
+                      color="primary"
+                      type="button"
+                      [disabled]="descargando() === avance.id"
+                      (click)="descargar(avance)"
+                    >
+                      <mat-icon>download</mat-icon>
+                      Descargar
+                    </button>
+                    <a mat-button color="primary" [routerLink]="['/estudiante/seguimiento', avance.id]">
+                      <mat-icon>visibility</mat-icon>
+                      Ver
                     </a>
-                  }
-                </td>
-              </tr>
+                    @if (avance.estado === AvanceEstadoEnum.OBSERVADO && !finalizada()) {
+                      <a
+                        mat-button
+                        color="primary"
+                        [routerLink]="['/estudiante/seguimiento', avance.id, 'corregir']"
+                      >
+                        <mat-icon>edit</mat-icon>
+                        Corregir
+                      </a>
+                    }
+                  </td>
+                </tr>
+              } @else {
+                <tr class="fila-no-reportada">
+                  <td>{{ fila.semana | date: 'dd/MM/yyyy' }}</td>
+                  <td class="celda-resumen">No se registró avance en esta semana.</td>
+                  <td>—</td>
+                  <td><span class="chip chip-rechazado">No reportada</span></td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+              }
             }
           </tbody>
         </table>

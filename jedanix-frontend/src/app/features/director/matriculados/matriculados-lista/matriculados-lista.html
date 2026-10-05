@@ -1,44 +1,82 @@
-<a mat-button routerLink="/director" class="volver">
-  <mat-icon inline>arrow_back</mat-icon>
-  Volver al inicio
-</a>
-
-<h1>Estudiantes matriculados</h1>
-<p class="subtitulo">Prácticas en curso. Desde aquí puedes revisar las horas y realizar el cierre formal.</p>
+<h1>Matriculados</h1>
+<p class="subtitulo">Estudiantes con práctica matriculada y su avance de horas.</p>
 
 @if (cargando()) {
   <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
 } @else if (errorCarga(); as mensaje) {
   <p class="mensaje-error">{{ mensaje }}</p>
-} @else if (matriculados().length === 0) {
+} @else if (filas().length === 0) {
+  <!-- CU-04, excepción 2.1.a -->
   <p class="mensaje-vacio">Todavía no hay estudiantes matriculados.</p>
 } @else {
-  <div class="tabla-contenedor">
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Estudiante</th>
-          <th>Empresa</th>
-          <th>Docente Asesor</th>
-          <th>Coordinador</th>
-          <th>Desde</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (m of matriculados(); track m.id) {
-          <tr>
-            <td>{{ m.estudiante.nombre_completo }}</td>
-            <td>{{ m.empresa.nombre }}</td>
-            <td>{{ m.empresa.docente_asesor.nombre_completo }}</td>
-            <td>{{ m.empresa.coordinador.nombre_completo }}</td>
-            <td>{{ m.fecha_postulacion ? (m.fecha_postulacion | date: 'dd/MM/yyyy') : '—' }}</td>
-            <td class="acciones">
-              <a mat-flat-button color="primary" [routerLink]="['/director/matriculados', m.id]">Revisar cierre</a>
-            </td>
-          </tr>
+  <div class="barra-filtros">
+    <mat-button-toggle-group
+      [value]="vista()"
+      (change)="vista.set($event.value)"
+      aria-label="Vista del listado"
+    >
+      <mat-button-toggle value="todos">Todos ({{ filas().length }})</mat-button-toggle>
+      <mat-button-toggle value="cierre">Pendiente de aprobación práctica ({{ totalCierre() }})</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-form-field appearance="outline" class="filtro">
+      <mat-label>Empresa receptora</mat-label>
+      <mat-select [value]="filtroEmpresa()" (selectionChange)="filtroEmpresa.set($event.value)">
+        <mat-option value="">Todas</mat-option>
+        @for (e of empresas(); track e.id) {
+          <mat-option [value]="e.id">{{ e.nombre }}</mat-option>
         }
-      </tbody>
-    </table>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-stroked-button type="button" (click)="ordenarPorPorcentaje.set(!ordenarPorPorcentaje())">
+      <mat-icon>{{ ordenarPorPorcentaje() ? 'filter_list_off' : 'sort' }}</mat-icon>
+      {{ ordenarPorPorcentaje() ? 'Quitar orden' : 'Ordenar por % de horas (mayor a menor)' }}
+    </button>
   </div>
+
+  @if (visibles().length === 0) {
+    <p class="mensaje-vacio">
+      @if (vista() === 'cierre') {
+        No hay estudiantes pendientes de aprobación de práctica con los filtros actuales.
+      } @else {
+        No hay estudiantes matriculados con los filtros actuales.
+      }
+    </p>
+  } @else {
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Estudiante</th>
+            <th>Empresa receptora</th>
+            <th>Horas completadas</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of visibles(); track f.postulacion.id) {
+            <tr>
+              <td>
+                {{ f.postulacion.estudiante.nombre_completo }}
+                @if (f.pendienteCierre) {
+                  <span class="chip chip-aprobado">Pendiente de aprobación práctica</span>
+                }
+              </td>
+              <td>{{ f.postulacion.empresa.nombre }}</td>
+              <td class="columna-horas">
+                <mat-progress-bar mode="determinate" [value]="f.porcentaje"></mat-progress-bar>
+                <small>{{ f.porcentaje }}% ({{ f.aceptadas }} de {{ f.requeridas }} h)</small>
+              </td>
+              <td class="acciones">
+                <a mat-flat-button color="primary" [routerLink]="['/director/matriculados', f.postulacion.id]">
+                  Ver detalle
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 }

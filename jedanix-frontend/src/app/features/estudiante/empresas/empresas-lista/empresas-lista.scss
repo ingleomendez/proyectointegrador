@@ -1,42 +1,58 @@
-.enlace-volver {
-  margin-bottom: 8px;
+:host {
+  display: block;
 }
 
-.subtitulo {
-  color: var(--mat-sys-on-surface-variant);
-  margin-top: -8px;
+.aviso-tramite {
+  margin-bottom: 20px;
+  border-left: 5px solid var(--jx-acento);
+  background: linear-gradient(90deg, #e0fbff, #ffffff);
+
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  mat-icon {
+    color: var(--jx-cyan-800);
+  }
 }
 
-.estado-carga {
+.texto-aviso {
   display: flex;
-  justify-content: center;
-  padding: 48px 0;
-}
-
-.mensaje-error {
-  color: var(--mat-sys-error);
-}
-
-.mensaje-vacio {
-  color: var(--mat-sys-on-surface-variant);
+  flex: 1 1 280px;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .grilla-empresas {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .tarjeta-empresa {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  border-top: 4px solid var(--jx-cyan-500);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 151, 167, 0.2);
+  }
 }
 
-.detalle-responsable {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.descripcion {
+  margin: 8px 0 0;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+mat-card-actions {
+  padding: 8px 16px 16px;
 }

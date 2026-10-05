@@ -1,0 +1,76 @@
+<a mat-button routerLink="/estudiante/avances" class="enlace-volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver a mis avances
+</a>
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorMensaje(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (avance(); as a) {
+  <h1>Avance de la semana del {{ a.semana_calendario | date: 'dd/MM/yyyy' }}</h1>
+  <p>
+    <span
+      class="chip"
+      [class.chip-aprobado]="a.estado === AvanceEstadoEnum.ACEPTADO"
+      [class.chip-rechazado]="a.estado === AvanceEstadoEnum.OBSERVADO"
+      [class.chip-pendiente]="a.estado === AvanceEstadoEnum.PENDIENTE_DE_REVISION"
+    >
+      {{ etiqueta(a.estado) }}
+    </span>
+    Enviado el {{ a.fecha_envio | date: 'dd/MM/yyyy HH:mm' }}
+  </p>
+
+  @if (a.estado === AvanceEstadoEnum.OBSERVADO) {
+    <a mat-flat-button color="primary" [routerLink]="['/estudiante/avances', a.id, 'corregir']">
+      Corregir avance
+    </a>
+  }
+
+  <mat-card class="tarjeta">
+    <mat-card-header><mat-card-title>Revisión</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <dl class="datos">
+        <dt>Calificación del Coordinador</dt>
+        <dd>{{ a.calificacion_coordinador ?? 'Sin calificar' }}</dd>
+        @if (a.comentario_coordinador) {
+          <dt>Observación del Coordinador</dt>
+          <dd>{{ a.comentario_coordinador }}</dd>
+        }
+        <dt>Observación del Docente Asesor</dt>
+        <dd>{{ a.observacion_docente_asesor ?? 'Sin observaciones' }}</dd>
+      </dl>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="tarjeta">
+    <mat-card-header><mat-card-title>Lo que reportaste</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <h3>Actividades a desarrollar</h3>
+      <p>{{ a.actividades_a_desarrollar }}</p>
+
+      <h3>Horario de trabajo</h3>
+      @for (dia of a.dias_trabajados; track dia.id) {
+        <p><strong>Día {{ dia.numero_dia }}</strong> ({{ dia.horas_dia }} h): {{ dia.descripcion_dia }}</p>
+      }
+      <p><strong>Horas totales:</strong> {{ a.horas_totales }} &nbsp; <strong>Beneficio económico:</strong> {{ a.beneficio_economico }}</p>
+
+      <h3>Soportes</h3>
+      @for (soporte of a.soportes_avance; track soporte.id) {
+        <p>
+          <a [href]="archivoService.urlPublica(soporte.archivo)" target="_blank" rel="noopener">
+            {{ nombreArchivo(soporte.archivo) }}
+          </a>
+          ({{ soporte.tipo_archivo }})
+        </p>
+      }
+
+      <h3>Actividades generales</h3>
+      <p>{{ a.actividades_generales }}</p>
+      <h3>Ejecución</h3>
+      <p>{{ a.ejecucion }}</p>
+      <h3>Observaciones</h3>
+      <p>{{ a.observaciones_estudiante }}</p>
+    </mat-card-content>
+  </mat-card>
+}

@@ -1,0 +1,122 @@
+<a mat-button routerLink="/director/solicitudes" class="volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver a solicitudes
+</a>
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (postulacion(); as p) {
+  <h1>Solicitud de {{ p.estudiante.nombre_completo }}</h1>
+  <p class="subtitulo">
+    {{ p.empresa.nombre }} ·
+    @switch (p.estado) {
+      @case (PostulacionEstadoEnum.PENDIENTE_DE_APROBACION) {
+        <span class="chip chip-pendiente">Pendiente de aprobación</span>
+      }
+      @case (PostulacionEstadoEnum.APROBADA) {
+        <span class="chip chip-aprobado">Aprobada (matriculado)</span>
+      }
+      @case (PostulacionEstadoEnum.RECHAZADA) {
+        <span class="chip chip-rechazado">Rechazada</span>
+      }
+      @default {
+        <span class="chip chip-neutro">{{ p.estado }}</span>
+      }
+    }
+  </p>
+
+  <mat-card class="tarjeta-pagina">
+    <mat-card-header><mat-card-title>Estudiante</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <dl class="datos">
+        <dt>Nombre</dt>
+        <dd>{{ p.estudiante.nombre_completo }}</dd>
+        <dt>Correo institucional</dt>
+        <dd>{{ p.estudiante.correo_institucional }}</dd>
+        <dt>Fecha de envío</dt>
+        <dd>{{ p.fecha_postulacion ? (p.fecha_postulacion | date: 'dd/MM/yyyy HH:mm') : '—' }}</dd>
+        @if (p.fecha_decision) {
+          <dt>Fecha de decisión</dt>
+          <dd>{{ p.fecha_decision | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        }
+        @if (p.motivo_rechazo) {
+          <dt>Motivo del rechazo</dt>
+          <dd>{{ p.motivo_rechazo }}</dd>
+        }
+      </dl>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="tarjeta-pagina">
+    <mat-card-header><mat-card-title>Documentos cargados</mat-card-title></mat-card-header>
+    <mat-card-content>
+      @if (documentos().length === 0) {
+        <p class="mensaje-vacio">La empresa no exige documentos.</p>
+      }
+      @for (d of documentos(); track d.nombre) {
+        <p>
+          <strong>{{ d.nombre }}:</strong>
+          @if (d.archivo; as ruta) {
+            <a [href]="archivoService.urlPublica(ruta)" target="_blank" rel="noopener">{{ nombreArchivo(ruta) }}</a>
+          } @else {
+            <span class="mensaje-vacio">sin cargar</span>
+          }
+        </p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="tarjeta-pagina">
+    <mat-card-header><mat-card-title>Respuestas de la bitácora</mat-card-title></mat-card-header>
+    <mat-card-content>
+      @if (respuestas().length === 0) {
+        <p class="mensaje-vacio">La empresa no tiene preguntas de bitácora.</p>
+      }
+      @for (r of respuestas(); track r.enunciado) {
+        <p><strong>{{ r.enunciado }}</strong><br />{{ r.respuesta ?? 'Sin respuesta' }}</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  @if (p.estado === PostulacionEstadoEnum.PENDIENTE_DE_APROBACION) {
+    @if (decision() === null) {
+      <div class="barra-acciones">
+        <button mat-flat-button color="primary" type="button" (click)="elegir('aprobar')">
+          <mat-icon>check</mat-icon>
+          Aprobar
+        </button>
+        <button mat-stroked-button type="button" (click)="elegir('rechazar')">
+          <mat-icon>close</mat-icon>
+          Rechazar
+        </button>
+      </div>
+    } @else {
+      <div class="aviso-confirmacion">
+        @if (decision() === 'aprobar') {
+          <p>
+            ¿Confirmas la aprobación? {{ p.estudiante.nombre_completo }} quedará matriculado en
+            {{ p.empresa.nombre }} y se le notificará.
+          </p>
+        } @else {
+          <p>Indica el motivo del rechazo; se le notificará al estudiante.</p>
+          <mat-form-field appearance="outline" class="campo-completo">
+            <mat-label>Motivo del rechazo</mat-label>
+            <textarea matInput [formControl]="motivo" rows="3"></textarea>
+            <mat-error>El motivo del rechazo es obligatorio.</mat-error>
+          </mat-form-field>
+        }
+        @if (errorDecision(); as mensaje) {
+          <p class="mensaje-error">{{ mensaje }}</p>
+        }
+        <div class="barra-acciones">
+          <button mat-flat-button color="primary" type="button" [disabled]="procesando()" (click)="confirmar()">
+            {{ procesando() ? 'Registrando...' : decision() === 'aprobar' ? 'Confirmar aprobación' : 'Confirmar rechazo' }}
+          </button>
+          <button mat-button type="button" [disabled]="procesando()" (click)="elegir(null)">Cancelar</button>
+        </div>
+      </div>
+    }
+  }
+}

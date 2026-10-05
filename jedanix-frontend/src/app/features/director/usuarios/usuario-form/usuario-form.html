@@ -1,0 +1,83 @@
+<a mat-button routerLink="/director/usuarios" class="volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver a usuarios
+</a>
+
+<h1>{{ esEdicion ? 'Editar usuario' : 'Crear usuario' }}</h1>
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (creado(); as correo) {
+  <p class="mensaje-exito">
+    <mat-icon inline>check_circle</mat-icon>
+    La cuenta de {{ correo }} fue creada.
+  </p>
+  <p class="mensaje-vacio">
+    El sistema genera una contraseña temporal y la envía al correo institucional del usuario a través del
+    servicio de Notificaciones.
+  </p>
+  <div class="barra-acciones">
+    <button mat-flat-button color="primary" type="button" (click)="crearOtro()">Crear otro usuario</button>
+    <a mat-button routerLink="/director/usuarios">Volver al listado</a>
+  </div>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario-columna">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre completo</mat-label>
+      <input matInput formControlName="nombre_completo" />
+      <mat-error>El nombre completo es obligatorio.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Correo institucional</mat-label>
+      <input matInput type="email" formControlName="correo_institucional" />
+      @if (esEdicion) {
+        <mat-hint>El correo no se puede modificar.</mat-hint>
+      }
+      <mat-error>Ingresa un correo institucional válido.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rol</mat-label>
+      <mat-select formControlName="rol">
+        @for (rol of roles; track rol) {
+          <mat-option [value]="rol">{{ nombreRol[rol] }}</mat-option>
+        }
+      </mat-select>
+      <mat-error>Selecciona un rol.</mat-error>
+    </mat-form-field>
+
+    @if (esEstudiante()) {
+      <mat-form-field appearance="outline">
+        <mat-label>Programa académico</mat-label>
+        <input matInput formControlName="programa_academico" />
+        <mat-error>El programa académico es obligatorio para el rol Estudiante.</mat-error>
+      </mat-form-field>
+    }
+
+    @if (confirmacion(); as mensaje) {
+      <div class="aviso-confirmacion">
+        <p>{{ mensaje }}</p>
+        <div class="barra-acciones">
+          <button mat-flat-button color="warn" type="button" (click)="confirmarYGuardar()">
+            Confirmar cambio de rol
+          </button>
+          <button mat-button type="button" (click)="confirmacion.set(null)">Cancelar</button>
+        </div>
+      </div>
+    }
+
+    @if (errorGuardado(); as mensaje) {
+      <p class="mensaje-error">{{ mensaje }}</p>
+    }
+
+    <div class="barra-acciones">
+      <button mat-flat-button color="primary" type="submit" [disabled]="guardando()">
+        {{ guardando() ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Crear usuario' }}
+      </button>
+      <a mat-button routerLink="/director/usuarios">Cancelar</a>
+    </div>
+  </form>
+}

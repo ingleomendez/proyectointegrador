@@ -110,12 +110,18 @@ def decidir_cierre(
 @router.get(
     "/matriculados",
     response_model=list[PostulacionListItem],
-    dependencies=[Depends(requiere_rol(RolEnum.COORDINADOR, RolEnum.DOCENTE_ASESOR))],
+    dependencies=[
+        Depends(requiere_rol(RolEnum.DIRECTOR, RolEnum.COORDINADOR, RolEnum.DOCENTE_ASESOR))
+    ],
 )
 def listar_matriculados(
     usuario_actual: Usuario = Depends(get_current_usuario), db: Session = Depends(get_db)
 ) -> list[Postulacion]:
+    """Director: todas las prácticas matriculadas (CU-04/CU-05). Coordinador /
+    Docente Asesor: solo las de las empresas bajo su responsabilidad."""
     service = PostulacionService(db)
+    if usuario_actual.rol == RolEnum.DIRECTOR:
+        return service.listar_matriculados()
     if usuario_actual.rol == RolEnum.COORDINADOR:
         return service.listar_matriculados_por_coordinador(usuario_actual.id)
     return service.listar_matriculados_por_docente_asesor(usuario_actual.id)

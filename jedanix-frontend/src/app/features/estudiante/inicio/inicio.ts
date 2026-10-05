@@ -38,6 +38,12 @@ export class Inicio {
       ruta: '/estudiante/postulaciones',
     },
     {
+      titulo: 'Mi práctica',
+      descripcion: 'Consulta los datos de tu práctica, tus horas y el avance.',
+      icono: 'work',
+      ruta: '/estudiante/mi-practica',
+    },
+    {
       titulo: 'Objetivos de práctica',
       descripcion: 'Plantea y revisa los objetivos de tu práctica.',
       icono: 'flag',
@@ -47,7 +53,7 @@ export class Inicio {
       titulo: 'Avances semanales',
       descripcion: 'Registra tus avances semanales y consulta su calificación.',
       icono: 'fact_check',
-      ruta: null,
+      ruta: '/estudiante/avances',
     },
   ];
 }

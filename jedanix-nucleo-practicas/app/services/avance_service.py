@@ -50,6 +50,11 @@ class AvanceSemanalService:
             return []
         return self.repo.listar_por_postulacion(postulacion.id)
 
+    def listar_por_postulacion(self, postulacion_id: int) -> list[AvanceSemanal]:
+        """CU-05 (Director): historial de avances de una práctica, para ver las
+        horas aceptadas antes de decidir el cierre."""
+        return self.repo.listar_por_postulacion(postulacion_id)
+
     def listar_por_coordinador(
         self, coordinador_id: int, solo_pendientes: bool = False
     ) -> list[AvanceSemanal]:
@@ -83,22 +88,44 @@ class AvanceSemanalService:
                 "poder registrar avances."
             )
 
-        if self.repo.get_por_postulacion_y_semana(postulacion.id, data.semana_calendario) is not None:
+        existente = self.repo.get_por_postulacion_y_semana(postulacion.id, data.semana_calendario)
+        if existente is not None and existente.estado != AvanceEstadoEnum.OBSERVADO:
             raise ConflictoError(
                 f"Ya existe un avance registrado para la semana {data.semana_calendario}."
             )
 
-        avance = AvanceSemanal(
-            postulacion_id=postulacion.id,
-            semana_calendario=data.semana_calendario,
-            actividades_a_desarrollar=data.actividades_a_desarrollar,
-            horas_totales=data.horas_totales,
-            beneficio_economico=data.beneficio_economico,
-            actividades_generales=data.actividades_generales,
-            ejecucion=data.ejecucion,
-            observaciones_estudiante=data.observaciones_estudiante,
-        )
-        self.repo.crear(avance)
+        if existente is not None:
+            # Flujo alterno 6.1.c: corregir y reenviar un avance OBSERVADO. Se
+            # reutiliza la misma fila (UNIQUE postulacion+semana) reemplazando
+            # sus campos, días y soportes; vuelve a PENDIENTE DE REVISIÓN. La
+            # observación del Docente Asesor se conserva (es independiente).
+            avance = existente
+            avance.actividades_a_desarrollar = data.actividades_a_desarrollar
+            avance.horas_totales = data.horas_totales
+            avance.beneficio_economico = data.beneficio_economico
+            avance.actividades_generales = data.actividades_generales
+            avance.ejecucion = data.ejecucion
+            avance.observaciones_estudiante = data.observaciones_estudiante
+            avance.estado = AvanceEstadoEnum.PENDIENTE_DE_REVISION
+            avance.calificacion_coordinador = None
+            avance.comentario_coordinador = None
+            avance.fecha_calificacion = None
+            avance.fecha_envio = datetime.utcnow()
+            avance.dias_trabajados.clear()
+            avance.soportes_avance.clear()
+            self.repo.guardar(avance)
+        else:
+            avance = AvanceSemanal(
+                postulacion_id=postulacion.id,
+                semana_calendario=data.semana_calendario,
+                actividades_a_desarrollar=data.actividades_a_desarrollar,
+                horas_totales=data.horas_totales,
+                beneficio_economico=data.beneficio_economico,
+                actividades_generales=data.actividades_generales,
+                ejecucion=data.ejecucion,
+                observaciones_estudiante=data.observaciones_estudiante,
+            )
+            self.repo.crear(avance)
 
         for dia in data.dias_trabajados:
             self.repo.agregar_dia_trabajado(

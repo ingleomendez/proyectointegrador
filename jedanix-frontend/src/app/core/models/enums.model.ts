@@ -38,3 +38,15 @@ export enum ObjetivoEstadoEnum {
   APROBADOS = 'APROBADOS',
   RECHAZADOS = 'RECHAZADOS',
 }
+
+export enum GrupoSanguineoEnum {
+  A = 'A',
+  B = 'B',
+  AB = 'AB',
+  O = 'O',
+}
+
+export enum FactorRhEnum {
+  POSITIVO = 'POSITIVO',
+  NEGATIVO = 'NEGATIVO',
+}

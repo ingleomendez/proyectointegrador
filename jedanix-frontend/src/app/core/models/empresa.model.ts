@@ -36,3 +36,33 @@ export interface EmpresaReceptoraOut {
   preguntas_bitacora: PreguntaBitacoraOut[];
   documentos_requeridos: DocumentoRequeridoOut[];
 }
+
+export interface PreguntaBitacoraCreate {
+  enunciado: string;
+  tipo_respuesta: TipoRespuestaEnum;
+}
+
+export interface DocumentoRequeridoCreate {
+  nombre_documento: string;
+}
+
+/** CU-02, flujo básico completo. */
+export interface EmpresaReceptoraCreate {
+  nombre: string;
+  descripcion: string;
+  requisitos_generales: string;
+  horas_requeridas: number;
+  coordinador_id: number;
+  docente_asesor_id: number;
+  preguntas_bitacora: PreguntaBitacoraCreate[];
+  documentos_requeridos: DocumentoRequeridoCreate[];
+}
+
+export interface EmpresaReceptoraUpdate {
+  nombre: string;
+  descripcion: string;
+  requisitos_generales: string;
+  horas_requeridas: number;
+  coordinador_id: number;
+  docente_asesor_id: number;
+}

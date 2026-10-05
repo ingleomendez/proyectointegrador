@@ -31,6 +31,8 @@ class ObjetivoPracticaOut(BaseModel):
 
     id: int
     postulacion_id: int
+    estudiante_nombre: str
+    empresa_nombre: str
     contenido: str
     estado: ObjetivoEstadoEnum
     observacion_docente: str | None

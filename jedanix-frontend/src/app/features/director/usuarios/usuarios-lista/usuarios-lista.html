@@ -1,0 +1,97 @@
+<a mat-button routerLink="/director" class="volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver al inicio
+</a>
+
+<h1>Usuarios del sistema</h1>
+<p class="subtitulo">Administra las cuentas de Estudiantes, Docentes Asesores, Coordinadores y Directores.</p>
+
+<div class="barra-acciones">
+  <a mat-flat-button color="primary" routerLink="/director/usuarios/nuevo">
+    <mat-icon>person_add</mat-icon>
+    Crear usuario
+  </a>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Filtrar por rol</mat-label>
+    <mat-select [value]="filtroRol()" (selectionChange)="cambiarFiltro($event.value)">
+      <mat-option value="">Todos</mat-option>
+      @for (rol of roles; track rol) {
+        <mat-option [value]="rol">{{ nombreRol[rol] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (confirmacion(); as c) {
+  <div class="aviso-confirmacion">
+    <p>{{ c.mensaje }}</p>
+    <div class="barra-acciones">
+      <button mat-flat-button color="warn" type="button" [disabled]="procesando()" (click)="confirmarInactivar()">
+        {{ c.forzar ? 'Inactivar de todas formas' : 'Sí, inactivar' }}
+      </button>
+      <button mat-button type="button" [disabled]="procesando()" (click)="cancelar()">Cancelar</button>
+    </div>
+  </div>
+}
+
+@if (errorAccion(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+}
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (visibles().length === 0) {
+  <p class="mensaje-vacio">No hay usuarios para mostrar.</p>
+} @else {
+  <div class="tabla-contenedor">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo institucional</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of visibles(); track u.id) {
+          <tr>
+            <td>{{ u.nombre_completo }}</td>
+            <td>{{ u.correo_institucional }}</td>
+            <td>{{ nombreRol[u.rol] }}</td>
+            <td>
+              <span
+                class="chip"
+                [class.chip-aprobado]="u.estado === UsuarioEstadoEnum.ACTIVO"
+                [class.chip-neutro]="u.estado === UsuarioEstadoEnum.INACTIVO"
+              >
+                {{ u.estado === UsuarioEstadoEnum.ACTIVO ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td class="acciones">
+              <a mat-button color="primary" [routerLink]="['/director/usuarios', u.id, 'editar']">Editar</a>
+              @if (u.estado === UsuarioEstadoEnum.ACTIVO) {
+                <button
+                  mat-button
+                  type="button"
+                  [disabled]="procesando() || u.id === miId()"
+                  [title]="u.id === miId() ? 'No puedes inactivar tu propia cuenta' : ''"
+                  (click)="pedirInactivar(u)"
+                >
+                  Inactivar
+                </button>
+              } @else {
+                <button mat-button type="button" [disabled]="procesando()" (click)="reactivar(u)">
+                  Reactivar
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

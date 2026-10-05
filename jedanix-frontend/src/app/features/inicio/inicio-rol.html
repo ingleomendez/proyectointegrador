@@ -1,0 +1,16 @@
+<h1>Bienvenido, {{ authService.usuario()?.nombreCompleto }}</h1>
+<p class="subtitulo">Este es tu panel de {{ nombreRol() }}.</p>
+
+<div class="grilla-accesos">
+  @for (acceso of accesos(); track acceso.ruta) {
+    <a [routerLink]="acceso.ruta" class="tarjeta-enlace">
+      <mat-card class="tarjeta-acceso">
+        <mat-card-content>
+          <mat-icon class="icono-acceso">{{ acceso.icono }}</mat-icon>
+          <h2>{{ acceso.etiqueta }}</h2>
+          <p>{{ acceso.descripcion }}</p>
+        </mat-card-content>
+      </mat-card>
+    </a>
+  }
+</div>

@@ -1,0 +1,88 @@
+<a mat-button routerLink="/" class="enlace-volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver al inicio
+</a>
+
+<h1>Mi práctica</h1>
+
+@switch (vista()) {
+  @case ('cargando') {
+    <div class="estado-carga">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  }
+  @case ('error') {
+    <p class="mensaje-error">No se pudo cargar la información de tu práctica. Intenta de nuevo.</p>
+  }
+  @case ('sin-practica') {
+    <p class="mensaje-vacio">Aún no tienes una práctica asignada.</p>
+    <a mat-flat-button color="primary" routerLink="/estudiante/empresas">Ver empresas disponibles</a>
+  }
+  @case ('en-tramite') {
+    <p class="mensaje-vacio">
+      Tu solicitud a <strong>{{ postulacion()?.empresa.nombre }}</strong> está en revisión
+      ({{ postulacion()?.estado }}). Cuando sea aprobada podrás ver aquí los datos de tu práctica.
+    </p>
+    <a mat-flat-button color="primary" routerLink="/estudiante/postulaciones">Ver mi postulación</a>
+  }
+  @case ('matriculado') {
+    <mat-card class="tarjeta">
+      <mat-card-header>
+        <mat-card-title>{{ empresa()?.nombre }}</mat-card-title>
+        <mat-card-subtitle>Empresa receptora</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <dl class="datos">
+          <dt>Docente Asesor</dt>
+          <dd>{{ empresa()?.docente_asesor.nombre_completo }}</dd>
+          <dt>Coordinador de práctica</dt>
+          <dd>{{ empresa()?.coordinador.nombre_completo }}</dd>
+          <dt>Fecha de inicio</dt>
+          <dd>{{ postulacion()?.fecha_decision | date: 'dd/MM/yyyy' }}</dd>
+        </dl>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="tarjeta">
+      <mat-card-header>
+        <mat-card-title>Avance de horas</mat-card-title>
+        <mat-card-subtitle>Solo cuentan los avances aceptados por el Coordinador</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="horas">
+          <strong>{{ horasAcumuladas() }}</strong> de {{ horasRequeridas() }} horas
+          ({{ porcentaje() }} %)
+        </p>
+        <mat-progress-bar mode="determinate" [value]="porcentaje()"></mat-progress-bar>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="tarjeta">
+      <mat-card-header>
+        <mat-card-title>Objetivos de la práctica</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <span
+          class="chip"
+          [class.chip-aprobado]="objetivo()?.estado === ObjetivoEstadoEnum.APROBADOS"
+          [class.chip-rechazado]="objetivo()?.estado === ObjetivoEstadoEnum.RECHAZADOS"
+          [class.chip-pendiente]="objetivo()?.estado === ObjetivoEstadoEnum.PENDIENTE_DE_APROBACION"
+        >
+          {{ etiquetaObjetivos() }}
+        </span>
+        @if (objetivo()?.estado === ObjetivoEstadoEnum.RECHAZADOS && objetivo()?.observacion_docente) {
+          <p class="observacion">
+            <strong>Observación del Docente Asesor:</strong> {{ objetivo()?.observacion_docente }}
+          </p>
+        }
+      </mat-card-content>
+      @if (objetivo()?.estado !== ObjetivoEstadoEnum.APROBADOS) {
+        <mat-card-actions>
+          <a mat-button color="primary" routerLink="/estudiante/objetivos">
+            {{ objetivo() ? 'Corregir objetivos' : 'Plantear objetivos' }}
+          </a>
+        </mat-card-actions>
+      }
+    </mat-card>
+  }
+}

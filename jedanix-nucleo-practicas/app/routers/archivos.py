@@ -18,6 +18,10 @@ DIRECTORIO_CARGAS = Path(__file__).resolve().parent.parent.parent / "uploads"
 DIRECTORIO_CARGAS.mkdir(parents=True, exist_ok=True)
 
 EXTENSIONES_PERMITIDAS = {".pdf"}
+# CU-08, paso 19: los soportes de un avance aceptan PDF, PNG o JPG. Solo se
+# habilitan cuando el cliente lo pide explícitamente (?permitir_imagenes=true);
+# CU-06 sigue exigiendo PDF.
+EXTENSIONES_SOPORTE = {".pdf", ".png", ".jpg", ".jpeg"}
 TAMANO_MAXIMO_BYTES = 10 * 1024 * 1024  # 10 MB
 
 
@@ -31,6 +35,7 @@ def _sanear_nombre(nombre: str) -> str:
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def cargar_archivo(
     archivo: UploadFile = File(...),
+    permitir_imagenes: bool = False,
     usuario_actual: Usuario = Depends(get_current_usuario),
 ) -> dict[str, str]:
     """Endpoint genérico de carga de archivos. `DocumentoPostulacionInput.archivo`
@@ -43,10 +48,15 @@ async def cargar_archivo(
     real). El archivo se guarda en disco con un nombre único (evita colisiones
     y sobrescrituras entre estudiantes) y se devuelve la ruta pública."""
     extension = Path(archivo.filename or "").suffix.lower()
-    if extension not in EXTENSIONES_PERMITIDAS:
+    permitidas = EXTENSIONES_SOPORTE if permitir_imagenes else EXTENSIONES_PERMITIDAS
+    if extension not in permitidas:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Solo se aceptan archivos en formato PDF.",
+            detail=(
+                "Solo se aceptan archivos en formato PDF, PNG o JPG."
+                if permitir_imagenes
+                else "Solo se aceptan archivos en formato PDF."
+            ),
         )
 
     contenido = await archivo.read()

@@ -78,5 +78,15 @@ class AvanceSemanal(Base):
         passive_deletes=True,
     )
 
+    # Datos de contexto para las pantallas del Coordinador / Docente Asesor /
+    # Director: los esquemas de salida los leen con `from_attributes`.
+    @property
+    def estudiante_nombre(self) -> str:
+        return self.postulacion.estudiante.nombre_completo
+
+    @property
+    def empresa_nombre(self) -> str:
+        return self.postulacion.empresa.nombre
+
     def __repr__(self) -> str:
         return f"<AvanceSemanal id={self.id} postulacion_id={self.postulacion_id} estado={self.estado}>"

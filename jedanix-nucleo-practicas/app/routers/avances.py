@@ -50,6 +50,20 @@ def listar_mis_avances(
     return AvanceSemanalService(db).listar_mios(usuario_actual.id)
 
 
+# ---- CU-05 (Director): avances de una práctica concreta ----
+
+
+@router.get(
+    "/postulacion/{postulacion_id}",
+    response_model=list[AvanceSemanalListItem],
+    dependencies=[Depends(requiere_rol(RolEnum.DIRECTOR))],
+)
+def listar_avances_de_postulacion(
+    postulacion_id: int, db: Session = Depends(get_db)
+) -> list[AvanceSemanal]:
+    return AvanceSemanalService(db).listar_por_postulacion(postulacion_id)
+
+
 # ---- CU-09 (Coordinador) ----
 
 

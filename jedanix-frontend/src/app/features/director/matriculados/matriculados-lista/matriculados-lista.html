@@ -1,0 +1,44 @@
+<a mat-button routerLink="/director" class="volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver al inicio
+</a>
+
+<h1>Estudiantes matriculados</h1>
+<p class="subtitulo">Prácticas en curso. Desde aquí puedes revisar las horas y realizar el cierre formal.</p>
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (matriculados().length === 0) {
+  <p class="mensaje-vacio">Todavía no hay estudiantes matriculados.</p>
+} @else {
+  <div class="tabla-contenedor">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Estudiante</th>
+          <th>Empresa</th>
+          <th>Docente Asesor</th>
+          <th>Coordinador</th>
+          <th>Desde</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of matriculados(); track m.id) {
+          <tr>
+            <td>{{ m.estudiante.nombre_completo }}</td>
+            <td>{{ m.empresa.nombre }}</td>
+            <td>{{ m.empresa.docente_asesor.nombre_completo }}</td>
+            <td>{{ m.empresa.coordinador.nombre_completo }}</td>
+            <td>{{ m.fecha_postulacion ? (m.fecha_postulacion | date: 'dd/MM/yyyy') : '—' }}</td>
+            <td class="acciones">
+              <a mat-flat-button color="primary" [routerLink]="['/director/matriculados', m.id]">Revisar cierre</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

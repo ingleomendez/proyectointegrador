@@ -1,0 +1,143 @@
+<a mat-button routerLink="/director/empresas" class="volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver a empresas
+</a>
+
+<h1>{{ esEdicion ? 'Editar empresa' : 'Nueva empresa receptora' }}</h1>
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario-columna">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre de la empresa</mat-label>
+      <input matInput formControlName="nombre" />
+      <mat-error>El nombre es obligatorio.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="descripcion" rows="3"></textarea>
+      <mat-error>La descripción es obligatoria.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Requisitos generales</mat-label>
+      <textarea matInput formControlName="requisitos_generales" rows="3"></textarea>
+      <mat-error>Los requisitos generales son obligatorios.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Horas requeridas de práctica</mat-label>
+      <input matInput type="number" min="1" formControlName="horas_requeridas" />
+      <mat-error>Ingresa un número de horas mayor que cero.</mat-error>
+    </mat-form-field>
+
+    <div class="fila-campos">
+      <mat-form-field appearance="outline">
+        <mat-label>Coordinador</mat-label>
+        <mat-select formControlName="coordinador_id">
+          @for (u of coordinadores(); track u.id) {
+            <mat-option [value]="u.id">{{ u.nombre_completo }}</mat-option>
+          }
+        </mat-select>
+        @if (coordinadores().length === 0) {
+          <mat-hint>No hay coordinadores activos. Crea uno en Usuarios.</mat-hint>
+        }
+        <mat-error>Selecciona un Coordinador.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Docente Asesor</mat-label>
+        <mat-select formControlName="docente_asesor_id">
+          @for (u of docentes(); track u.id) {
+            <mat-option [value]="u.id">{{ u.nombre_completo }}</mat-option>
+          }
+        </mat-select>
+        @if (docentes().length === 0) {
+          <mat-hint>No hay docentes asesores activos. Crea uno en Usuarios.</mat-hint>
+        }
+        <mat-error>Selecciona un Docente Asesor.</mat-error>
+      </mat-form-field>
+    </div>
+
+    @if (!esEdicion) {
+      <h2>Bitácora de postulación</h2>
+      <p class="subtitulo">Preguntas que el estudiante responderá al postularse (al menos una).</p>
+      <div formArrayName="preguntas_bitacora">
+        @for (pregunta of preguntas.controls; track $index) {
+          <div class="fila-campos" [formGroupName]="$index">
+            <mat-form-field appearance="outline" class="campo-ancho">
+              <mat-label>Pregunta {{ $index + 1 }}</mat-label>
+              <input matInput formControlName="enunciado" />
+              <mat-error>El enunciado es obligatorio.</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo de respuesta</mat-label>
+              <mat-select formControlName="tipo_respuesta">
+                @for (tipo of tiposRespuesta; track tipo) {
+                  <mat-option [value]="tipo">{{ etiquetaTipo[tipo] }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Quitar pregunta"
+              [disabled]="preguntas.length === 1"
+              (click)="quitarPregunta($index)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+      <div class="barra-acciones">
+        <button mat-stroked-button type="button" (click)="agregarPregunta()">
+          <mat-icon>add</mat-icon>
+          Agregar pregunta
+        </button>
+      </div>
+
+      <h2>Documentos requeridos</h2>
+      <p class="subtitulo">Documentos que el estudiante debe cargar al postularse (opcional).</p>
+      <div formArrayName="documentos_requeridos">
+        @for (documento of documentos.controls; track $index) {
+          <div class="fila-campos">
+            <mat-form-field appearance="outline" class="campo-ancho">
+              <mat-label>Documento {{ $index + 1 }}</mat-label>
+              <input matInput [formControlName]="$index" placeholder="Hoja de vida" />
+              <mat-error>El nombre del documento es obligatorio.</mat-error>
+            </mat-form-field>
+            <button mat-icon-button type="button" aria-label="Quitar documento" (click)="quitarDocumento($index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+      <div class="barra-acciones">
+        <button mat-stroked-button type="button" (click)="agregarDocumento()">
+          <mat-icon>add</mat-icon>
+          Agregar documento
+        </button>
+      </div>
+    } @else {
+      <p class="subtitulo">
+        Las preguntas de bitácora y los documentos requeridos se agregan desde el detalle de la empresa.
+      </p>
+    }
+
+    @if (errorGuardado(); as mensaje) {
+      <p class="mensaje-error">{{ mensaje }}</p>
+    }
+
+    <div class="barra-acciones">
+      <button mat-flat-button color="primary" type="submit" [disabled]="guardando()">
+        {{ guardando() ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Crear empresa' }}
+      </button>
+      <a mat-button routerLink="/director/empresas">Cancelar</a>
+    </div>
+  </form>
+}

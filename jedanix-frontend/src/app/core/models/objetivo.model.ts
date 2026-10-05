@@ -11,9 +11,18 @@ export interface ObjetivoPracticaCreate {
 export interface ObjetivoPracticaOut {
   id: number;
   postulacion_id: number;
+  estudiante_nombre: string;
+  empresa_nombre: string;
   contenido: string;
   estado: ObjetivoEstadoEnum;
   observacion_docente: string | null;
   fecha_envio: string;
   fecha_decision: string | null;
+}
+
+/** CU-11 (Docente Asesor): `observacion_docente` es obligatoria si `aprobar`
+ * es false. */
+export interface ObjetivoPracticaDecision {
+  aprobar: boolean;
+  observacion_docente?: string | null;
 }

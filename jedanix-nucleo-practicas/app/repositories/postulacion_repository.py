@@ -67,6 +67,13 @@ class PostulacionRepository:
         stmt = stmt.order_by(Postulacion.empresa_id, Postulacion.fecha_postulacion)
         return list(self.db.execute(stmt).unique().scalars().all())
 
+    def listar_matriculados(self) -> list[Postulacion]:
+        """CU-04/CU-05 (Director): todas las prácticas MATRICULADAS (APROBADA)."""
+        stmt = self._query_base().where(
+            Postulacion.estado == PostulacionEstadoEnum.APROBADA
+        ).order_by(Postulacion.empresa_id, Postulacion.id)
+        return list(self.db.execute(stmt).unique().scalars().all())
+
     def listar_matriculados_por_coordinador(self, coordinador_id: int) -> list[Postulacion]:
         """CU-09, paso 2: estudiantes matriculados en empresas donde este
         usuario es el Coordinador asignado."""

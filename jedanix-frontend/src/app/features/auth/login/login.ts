@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../core/services/auth.service';
-import { RolEnum } from '../../../core/models/usuario.model';
+import { rutaInicioDeRol } from '../../../core/utils/menu-rol';
 
 @Component({
   selector: 'app-login',
@@ -60,14 +60,8 @@ export class Login {
   }
 
   private redirigirSegunRol(): void {
+    // Cada rol aterriza en su propio panel (ver `rutaInicioDeRol`).
     const usuario = this.authService.usuario();
-    if (usuario?.rol === RolEnum.ESTUDIANTE) {
-      this.router.navigateByUrl('/estudiante');
-      return;
-    }
-    // Las pantallas del Director, Coordinador y Docente Asesor todavía no
-    // existen (ver Documentacion_Codigo_JEDANIX.md) -- se agregan rutas
-    // aquí a medida que se construyan.
-    this.router.navigateByUrl('/estudiante');
+    this.router.navigateByUrl(usuario ? rutaInicioDeRol(usuario.rol) : '/login');
   }
 }

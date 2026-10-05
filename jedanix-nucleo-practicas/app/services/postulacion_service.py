@@ -59,6 +59,10 @@ class PostulacionService:
         una empresa puntual con `empresa_id`)."""
         return self.repo.listar_pendientes(empresa_id=empresa_id)
 
+    def listar_matriculados(self) -> list[Postulacion]:
+        """CU-04/CU-05 (Director): todas las prácticas matriculadas."""
+        return self.repo.listar_matriculados()
+
     def listar_matriculados_por_coordinador(self, coordinador_id: int) -> list[Postulacion]:
         """CU-09, paso 2: estudiantes matriculados bajo este Coordinador."""
         return self.repo.listar_matriculados_por_coordinador(coordinador_id)

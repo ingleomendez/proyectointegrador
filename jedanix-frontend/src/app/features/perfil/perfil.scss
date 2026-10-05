@@ -1,0 +1,52 @@
+:host {
+  display: block;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--mat-sys-surface-variant);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.avatar-vacio {
+  font-size: 72px;
+  width: 72px;
+  height: 72px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.acciones-foto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.ayuda {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.solo-lectura {
+  margin-top: 8px;
+}

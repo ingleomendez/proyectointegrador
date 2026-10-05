@@ -37,6 +37,28 @@ export const ESTUDIANTE_ROUTES: Routes = [
       ),
   },
   {
+    path: 'mi-practica',
+    loadComponent: () => import('./mi-practica/mi-practica').then((m) => m.MiPractica),
+  },
+  {
+    path: 'avances',
+    loadComponent: () =>
+      import('./avances/avances-lista/avances-lista').then((m) => m.AvancesLista),
+  },
+  {
+    path: 'avances/nuevo',
+    loadComponent: () => import('./avances/avance-nuevo/avance-nuevo').then((m) => m.AvanceNuevo),
+  },
+  {
+    path: 'avances/:id/corregir',
+    loadComponent: () => import('./avances/avance-nuevo/avance-nuevo').then((m) => m.AvanceNuevo),
+  },
+  {
+    path: 'avances/:id',
+    loadComponent: () =>
+      import('./avances/avance-detalle/avance-detalle').then((m) => m.AvanceDetalle),
+  },
+  {
     path: 'objetivos',
     loadComponent: () => import('./objetivos/objetivos').then((m) => m.Objetivos),
   },

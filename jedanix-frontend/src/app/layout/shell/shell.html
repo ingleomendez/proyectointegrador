@@ -1,9 +1,23 @@
 <mat-toolbar color="primary">
   <a routerLink="/" class="marca">JEDANIX</a>
+
+  <nav class="menu" aria-label="Navegación principal">
+    @for (item of menu(); track item.ruta) {
+      <a class="item-menu" [routerLink]="item.ruta" routerLinkActive="activo" [title]="item.etiqueta">
+        <mat-icon>{{ item.icono }}</mat-icon>
+        <span class="etiqueta-menu">{{ item.etiqueta }}</span>
+      </a>
+    }
+  </nav>
+
   <span class="espaciador"></span>
+
   @if (authService.usuario(); as usuario) {
-    <span class="usuario-info">{{ usuario.nombreCompleto }} · {{ usuario.rol }}</span>
+    <span class="usuario-info">{{ usuario.nombreCompleto }} · {{ nombreRol() }}</span>
   }
+  <a mat-icon-button routerLink="/perfil" aria-label="Mi perfil" title="Mi perfil">
+    <mat-icon>account_circle</mat-icon>
+  </a>
   <button
     mat-icon-button
     type="button"

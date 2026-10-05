@@ -44,5 +44,14 @@ class ObjetivoPractica(Base):
         "Postulacion", back_populates="objetivo", passive_deletes=True
     )
 
+    # Datos de contexto para la bandeja del Docente Asesor (CU-11).
+    @property
+    def estudiante_nombre(self) -> str:
+        return self.postulacion.estudiante.nombre_completo
+
+    @property
+    def empresa_nombre(self) -> str:
+        return self.postulacion.empresa.nombre
+
     def __repr__(self) -> str:
         return f"<ObjetivoPractica id={self.id} postulacion_id={self.postulacion_id} estado={self.estado}>"

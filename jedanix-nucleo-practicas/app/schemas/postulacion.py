@@ -107,5 +107,6 @@ class PostulacionListItem(BaseModel):
 
     id: int
     estudiante: UsuarioListItem
+    empresa: EmpresaReceptoraListItem
     estado: PostulacionEstadoEnum
     fecha_postulacion: datetime | None

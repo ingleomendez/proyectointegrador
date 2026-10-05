@@ -1,0 +1,138 @@
+<a mat-button routerLink="/director/empresas" class="volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver a empresas
+</a>
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (empresa(); as e) {
+  <h1>{{ e.nombre }}</h1>
+  <p>
+    <span
+      class="chip"
+      [class.chip-aprobado]="e.estado === EmpresaEstadoEnum.ACTIVA"
+      [class.chip-neutro]="e.estado === EmpresaEstadoEnum.INACTIVA"
+    >
+      {{ e.estado === EmpresaEstadoEnum.ACTIVA ? 'Activa' : 'Inactiva' }}
+    </span>
+  </p>
+
+  <div class="barra-acciones">
+    <a mat-stroked-button [routerLink]="['/director/empresas', e.id, 'editar']">
+      <mat-icon>edit</mat-icon>
+      Editar datos
+    </a>
+    @if (e.estado === EmpresaEstadoEnum.ACTIVA) {
+      <button mat-stroked-button type="button" [disabled]="procesando()" (click)="pedirInactivar()">
+        <mat-icon>block</mat-icon>
+        Inactivar empresa
+      </button>
+    }
+  </div>
+
+  @if (confirmarInactivar(); as c) {
+    <div class="aviso-confirmacion">
+      <p>{{ c.mensaje }}</p>
+      <div class="barra-acciones">
+        <button mat-flat-button color="warn" type="button" [disabled]="procesando()" (click)="inactivar()">
+          {{ c.forzar ? 'Inactivar de todas formas' : 'Sí, inactivar' }}
+        </button>
+        <button mat-button type="button" [disabled]="procesando()" (click)="confirmarInactivar.set(null)">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (errorAccion(); as mensaje) {
+    <p class="mensaje-error">{{ mensaje }}</p>
+  }
+
+  <mat-card class="tarjeta-pagina">
+    <mat-card-header><mat-card-title>Datos generales</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <dl class="datos">
+        <dt>Descripción</dt>
+        <dd>{{ e.descripcion }}</dd>
+        <dt>Requisitos generales</dt>
+        <dd>{{ e.requisitos_generales }}</dd>
+        <dt>Horas requeridas</dt>
+        <dd>{{ e.horas_requeridas }}</dd>
+        <dt>Coordinador</dt>
+        <dd>{{ e.coordinador.nombre_completo }} ({{ e.coordinador.correo_institucional }})</dd>
+        <dt>Docente Asesor</dt>
+        <dd>{{ e.docente_asesor.nombre_completo }} ({{ e.docente_asesor.correo_institucional }})</dd>
+      </dl>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="tarjeta-pagina">
+    <mat-card-header><mat-card-title>Bitácora de postulación</mat-card-title></mat-card-header>
+    <mat-card-content>
+      @if (e.preguntas_bitacora.length === 0) {
+        <p class="mensaje-vacio">Esta empresa no tiene preguntas de bitácora.</p>
+      } @else {
+        <ol>
+          @for (p of e.preguntas_bitacora; track p.id) {
+            <li>{{ p.enunciado }} <span class="chip chip-neutro">{{ etiquetaTipo[p.tipo_respuesta] }}</span></li>
+          }
+        </ol>
+      }
+
+      <form [formGroup]="formPregunta" (ngSubmit)="agregarPregunta()" class="fila-campos">
+        <mat-form-field appearance="outline" class="campo-ancho" subscriptSizing="dynamic">
+          <mat-label>Nueva pregunta</mat-label>
+          <input matInput formControlName="enunciado" />
+          <mat-error>El enunciado es obligatorio.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Tipo de respuesta</mat-label>
+          <mat-select formControlName="tipo_respuesta">
+            @for (tipo of tiposRespuesta; track tipo) {
+              <mat-option [value]="tipo">{{ etiquetaTipo[tipo] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="procesando()">Agregar</button>
+      </form>
+
+      @if (confirmarDuplicada(); as c) {
+        <div class="aviso-confirmacion">
+          <p>{{ c.mensaje }}</p>
+          <div class="barra-acciones">
+            <button mat-flat-button color="primary" type="button" [disabled]="procesando()" (click)="agregarPregunta(true, c.datos)">
+              Agregar de todas formas
+            </button>
+            <button mat-button type="button" (click)="confirmarDuplicada.set(null)">Cancelar</button>
+          </div>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="tarjeta-pagina">
+    <mat-card-header><mat-card-title>Documentos requeridos</mat-card-title></mat-card-header>
+    <mat-card-content>
+      @if (e.documentos_requeridos.length === 0) {
+        <p class="mensaje-vacio">Esta empresa no exige documentos para postularse.</p>
+      } @else {
+        <ul>
+          @for (d of e.documentos_requeridos; track d.id) {
+            <li>{{ d.nombre_documento }}</li>
+          }
+        </ul>
+      }
+
+      <form [formGroup]="formDocumento" (ngSubmit)="agregarDocumento()" class="fila-campos">
+        <mat-form-field appearance="outline" class="campo-ancho" subscriptSizing="dynamic">
+          <mat-label>Nuevo documento requerido</mat-label>
+          <input matInput formControlName="nombre_documento" placeholder="Hoja de vida" />
+          <mat-error>El nombre del documento es obligatorio.</mat-error>
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="procesando()">Agregar</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+}

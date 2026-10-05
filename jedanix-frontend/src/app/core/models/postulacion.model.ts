@@ -51,6 +51,19 @@ export interface PostulacionOut {
 export interface PostulacionListItem {
   id: number;
   estudiante: UsuarioListItem;
+  empresa: EmpresaReceptoraListItem;
   estado: PostulacionEstadoEnum;
   fecha_postulacion: string | null;
+}
+
+/** CU-03: decisión del Director. `motivo_rechazo` solo si `aprobar` es false. */
+export interface PostulacionDecision {
+  aprobar: boolean;
+  motivo_rechazo?: string | null;
+}
+
+/** CU-05: cierre formal de la práctica o rechazo del cierre. */
+export interface PostulacionCierre {
+  aprobar: boolean;
+  observacion_cierre?: string | null;
 }

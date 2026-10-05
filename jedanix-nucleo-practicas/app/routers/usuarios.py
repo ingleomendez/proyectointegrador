@@ -63,6 +63,17 @@ def listar_usuarios(
     return UsuarioService(db).listar(rol=rol)
 
 
+@router.get(
+    "/{usuario_id}",
+    response_model=UsuarioOut,
+    dependencies=[Depends(requiere_rol(RolEnum.DIRECTOR))],
+)
+def obtener_usuario(usuario_id: int, db: Session = Depends(get_db)) -> Usuario:
+    """Detalle de un usuario para el formulario de edición del Director
+    (CU-01, flujo alterno 4.1.a)."""
+    return UsuarioService(db).obtener(usuario_id)
+
+
 @router.put(
     "/{usuario_id}",
     response_model=UsuarioOut,

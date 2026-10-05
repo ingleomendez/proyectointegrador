@@ -3,7 +3,11 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { ObjetivoPracticaCreate, ObjetivoPracticaOut } from '../models/objetivo.model';
+import {
+  ObjetivoPracticaCreate,
+  ObjetivoPracticaDecision,
+  ObjetivoPracticaOut,
+} from '../models/objetivo.model';
 
 /** CU-11 (lado Estudiante): plantear/reenviar y consultar los objetivos de
  * su práctica. La decisión del Docente Asesor (aprobar/rechazar) se
@@ -23,5 +27,15 @@ export class ObjetivoService {
    * MATRICULADA, o si aún no ha planteado objetivos para ella. */
   obtenerMios(): Observable<ObjetivoPracticaOut> {
     return this.http.get<ObjetivoPracticaOut>(`${this.baseUrl}/me`);
+  }
+
+  // ---- CU-11 (Docente Asesor) ----
+
+  listarPendientes(): Observable<ObjetivoPracticaOut[]> {
+    return this.http.get<ObjetivoPracticaOut[]>(`${this.baseUrl}/pendientes`);
+  }
+
+  decidir(objetivoId: number, data: ObjetivoPracticaDecision): Observable<ObjetivoPracticaOut> {
+    return this.http.patch<ObjetivoPracticaOut>(`${this.baseUrl}/${objetivoId}/decision`, data);
   }
 }

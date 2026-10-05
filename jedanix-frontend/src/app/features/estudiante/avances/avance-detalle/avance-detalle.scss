@@ -1,0 +1,67 @@
+:host {
+  display: block;
+}
+
+.enlace-volver {
+  margin-bottom: 8px;
+}
+
+.estado-carga {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.mensaje-error {
+  color: var(--mat-sys-error);
+}
+
+.tarjeta {
+  margin: 16px 0;
+  max-width: 760px;
+}
+
+h3 {
+  margin: 16px 0 4px;
+  font-size: 1rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 24px;
+  margin: 0;
+
+  dt {
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.chip {
+  display: inline-flex;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.chip-pendiente {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+.chip-aprobado {
+  background: var(--mat-sys-tertiary-container, #c8f7d4);
+  color: var(--mat-sys-on-tertiary-container, #0a3818);
+}
+
+.chip-rechazado {
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}

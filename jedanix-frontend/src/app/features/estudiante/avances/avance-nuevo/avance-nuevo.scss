@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+.enlace-volver {
+  margin-bottom: 8px;
+}
+
+.subtitulo {
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: -8px;
+}
+
+.estado-carga {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.mensaje-error {
+  color: var(--mat-sys-error);
+}
+
+.ayuda {
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: -8px;
+}
+
+.tarjeta-observacion {
+  margin: 8px 0 16px;
+  max-width: 720px;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  max-width: 720px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .campo-corto {
+    max-width: 320px;
+  }
+}
+
+.bloques-dia {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.bloque-dia h3 {
+  margin: 0 0 8px;
+}
+
+.suma {
+  margin: 0 0 16px;
+}
+
+.input-oculto {
+  display: none;
+}
+
+.fila-soportes {
+  margin-bottom: 8px;
+}
+
+.soporte {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.acciones-formulario {
+  margin: 16px 0 32px;
+}

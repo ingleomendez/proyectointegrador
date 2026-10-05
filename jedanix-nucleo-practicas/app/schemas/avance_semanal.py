@@ -122,6 +122,8 @@ class AvanceSemanalOut(BaseModel):
 
     id: int
     postulacion_id: int
+    estudiante_nombre: str
+    empresa_nombre: str
     semana_calendario: date
     actividades_a_desarrollar: str
     dias_trabajados: list[DiaTrabajadoOut]
@@ -146,7 +148,11 @@ class AvanceSemanalListItem(BaseModel):
     model_config = {"from_attributes": True}
 
     id: int
+    postulacion_id: int
+    estudiante_nombre: str
+    empresa_nombre: str
     semana_calendario: date
     fecha_envio: datetime
     estado: AvanceEstadoEnum
+    horas_totales: Decimal
     calificacion_coordinador: Decimal | None

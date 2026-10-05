@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+.grilla-accesos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.tarjeta-enlace {
+  text-decoration: none;
+  color: inherit;
+}
+
+.tarjeta-acceso {
+  height: 100%;
+  transition: box-shadow 0.15s ease;
+}
+
+.tarjeta-enlace:hover .tarjeta-acceso {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.icono-acceso {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: var(--mat-sys-primary);
+  margin-bottom: 8px;
+}

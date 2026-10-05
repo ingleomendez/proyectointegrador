@@ -1,0 +1,68 @@
+<a mat-button routerLink="/docente-asesor" class="volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver al inicio
+</a>
+
+<h1>Objetivos pendientes</h1>
+<p class="subtitulo">Revisa los objetivos de práctica que plantearon tus estudiantes.</p>
+
+@if (mensajeExito(); as mensaje) {
+  <p class="mensaje-exito"><mat-icon inline>check_circle</mat-icon> {{ mensaje }}</p>
+}
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (objetivos().length === 0) {
+  <p class="mensaje-vacio">No tienes objetivos pendientes de decisión.</p>
+} @else {
+  @for (o of objetivos(); track o.id) {
+    <mat-card class="tarjeta-pagina">
+      <mat-card-header>
+        <mat-card-title>{{ o.estudiante_nombre }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ o.empresa_nombre }} · enviado el {{ o.fecha_envio | date: 'dd/MM/yyyy HH:mm' }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="contenido-objetivo">{{ o.contenido }}</p>
+
+        @if (activa()?.objetivoId === o.id) {
+          <div class="aviso-confirmacion">
+            @if (activa()?.tipo === 'aprobar') {
+              <p>¿Confirmas la aprobación? El estudiante podrá registrar avances semanales.</p>
+            } @else {
+              <p>Indica qué debe corregir el estudiante.</p>
+              <mat-form-field appearance="outline" class="campo-completo">
+                <mat-label>Observación</mat-label>
+                <textarea matInput rows="3" [formControl]="observacion"></textarea>
+                <mat-error>La observación es obligatoria al rechazar.</mat-error>
+              </mat-form-field>
+            }
+            @if (errorDecision(); as mensaje) {
+              <p class="mensaje-error">{{ mensaje }}</p>
+            }
+            <div class="barra-acciones">
+              <button mat-flat-button color="primary" type="button" [disabled]="procesando()" (click)="confirmar(o)">
+                {{ procesando() ? 'Registrando...' : activa()?.tipo === 'aprobar' ? 'Confirmar aprobación' : 'Confirmar rechazo' }}
+              </button>
+              <button mat-button type="button" [disabled]="procesando()" (click)="cancelar()">Cancelar</button>
+            </div>
+          </div>
+        } @else {
+          <div class="barra-acciones">
+            <button mat-flat-button color="primary" type="button" (click)="elegir(o.id, 'aprobar')">
+              <mat-icon>check</mat-icon>
+              Aprobar
+            </button>
+            <button mat-stroked-button type="button" (click)="elegir(o.id, 'rechazar')">
+              <mat-icon>close</mat-icon>
+              Rechazar
+            </button>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+}

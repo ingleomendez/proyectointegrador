@@ -1,0 +1,88 @@
+:host {
+  display: block;
+}
+
+.enlace-volver {
+  margin-bottom: 8px;
+}
+
+.subtitulo {
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: -8px;
+}
+
+.estado-carga {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.mensaje-error {
+  color: var(--mat-sys-error);
+}
+
+.mensaje-vacio {
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 16px;
+}
+
+.barra-acciones {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.aviso {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.contenedor-tabla {
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    white-space: nowrap;
+  }
+
+  th {
+    color: var(--mat-sys-on-surface-variant);
+    font-weight: 500;
+  }
+}
+
+.acciones {
+  display: flex;
+  gap: 4px;
+}
+
+.chip {
+  display: inline-flex;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.chip-pendiente {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+.chip-aprobado {
+  background: var(--mat-sys-tertiary-container, #c8f7d4);
+  color: var(--mat-sys-on-tertiary-container, #0a3818);
+}
+
+.chip-rechazado {
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}

@@ -1,3 +1,5 @@
+import { FactorRhEnum, GrupoSanguineoEnum } from './enums.model';
+
 /** Replica de `app/models/enums.py` (solo los enums que el frontend necesita
  * para distinguir pantallas y validar formularios). */
 
@@ -22,4 +24,48 @@ export interface UsuarioListItem {
   correo_institucional: string;
   rol: RolEnum;
   estado: UsuarioEstadoEnum;
+}
+
+/** Replica de `UsuarioOut`: usuario completo (Director en CU-01, y el propio
+ * usuario en Gestionar Perfil). */
+export interface UsuarioOut {
+  id: number;
+  nombre_completo: string;
+  correo_institucional: string;
+  celular: string | null;
+  foto_perfil: string | null;
+  rol: RolEnum;
+  estado: UsuarioEstadoEnum;
+  fecha_registro: string;
+  programa_academico: string | null;
+  direccion_residencia: string | null;
+  grupo_sanguineo: GrupoSanguineoEnum | null;
+  factor_rh: FactorRhEnum | null;
+  eps: string | null;
+}
+
+/** Gestionar Perfil: campos editables por el propio usuario. */
+export interface PerfilUpdate {
+  nombre_completo: string;
+  celular: string | null;
+  foto_perfil: string | null;
+  direccion_residencia: string | null;
+  grupo_sanguineo: GrupoSanguineoEnum | null;
+  factor_rh: FactorRhEnum | null;
+  eps: string | null;
+}
+
+/** CU-01, pasos 6-16. */
+export interface UsuarioCreate {
+  nombre_completo: string;
+  correo_institucional: string;
+  rol: RolEnum;
+  programa_academico: string | null;
+}
+
+/** CU-01, flujo alterno 4.1.a (el correo no es editable). */
+export interface UsuarioUpdateDirector {
+  nombre_completo: string;
+  rol: RolEnum;
+  programa_academico: string | null;
 }

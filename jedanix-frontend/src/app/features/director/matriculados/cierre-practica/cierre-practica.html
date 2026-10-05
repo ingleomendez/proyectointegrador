@@ -1,0 +1,136 @@
+<a mat-button routerLink="/director/matriculados" class="volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver a matriculados
+</a>
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (postulacion(); as p) {
+  <h1>Cierre de práctica</h1>
+  <p class="subtitulo">
+    {{ p.estudiante.nombre_completo }} · {{ p.empresa.nombre }} ·
+    @if (p.estado === PostulacionEstadoEnum.FINALIZADA) {
+      <span class="chip chip-aprobado">Finalizada</span>
+    } @else {
+      <span class="chip chip-pendiente">En curso</span>
+    }
+  </p>
+
+  <mat-card class="tarjeta-pagina">
+    <mat-card-header><mat-card-title>Horas de práctica</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <p class="horas">
+        <strong>{{ horasAceptadas() }}</strong> de {{ horasRequeridas() }} horas aceptadas
+        ({{ porcentaje() }}%)
+      </p>
+      <mat-progress-bar mode="determinate" [value]="porcentaje()"></mat-progress-bar>
+      <p class="criterio">
+        @if (cumpleHoras()) {
+          <span class="chip chip-aprobado"><mat-icon inline>check_circle</mat-icon> Cumple las horas requeridas</span>
+        } @else {
+          <span class="chip chip-rechazado">
+            <mat-icon inline>error</mat-icon>
+            Faltan {{ horasRequeridas() - horasAceptadas() }} horas por completar
+          </span>
+        }
+      </p>
+      <p class="mensaje-vacio">
+        Solo cuentan las horas de avances ya aceptados por el Coordinador.
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="tarjeta-pagina">
+    <mat-card-header><mat-card-title>Avances semanales</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <p>
+        {{ resumen().total }} registrados: {{ resumen().aceptados }} aceptados,
+        {{ resumen().pendientes }} pendientes de revisión, {{ resumen().observados }} observados.
+      </p>
+      @if (avances().length > 0) {
+        <div class="tabla-contenedor">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Semana (lunes)</th>
+                <th>Horas</th>
+                <th>Estado</th>
+                <th>Calificación</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (a of avances(); track a.id) {
+                <tr>
+                  <td>{{ a.semana_calendario | date: 'dd/MM/yyyy' }}</td>
+                  <td>{{ a.horas_totales }}</td>
+                  <td>
+                    <span
+                      class="chip"
+                      [class.chip-aprobado]="a.estado === AvanceEstadoEnum.ACEPTADO"
+                      [class.chip-rechazado]="a.estado === AvanceEstadoEnum.OBSERVADO"
+                      [class.chip-pendiente]="a.estado === AvanceEstadoEnum.PENDIENTE_DE_REVISION"
+                    >
+                      {{ etiqueta(a.estado) }}
+                    </span>
+                  </td>
+                  <td>{{ a.calificacion_coordinador ?? '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  @if (p.estado === PostulacionEstadoEnum.FINALIZADA) {
+    <p class="mensaje-exito">
+      <mat-icon inline>check_circle</mat-icon>
+      Práctica finalizada el {{ p.fecha_cierre | date: 'dd/MM/yyyy HH:mm' }}.
+    </p>
+  } @else {
+    @if (p.observacion_cierre) {
+      <p class="mensaje-vacio"><strong>Última observación de cierre:</strong> {{ p.observacion_cierre }}</p>
+    }
+
+    @if (decision() === null) {
+      <div class="barra-acciones">
+        <button mat-flat-button color="primary" type="button" [disabled]="!cumpleHoras()" (click)="elegir('finalizar')">
+          <mat-icon>verified</mat-icon>
+          Finalizar práctica
+        </button>
+        <button mat-stroked-button type="button" (click)="elegir('rechazar')">
+          <mat-icon>undo</mat-icon>
+          Rechazar cierre
+        </button>
+      </div>
+    } @else {
+      <div class="aviso-confirmacion">
+        @if (decision() === 'finalizar') {
+          <p>
+            ¿Confirmas el cierre formal? La práctica de {{ p.estudiante.nombre_completo }} quedará
+            FINALIZADA y se notificará a los involucrados.
+          </p>
+        } @else {
+          <p>Indica la observación del rechazo del cierre; se le notificará al estudiante.</p>
+          <mat-form-field appearance="outline" class="campo-completo">
+            <mat-label>Observación</mat-label>
+            <textarea matInput [formControl]="observacion" rows="3"></textarea>
+            <mat-error>La observación es obligatoria al rechazar el cierre.</mat-error>
+          </mat-form-field>
+        }
+        @if (errorDecision(); as mensaje) {
+          <p class="mensaje-error">{{ mensaje }}</p>
+        }
+        <div class="barra-acciones">
+          <button mat-flat-button color="primary" type="button" [disabled]="procesando()" (click)="confirmar()">
+            {{ procesando() ? 'Registrando...' : decision() === 'finalizar' ? 'Confirmar cierre' : 'Confirmar rechazo' }}
+          </button>
+          <button mat-button type="button" [disabled]="procesando()" (click)="elegir(null)">Cancelar</button>
+        </div>
+      </div>
+    }
+  }
+}

@@ -1,0 +1,130 @@
+<a mat-button routerLink="/" class="volver">
+  <mat-icon inline>arrow_back</mat-icon>
+  Volver al inicio
+</a>
+
+<h1>Mi perfil</h1>
+<p class="subtitulo">Consulta y actualiza tu información personal.</p>
+
+@if (cargando()) {
+  <div class="estado-carga"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (errorCarga(); as mensaje) {
+  <p class="mensaje-error">{{ mensaje }}</p>
+} @else if (perfil(); as p) {
+  <mat-card class="tarjeta-pagina">
+    <mat-card-content>
+      <div class="cabecera">
+        <div class="avatar">
+          @if (fotoUrl(); as url) {
+            <img [src]="url" alt="Foto de perfil" />
+          } @else {
+            <mat-icon class="avatar-vacio">account_circle</mat-icon>
+          }
+        </div>
+        <div class="acciones-foto">
+          <input
+            #selectorFoto
+            type="file"
+            accept="image/png,image/jpeg"
+            hidden
+            (change)="seleccionarFoto($event)"
+          />
+          <button
+            mat-stroked-button
+            type="button"
+            [disabled]="subiendoFoto()"
+            (click)="selectorFoto.click()"
+          >
+            <mat-icon>photo_camera</mat-icon>
+            {{ subiendoFoto() ? 'Cargando...' : 'Cambiar foto' }}
+          </button>
+          @if (fotoPerfil()) {
+            <button mat-button type="button" (click)="quitarFoto()">Quitar foto</button>
+          }
+          @if (errorFoto(); as mensaje) {
+            <p class="mensaje-error">{{ mensaje }}</p>
+          }
+          <p class="ayuda">JPG o PNG, máximo 2 MB. Se aplica al pulsar "Guardar cambios".</p>
+        </div>
+      </div>
+
+      <dl class="datos solo-lectura">
+        <dt>Correo institucional</dt>
+        <dd>{{ p.correo_institucional }}</dd>
+        <dt>Rol</dt>
+        <dd>{{ nombreRol[p.rol] }}</dd>
+        @if (p.programa_academico) {
+          <dt>Programa académico</dt>
+          <dd>{{ p.programa_academico }}</dd>
+        }
+      </dl>
+    </mat-card-content>
+  </mat-card>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario-columna">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre completo</mat-label>
+      <input matInput formControlName="nombre_completo" autocomplete="name" />
+      <mat-error>El nombre completo es obligatorio.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Celular</mat-label>
+      <input matInput formControlName="celular" inputmode="tel" placeholder="3001234567" />
+      <mat-hint>Entre 7 y 15 dígitos, con "+" opcional al inicio.</mat-hint>
+      <mat-error>El número de celular no tiene un formato válido.</mat-error>
+    </mat-form-field>
+
+    @if (esEstudiante()) {
+      <mat-form-field appearance="outline">
+        <mat-label>Dirección de residencia</mat-label>
+        <input matInput formControlName="direccion_residencia" autocomplete="street-address" />
+      </mat-form-field>
+
+      <div class="fila-campos">
+        <mat-form-field appearance="outline">
+          <mat-label>Grupo sanguíneo</mat-label>
+          <mat-select formControlName="grupo_sanguineo">
+            <mat-option [value]="null">Sin especificar</mat-option>
+            @for (grupo of gruposSanguineos; track grupo) {
+              <mat-option [value]="grupo">{{ grupo }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Factor RH</mat-label>
+          <mat-select formControlName="factor_rh">
+            <mat-option [value]="null">Sin especificar</mat-option>
+            @for (factor of factoresRh; track factor) {
+              <mat-option [value]="factor">{{ factor === 'POSITIVO' ? 'Positivo (+)' : 'Negativo (−)' }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>EPS</mat-label>
+        <input matInput formControlName="eps" />
+        <mat-error>La EPS es obligatoria para el rol Estudiante.</mat-error>
+      </mat-form-field>
+    }
+
+    @if (errorGuardado(); as mensaje) {
+      <p class="mensaje-error">{{ mensaje }}</p>
+    }
+    @if (exito()) {
+      <p class="mensaje-exito">
+        <mat-icon inline>check_circle</mat-icon>
+        Tus datos se guardaron correctamente.
+      </p>
+    }
+
+    <div class="barra-acciones">
+      <button mat-flat-button color="primary" type="submit" [disabled]="guardando()">
+        {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+      <button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+    </div>
+  </form>
+}

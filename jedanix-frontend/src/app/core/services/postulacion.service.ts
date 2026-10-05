@@ -1,9 +1,15 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { PostulacionCreate, PostulacionOut } from '../models/postulacion.model';
+import {
+  PostulacionCierre,
+  PostulacionCreate,
+  PostulacionDecision,
+  PostulacionListItem,
+  PostulacionOut,
+} from '../models/postulacion.model';
 
 /** CU-06: postulación del Estudiante a una empresa receptora. */
 @Injectable({ providedIn: 'root' })
@@ -26,5 +32,31 @@ export class PostulacionService {
 
   obtener(postulacionId: number): Observable<PostulacionOut> {
     return this.http.get<PostulacionOut>(`${this.baseUrl}/${postulacionId}`);
+  }
+
+  // ---- CU-03 / CU-04 / CU-05 (Director) ----
+
+  /** CU-03: solicitudes PENDIENTE_DE_APROBACION (todas, o de una empresa). */
+  listarPendientes(empresaId?: number): Observable<PostulacionListItem[]> {
+    let params = new HttpParams();
+    if (empresaId !== undefined) {
+      params = params.set('empresa_id', empresaId);
+    }
+    return this.http.get<PostulacionListItem[]>(`${this.baseUrl}/pendientes`, { params });
+  }
+
+  decidir(postulacionId: number, data: PostulacionDecision): Observable<PostulacionOut> {
+    return this.http.patch<PostulacionOut>(`${this.baseUrl}/${postulacionId}/decision`, data);
+  }
+
+  /** CU-05: cierre formal de la práctica (o rechazo del cierre con observación). */
+  decidirCierre(postulacionId: number, data: PostulacionCierre): Observable<PostulacionOut> {
+    return this.http.patch<PostulacionOut>(`${this.baseUrl}/${postulacionId}/cierre`, data);
+  }
+
+  /** Prácticas matriculadas: todas para el Director; solo las de sus empresas
+   * para Coordinador y Docente Asesor (lo decide el rol del token). */
+  listarMatriculados(): Observable<PostulacionListItem[]> {
+    return this.http.get<PostulacionListItem[]>(`${this.baseUrl}/matriculados`);
   }
 }

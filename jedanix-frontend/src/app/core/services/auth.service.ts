@@ -44,6 +44,17 @@ export class AuthService {
     this.router.navigateByUrl('/login');
   }
 
+  /** Gestionar Perfil: refleja de inmediato el nombre editado en el encabezado. */
+  actualizarNombre(nombreCompleto: string): void {
+    const actual = this.usuarioSignal();
+    if (!actual) {
+      return;
+    }
+    const sesion: SesionUsuario = { ...actual, nombreCompleto };
+    localStorage.setItem(CLAVE_USUARIO, JSON.stringify(sesion));
+    this.usuarioSignal.set(sesion);
+  }
+
   /** Usado por `authInterceptor` para adjuntar el header `Authorization`. */
   obtenerToken(): string | null {
     return localStorage.getItem(CLAVE_TOKEN);

@@ -37,11 +37,12 @@ llamada HTTP no bloqueante, y este servicio arma el correo, lo envía y guarda e
 
 Con `npm run dev` el servicio se reinicia solo al guardar cambios. `npm test` corre las pruebas de las plantillas.
 
-## Correo: modo simulado o SMTP real
+## Correo: modo simulado, SMTP real o API de Brevo
 
-- **Sin `SMTP_HOST`** (por defecto): **modo simulado**. No sale ningún correo real; cada mensaje se imprime en la consola de este servicio y
+- **Sin `BREVO_API_KEY` ni `SMTP_HOST`** (por defecto): **modo simulado**. No sale ningún correo real; cada mensaje se imprime en la consola de este servicio y
   queda registrado como `ENVIADA` con canal `SIMULADO`. Así puedes ver, por ejemplo, la **contraseña temporal** de un usuario recién creado
   (CU-01) en la consola de Notificaciones.
+- **Con `BREVO_API_KEY`** (recomendado en la nube): envía por la API HTTPS de Brevo (canal `BREVO`, puerto 443). Necesario en hosting gratuito como Render, que bloquea los puertos SMTP. El remitente de `MAIL_FROM` debe estar verificado en Brevo. Tiene prioridad sobre SMTP.
 - **Con `SMTP_HOST`**: envía correos reales con Nodemailer (canal `SMTP`). Ejemplo con Gmail: `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`,
   `SMTP_SECURE=false`, `SMTP_USER=tu-correo@gmail.com`, `SMTP_PASS=<contraseña de aplicación>`.
 
@@ -105,7 +106,7 @@ src/
   routes/eventos.js             POST /eventos
   routes/notificaciones.js      historial y reenvío manual
   services/plantillas.js        motor de plantillas (un mensaje por evento)
-  services/mailer.js            Cliente de Envío (SMTP o simulado)
+  services/mailer.js            Cliente de Envío (Brevo, SMTP o simulado)
   services/notificacionService.js   registro, envío, estados
   jobs/reintentos.js            job de reintentos
 sql/schema.sql                  tabla notificaciones (idempotente)

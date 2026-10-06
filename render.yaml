@@ -1,0 +1,70 @@
+# Blueprint de Render (plan gratuito) para los dos servicios de JEDANIX.
+# El frontend va aparte en Cloudflare Pages y las bases de datos en Neon.
+# Las variables con `sync: false` se escriben a mano en el panel de Render
+# (son secretos o URLs que solo conoces tú); ver DESPLIEGUE.md.
+services:
+  # ---- Núcleo de Prácticas (FastAPI) ----
+  - type: web
+    name: jedanix-nucleo
+    runtime: python
+    plan: free
+    region: virginia
+    rootDir: jedanix-nucleo-practicas
+    buildCommand: pip install -r requirements.txt
+    # Render free no tiene "pre-deploy": las migraciones y el Director inicial
+    # se aplican al arrancar (ambos pasos son idempotentes).
+    startCommand: alembic upgrade head && python -m scripts.crear_director && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: ENVIRONMENT
+        value: production
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "480"
+      # Un servicio gratuito dormido tarda ~1 min en despertar: el Núcleo debe
+      # esperar ese tiempo a Notificaciones o el primer correo se perdería.
+      - key: NOTIFICACIONES_TIMEOUT_SECONDS
+        value: "90"
+      - key: DATABASE_URL            # cadena de conexión de Neon (jedanix_nucleo)
+        sync: false
+      - key: SECRET_KEY              # cadena larga aleatoria
+        sync: false
+      - key: NOTIFICACIONES_SERVICE_URL   # URL https de jedanix-notificaciones en Render
+        sync: false
+      - key: NOTIFICACIONES_API_KEY  # la MISMA clave que en jedanix-notificaciones
+        sync: false
+      - key: CORS_ORIGINS            # URL de Cloudflare Pages, p. ej. https://jedanix.pages.dev
+        sync: false
+      - key: DIRECTOR_CORREO
+        sync: false
+      - key: DIRECTOR_NOMBRE
+        sync: false
+      - key: DIRECTOR_PASSWORD
+        sync: false
+
+  # ---- Notificaciones (Node + Express) ----
+  - type: web
+    name: jedanix-notificaciones
+    runtime: node
+    plan: free
+    region: virginia
+    rootDir: jedanix-notificaciones
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /salud
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL            # cadena de conexión de Neon (jedanix_notificaciones)
+        sync: false
+      - key: NOTIFICACIONES_API_KEY  # la MISMA clave que en jedanix-nucleo
+        sync: false
+      - key: BREVO_API_KEY           # API key v3 de Brevo
+        sync: false
+      - key: MAIL_FROM               # "JEDANIX <correo-verificado-en-brevo>"
+        sync: false
+      - key: FRONTEND_URL            # URL de Cloudflare Pages
+        sync: false

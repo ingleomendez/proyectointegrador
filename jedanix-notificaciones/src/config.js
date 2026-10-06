@@ -25,6 +25,9 @@ const config = {
     usuario: (process.env.SMTP_USER || '').trim(),
     clave: process.env.SMTP_PASS || '',
   },
+  // Envío por API HTTPS de Brevo (puerto 443). Necesario en hosting gratuito (p. ej. Render)
+  // que bloquea los puertos SMTP. Si hay clave, tiene prioridad sobre SMTP.
+  brevoApiKey: (process.env.BREVO_API_KEY || '').trim(),
   // Clave compartida con el Núcleo (cabecera X-API-Key). Vacía = sin protección (solo desarrollo).
   claveInterna: (process.env.NOTIFICACIONES_API_KEY || '').trim(),
   remitente: process.env.MAIL_FROM || 'JEDANIX <no-reply@jedanix.local>',
@@ -35,7 +38,7 @@ const config = {
   },
 };
 
-// Sin SMTP_HOST el servicio no envía correos reales: los imprime en consola.
-config.modoSimulado = config.smtp.host === '';
+// Sin BREVO_API_KEY ni SMTP_HOST el servicio no envía correos reales: los imprime en consola.
+config.modoSimulado = config.brevoApiKey === '' && config.smtp.host === '';
 
 module.exports = config;

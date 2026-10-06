@@ -16,6 +16,7 @@ from app.models.objetivo_practica import ObjetivoPractica
 from app.models.avance_semanal import AvanceSemanal
 from app.models.dia_trabajado import DiaTrabajado
 from app.models.soporte_avance import SoporteAvance
+from app.models.archivo_subido import ArchivoSubido
 
 __all__ = [
     "Usuario",
@@ -29,4 +30,5 @@ __all__ = [
     "AvanceSemanal",
     "DiaTrabajado",
     "SoporteAvance",
+    "ArchivoSubido",
 ]

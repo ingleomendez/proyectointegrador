@@ -1,3 +1,4 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -14,6 +15,16 @@ class Settings(BaseSettings):
     # Orígenes del frontend que CORS deja pasar, separados por comas. Para otro
     # dominio/puerto (despliegue, otro equipo en la red) se define en el `.env`.
     CORS_ORIGINS: str = "http://localhost:4200,http://127.0.0.1:4200"
+
+    @field_validator("DATABASE_URL")
+    @classmethod
+    def _normalizar_url_postgres(cls, valor: str) -> str:
+        """Algunos proveedores (Render, Heroku) entregan `postgres://...`, esquema
+        que SQLAlchemy 2 ya no acepta; se traduce a `postgresql://`."""
+        valor = valor.strip()
+        if valor.startswith("postgres://"):
+            return "postgresql://" + valor[len("postgres://"):]
+        return valor
 
     @property
     def cors_origins_lista(self) -> list[str]:

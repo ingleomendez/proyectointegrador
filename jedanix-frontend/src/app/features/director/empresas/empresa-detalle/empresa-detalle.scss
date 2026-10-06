@@ -1,0 +1,28 @@
+// Listas de preguntas y documentos con acciones de editar y eliminar (CU-02, flujo alterno 4.1.a).
+.lista-editable {
+  margin: 0 0 16px;
+  padding-left: 22px;
+
+  li {
+    padding: 4px 0;
+  }
+
+  .texto-item {
+    display: inline;
+    margin-right: 8px;
+    overflow-wrap: anywhere;
+  }
+
+  .acciones-item {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    opacity: 0.55;
+    transition: opacity 0.15s ease;
+  }
+
+  li:hover .acciones-item,
+  li:focus-within .acciones-item {
+    opacity: 1;
+  }
+}

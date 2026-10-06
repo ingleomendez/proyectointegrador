@@ -21,17 +21,11 @@ import { EmpresaService } from '../../../../core/services/empresa.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { mensajeDeError } from '../../../../core/utils/errores';
 
-export const ETIQUETA_TIPO_RESPUESTA: Record<TipoRespuestaEnum, string> = {
-  [TipoRespuestaEnum.TEXTO_LIBRE]: 'Texto libre',
-  [TipoRespuestaEnum.SELECCION_UNICA]: 'Selección única',
-  [TipoRespuestaEnum.SELECCION_MULTIPLE]: 'Selección múltiple',
-};
-
 /**
  * CU-02 (Director): crear una empresa receptora con sus responsables, al
  * menos una pregunta de bitácora y los documentos requeridos (pasos 6-29), o
  * editar sus datos generales y responsables. Las preguntas y documentos de
- * una empresa existente se agregan desde su pantalla de detalle.
+ * una empresa existente se agregan, editan o eliminan desde su pantalla de detalle.
  */
 @Component({
   selector: 'app-empresa-form',
@@ -53,8 +47,6 @@ export class EmpresaForm {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
-  protected readonly tiposRespuesta = Object.values(TipoRespuestaEnum);
-  protected readonly etiquetaTipo = ETIQUETA_TIPO_RESPUESTA;
 
   private readonly empresaId: number | null = this.route.snapshot.paramMap.has('id')
     ? Number(this.route.snapshot.paramMap.get('id'))
@@ -75,6 +67,8 @@ export class EmpresaForm {
     horas_requeridas: new FormControl<number | null>(null, {
       validators: [Validators.required, Validators.min(1)],
     }),
+    telefono: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(30)] }),
+    direccion: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(255)] }),
     coordinador_id: new FormControl<number | null>(null, { validators: [Validators.required] }),
     docente_asesor_id: new FormControl<number | null>(null, { validators: [Validators.required] }),
     preguntas_bitacora: new FormArray<FormGroup<{ enunciado: FormControl<string>; tipo_respuesta: FormControl<TipoRespuestaEnum> }>>([]),
@@ -104,6 +98,8 @@ export class EmpresaForm {
             descripcion: empresa.descripcion,
             requisitos_generales: empresa.requisitos_generales,
             horas_requeridas: empresa.horas_requeridas,
+            telefono: empresa.telefono ?? '',
+            direccion: empresa.direccion ?? '',
             coordinador_id: empresa.coordinador.id,
             docente_asesor_id: empresa.docente_asesor.id,
           });
@@ -167,6 +163,8 @@ export class EmpresaForm {
       descripcion: v.descripcion.trim(),
       requisitos_generales: v.requisitos_generales.trim(),
       horas_requeridas: Number(v.horas_requeridas),
+      telefono: v.telefono.trim(),
+      direccion: v.direccion.trim(),
       coordinador_id: Number(v.coordinador_id),
       docente_asesor_id: Number(v.docente_asesor_id),
     };

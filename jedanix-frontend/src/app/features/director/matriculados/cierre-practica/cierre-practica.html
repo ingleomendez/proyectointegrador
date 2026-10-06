@@ -96,10 +96,16 @@
     @if (p.observacion_cierre) {
       <p class="mensaje-vacio"><strong>Última observación de cierre:</strong> {{ p.observacion_cierre }}</p>
     }
+    @if (cumpleHoras() && !puedeAprobar()) {
+      <p class="mensaje-vacio">
+        <mat-icon inline>info</mat-icon>
+        El cierre fue rechazado anteriormente: podrás aprobarlo cuando se acepte un avance posterior a esa observación.
+      </p>
+    }
 
     @if (decision() === null) {
       <div class="barra-acciones">
-        <button mat-flat-button color="primary" type="button" [disabled]="!cumpleHoras()" (click)="elegir('finalizar')">
+        <button mat-flat-button color="primary" type="button" [disabled]="!puedeAprobar()" (click)="elegir('finalizar')">
           <mat-icon>verified</mat-icon>
           Aprobar cierre
         </button>

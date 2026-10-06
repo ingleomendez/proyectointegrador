@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.core.config import settings
 from app.routers import archivos, auth, avances, empresas, objetivos, postulaciones, usuarios
 from app.services.exceptions import (
     ConflictoError,
@@ -22,12 +23,11 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS: por ahora abierto a cualquier origen para no bloquear el desarrollo del
-# frontend Angular (jedanix-frontend/) mientras corre en otro puerto/host.
-# TODO: antes de producción, restringir `allow_origins` al dominio real del frontend.
+# CORS: solo los orígenes del frontend Angular (`CORS_ORIGINS` en el `.env`; por
+# defecto http://localhost:4200 y http://127.0.0.1:4200).
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origins_lista,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

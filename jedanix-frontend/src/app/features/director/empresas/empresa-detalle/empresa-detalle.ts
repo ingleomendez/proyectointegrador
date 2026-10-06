@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -7,23 +8,26 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
+import { Observable } from 'rxjs';
 
 import { EmpresaReceptoraOut, PreguntaBitacoraCreate } from '../../../../core/models/empresa.model';
 import { EmpresaEstadoEnum, TipoRespuestaEnum } from '../../../../core/models/enums.model';
 import { EmpresaService } from '../../../../core/services/empresa.service';
 import { leerConfirmacion, mensajeDeError } from '../../../../core/utils/errores';
-import { ETIQUETA_TIPO_RESPUESTA } from '../empresa-form/empresa-form';
 
 /**
- * CU-02 (Director): detalle de una empresa receptora. Desde aquí se agregan
- * preguntas de bitácora (con aviso si el enunciado ya existe, excepción
- * 17.1.a), documentos requeridos, y se inactiva la empresa (con aviso si hay
- * postulaciones pendientes, excepción 31.1.a).
+ * CU-02 (Director): detalle de una empresa receptora. Desde aquí se agregan,
+ * editan y eliminan preguntas de bitácora (con aviso si el enunciado ya
+ * existe, excepción 17.1.a) y documentos requeridos (con confirmación si hay
+ * postulaciones en curso que ya los usan, excepción 22.1.a), y se inactiva la
+ * empresa (con aviso si hay postulaciones pendientes, excepción 31.1.a).
  */
+
+type TipoItem = 'pregunta' | 'documento';
 @Component({
   selector: 'app-empresa-detalle-director',
   imports: [
+    NgTemplateOutlet,
     RouterLink,
     ReactiveFormsModule,
     MatButtonModule,
@@ -32,17 +36,15 @@ import { ETIQUETA_TIPO_RESPUESTA } from '../empresa-form/empresa-form';
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
   ],
   templateUrl: './empresa-detalle.html',
+  styleUrl: './empresa-detalle.scss',
 })
 export class EmpresaDetalleDirector {
   private readonly empresaService = inject(EmpresaService);
   private readonly route = inject(ActivatedRoute);
 
   protected readonly EmpresaEstadoEnum = EmpresaEstadoEnum;
-  protected readonly tiposRespuesta = Object.values(TipoRespuestaEnum);
-  protected readonly etiquetaTipo = ETIQUETA_TIPO_RESPUESTA;
 
   private readonly empresaId = Number(this.route.snapshot.paramMap.get('id'));
 
@@ -51,6 +53,23 @@ export class EmpresaDetalleDirector {
   protected readonly empresa = signal<EmpresaReceptoraOut | null>(null);
   protected readonly procesando = signal(false);
   protected readonly errorAccion = signal<string | null>(null);
+
+  // Edición en línea de una pregunta o documento existente (flujo alterno 4.1.a)
+  protected readonly edicion = signal<{ tipo: TipoItem; id: number } | null>(null);
+  protected readonly controlEdicion = new FormControl('', {
+    nonNullable: true,
+    validators: [Validators.required],
+  });
+  protected readonly confirmarDuplicadaEdicion = signal<{ id: number; mensaje: string; enunciado: string } | null>(null);
+
+  // Eliminación con confirmación (excepción 22.1.a)
+  protected readonly confirmarEliminar = signal<{
+    tipo: TipoItem;
+    id: number;
+    nombre: string;
+    mensaje: string;
+    forzado: boolean;
+  } | null>(null);
 
   // Inactivar
   protected readonly confirmarInactivar = signal<{ mensaje: string; forzar: boolean } | null>(null);
@@ -129,6 +148,105 @@ export class EmpresaDetalleDirector {
           this.errorAccion.set(mensajeDeError(error, 'No se pudo agregar el documento.'));
         },
       });
+  }
+
+  // ---- Editar preguntas y documentos existentes (flujo alterno 4.1.a) ----
+
+  protected iniciarEdicion(tipo: TipoItem, id: number, textoActual: string): void {
+    this.errorAccion.set(null);
+    this.confirmarEliminar.set(null);
+    this.confirmarDuplicadaEdicion.set(null);
+    this.controlEdicion.setValue(textoActual);
+    this.controlEdicion.markAsUntouched();
+    this.edicion.set({ tipo, id });
+  }
+
+  protected cancelarEdicion(): void {
+    this.edicion.set(null);
+    this.confirmarDuplicadaEdicion.set(null);
+  }
+
+  protected guardarEdicion(confirmarDuplicado = false): void {
+    const actual = this.edicion();
+    if (!actual) {
+      return;
+    }
+    if (this.controlEdicion.invalid || !this.controlEdicion.value.trim()) {
+      this.controlEdicion.markAsTouched();
+      return;
+    }
+    const texto = this.controlEdicion.value.trim();
+    this.errorAccion.set(null);
+    this.procesando.set(true);
+
+    const peticion: Observable<unknown> =
+      actual.tipo === 'pregunta'
+        ? this.empresaService.actualizarPregunta(this.empresaId, actual.id, { enunciado: texto }, confirmarDuplicado)
+        : this.empresaService.actualizarDocumentoRequerido(this.empresaId, actual.id, { nombre_documento: texto });
+
+    peticion.subscribe({
+      next: () => {
+        this.procesando.set(false);
+        this.cancelarEdicion();
+        this.cargar();
+      },
+      error: (error) => {
+        this.procesando.set(false);
+        const requiere = leerConfirmacion(error);
+        if (requiere && actual.tipo === 'pregunta') {
+          this.confirmarDuplicadaEdicion.set({ id: actual.id, mensaje: requiere.mensaje, enunciado: texto }); // 17.1.a
+          return;
+        }
+        this.errorAccion.set(mensajeDeError(error, 'No se pudo guardar el cambio.'));
+      },
+    });
+  }
+
+  // ---- Eliminar preguntas y documentos (flujo alterno 4.1.a, excepción 22.1.a) ----
+
+  protected pedirEliminar(tipo: TipoItem, id: number, nombre: string): void {
+    this.errorAccion.set(null);
+    this.cancelarEdicion();
+    this.confirmarEliminar.set({
+      tipo,
+      id,
+      nombre,
+      mensaje:
+        tipo === 'pregunta'
+          ? `¿Eliminar la pregunta «${nombre}»? Dejará de pedirse en nuevas postulaciones.`
+          : `¿Eliminar el documento «${nombre}»? Dejará de pedirse en nuevas postulaciones.`,
+      forzado: false,
+    });
+  }
+
+  protected eliminar(): void {
+    const actual = this.confirmarEliminar();
+    if (!actual) {
+      return;
+    }
+    this.procesando.set(true);
+    const peticion: Observable<unknown> =
+      actual.tipo === 'pregunta'
+        ? this.empresaService.eliminarPregunta(this.empresaId, actual.id, actual.forzado)
+        : this.empresaService.eliminarDocumentoRequerido(this.empresaId, actual.id, actual.forzado);
+
+    peticion.subscribe({
+      next: () => {
+        this.procesando.set(false);
+        this.confirmarEliminar.set(null);
+        this.cargar();
+      },
+      error: (error) => {
+        this.procesando.set(false);
+        const requiere = leerConfirmacion(error);
+        if (requiere) {
+          this.confirmarEliminar.set({ ...actual, mensaje: requiere.mensaje, forzado: true }); // 22.1.a
+          return;
+        }
+        this.confirmarEliminar.set(null);
+        this.errorAccion.set(mensajeDeError(error, 'No se pudo eliminar.'));
+      },
+    });
   }
 
   // ---- Inactivar ----

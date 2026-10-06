@@ -22,7 +22,6 @@ import { PostulacionService } from '../../../core/services/postulacion.service';
 import { mensajeDeError } from '../../../core/utils/errores';
 import { rutaInicioDeRol } from '../../../core/utils/menu-rol';
 import { etiquetaEstadoAvance } from '../../../core/utils/semana';
-import { detallesDeAvances } from '../revision.util';
 
 interface FilaAvance {
   avance: AvanceSemanalListItem;
@@ -132,24 +131,14 @@ export class EstudianteDetalle {
     });
   }
 
+  /** El listado trae `tiene_observacion_docente`, así que no hace falta pedir el detalle de cada avance. */
   private armarFilas(avances: AvanceSemanalListItem[]): Observable<FilaAvance[]> {
-    if (this.esCoordinador) {
-      return of(avances.map((avance) => ({ avance, observado: false })));
-    }
-    return new Observable<FilaAvance[]>((suscriptor) => {
-      detallesDeAvances(this.avanceService, avances).subscribe({
-        next: (detalles) => {
-          suscriptor.next(
-            avances.map((avance) => ({
-              avance,
-              observado: !!detalles.find((d) => d.id === avance.id)?.observacion_docente_asesor,
-            })),
-          );
-          suscriptor.complete();
-        },
-        error: (error) => suscriptor.error(error),
-      });
-    });
+    return of(
+      avances.map((avance) => ({
+        avance,
+        observado: !this.esCoordinador && !!avance.tiene_observacion_docente,
+      })),
+    );
   }
 
   protected textoAccion(fila: FilaAvance): string {

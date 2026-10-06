@@ -33,6 +33,7 @@ class PostulacionRepository:
             joinedload(Postulacion.empresa).joinedload(EmpresaReceptora.docente_asesor),
             selectinload(Postulacion.respuestas_bitacora),
             selectinload(Postulacion.documentos_postulacion),
+            selectinload(Postulacion.avances_semanales),
         )
 
     def get_by_id(self, postulacion_id: int) -> Postulacion | None:

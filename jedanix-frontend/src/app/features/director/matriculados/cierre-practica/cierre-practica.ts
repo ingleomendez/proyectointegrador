@@ -88,6 +88,10 @@ export class CierrePractica {
     () => this.horasRequeridas() > 0 && this.horasAceptadas() >= this.horasRequeridas(),
   );
 
+  /** CU-05, precondición 2: en el subconjunto "Pendiente de aprobación práctica"
+   * (tras un rechazo del cierre exige un avance aceptado posterior, flujo 9.1.a). */
+  protected readonly puedeAprobar = computed(() => this.postulacion()?.pendiente_cierre ?? false);
+
   protected readonly porcentaje = computed(() => {
     const requeridas = this.horasRequeridas();
     return requeridas > 0 ? Math.min(100, Math.round((this.horasAceptadas() / requeridas) * 100)) : 0;

@@ -21,6 +21,18 @@
           <span class="etiqueta">Horas requeridas</span>
           <p class="valor-grande">{{ datos.horas_requeridas }} horas</p>
         </div>
+        @if (datos.telefono) {
+          <div>
+            <span class="etiqueta">Teléfono</span>
+            <p class="valor-grande">{{ datos.telefono }}</p>
+          </div>
+        }
+        @if (datos.direccion) {
+          <div>
+            <span class="etiqueta">Dirección</span>
+            <p class="valor-grande">{{ datos.direccion }}</p>
+          </div>
+        }
       </div>
 
       <span class="etiqueta">Requisitos generales</span>

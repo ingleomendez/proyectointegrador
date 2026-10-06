@@ -27,6 +27,8 @@ interface ConfirmacionInactivar {
  * usuarios con filtro por rol, acceso a crear/editar, e inactivar/reactivar.
  * Inactivar pide confirmación y, si el usuario tiene avances sin revisar
  * (excepción 4.1.b.1), una segunda confirmación con el aviso del backend.
+ * "Reenviar credenciales" (excepción 19.1.a) genera una contraseña temporal nueva
+ * y la envía al correo del usuario.
  */
 @Component({
   selector: 'app-usuarios-lista',
@@ -54,6 +56,8 @@ export class UsuariosLista {
   protected readonly usuarios = signal<UsuarioListItem[]>([]);
   protected readonly filtroRol = signal<RolEnum | ''>('');
   protected readonly confirmacion = signal<ConfirmacionInactivar | null>(null);
+  protected readonly confirmacionReenvio = signal<UsuarioListItem | null>(null);
+  protected readonly mensajeExito = signal<string | null>(null);
   protected readonly procesando = signal(false);
   protected readonly errorAccion = signal<string | null>(null);
 
@@ -74,6 +78,8 @@ export class UsuariosLista {
 
   protected pedirInactivar(usuario: UsuarioListItem): void {
     this.errorAccion.set(null);
+    this.mensajeExito.set(null);
+    this.confirmacionReenvio.set(null);
     this.confirmacion.set({
       usuario,
       mensaje: `¿Seguro que deseas inactivar a ${usuario.nombre_completo}? No podrá iniciar sesión.`,
@@ -83,6 +89,37 @@ export class UsuariosLista {
 
   protected cancelar(): void {
     this.confirmacion.set(null);
+  }
+
+  // ---- Reenviar credenciales (CU-01, excepción 19.1.a) ----
+
+  protected pedirReenvio(usuario: UsuarioListItem): void {
+    this.errorAccion.set(null);
+    this.mensajeExito.set(null);
+    this.confirmacion.set(null);
+    this.confirmacionReenvio.set(usuario);
+  }
+
+  protected confirmarReenvio(): void {
+    const usuario = this.confirmacionReenvio();
+    if (!usuario) {
+      return;
+    }
+    this.procesando.set(true);
+    this.usuarioService.reenviarCredenciales(usuario.id).subscribe({
+      next: () => {
+        this.procesando.set(false);
+        this.confirmacionReenvio.set(null);
+        this.mensajeExito.set(
+          `Se generó una contraseña temporal nueva y se envió a ${usuario.correo_institucional}.`,
+        );
+      },
+      error: (error) => {
+        this.procesando.set(false);
+        this.confirmacionReenvio.set(null);
+        this.errorAccion.set(mensajeDeError(error, 'No se pudieron reenviar las credenciales.'));
+      },
+    });
   }
 
   protected confirmarInactivar(): void {

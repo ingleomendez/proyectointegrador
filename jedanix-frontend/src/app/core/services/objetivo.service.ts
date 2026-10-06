@@ -29,6 +29,13 @@ export class ObjetivoService {
     return this.http.get<ObjetivoPracticaOut>(`${this.baseUrl}/me`);
   }
 
+  // ---- CU-04 (Director) ----
+
+  /** GET /objetivos/postulacion/{id} -- 404 si la práctica aún no tiene objetivos. */
+  obtenerDePostulacion(postulacionId: number): Observable<ObjetivoPracticaOut> {
+    return this.http.get<ObjetivoPracticaOut>(`${this.baseUrl}/postulacion/${postulacionId}`);
+  }
+
   // ---- CU-11 (Docente Asesor) ----
 
   listarPendientes(): Observable<ObjetivoPracticaOut[]> {

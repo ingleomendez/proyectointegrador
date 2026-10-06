@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.models.enums import EmpresaEstadoEnum, TipoRespuestaEnum
 from app.schemas.usuario import UsuarioListItem
@@ -14,6 +14,14 @@ class PreguntaBitacoraCreate(BaseModel):
     tipo_respuesta: TipoRespuestaEnum
 
 
+class PreguntaBitacoraUpdate(BaseModel):
+    """CU-02, flujo alterno 4.1.a: edición del enunciado de una pregunta ya
+    existente. El tipo de respuesta es opcional (hoy todas son de texto libre)."""
+
+    enunciado: str = Field(min_length=1)
+    tipo_respuesta: TipoRespuestaEnum | None = None
+
+
 class PreguntaBitacoraOut(BaseModel):
     model_config = {"from_attributes": True}
 
@@ -24,6 +32,12 @@ class PreguntaBitacoraOut(BaseModel):
 
 class DocumentoRequeridoCreate(BaseModel):
     """CU-02, pasos 22-24: un documento requerido (p. ej. "Hoja de vida")."""
+
+    nombre_documento: str = Field(min_length=1, max_length=150)
+
+
+class DocumentoRequeridoUpdate(BaseModel):
+    """CU-02, flujo alterno 4.1.a: edición del nombre de un documento requerido."""
 
     nombre_documento: str = Field(min_length=1, max_length=150)
 
@@ -46,6 +60,8 @@ class EmpresaReceptoraCreate(BaseModel):
     descripcion: str = Field(min_length=1)
     requisitos_generales: str = Field(min_length=1)
     horas_requeridas: int = Field(gt=0)
+    telefono: str = Field(min_length=1, max_length=30)
+    direccion: str = Field(min_length=1, max_length=255)
     coordinador_id: int
     docente_asesor_id: int
     preguntas_bitacora: list[PreguntaBitacoraCreate] = Field(min_length=1)
@@ -63,6 +79,8 @@ class EmpresaReceptoraUpdate(BaseModel):
     descripcion: str = Field(min_length=1)
     requisitos_generales: str = Field(min_length=1)
     horas_requeridas: int = Field(gt=0)
+    telefono: str = Field(min_length=1, max_length=30)
+    direccion: str = Field(min_length=1, max_length=255)
     coordinador_id: int
     docente_asesor_id: int
 
@@ -78,11 +96,21 @@ class EmpresaReceptoraOut(BaseModel):
     descripcion: str
     requisitos_generales: str
     horas_requeridas: int
+    telefono: str | None = None
+    direccion: str | None = None
     estado: EmpresaEstadoEnum
     coordinador: UsuarioListItem
     docente_asesor: UsuarioListItem
     preguntas_bitacora: list[PreguntaBitacoraOut]
     documentos_requeridos: list[DocumentoRequeridoOut]
+
+    @field_validator("preguntas_bitacora", "documentos_requeridos", mode="before")
+    @classmethod
+    def _solo_activos(cls, items):
+        """Las preguntas y documentos dados de baja (`activa=False`, CU-02
+        excepción 22.1.a) siguen en la base de datos para conservar las
+        postulaciones ya enviadas, pero no se muestran ni se piden de nuevo."""
+        return [i for i in items if getattr(i, "activa", True)]
 
 
 class EmpresaReceptoraListItem(BaseModel):
@@ -95,6 +123,7 @@ class EmpresaReceptoraListItem(BaseModel):
 
     id: int
     nombre: str
+    descripcion: str
     estado: EmpresaEstadoEnum
     coordinador: UsuarioListItem
     docente_asesor: UsuarioListItem

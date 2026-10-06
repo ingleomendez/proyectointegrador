@@ -27,6 +27,28 @@ export class ArchivoService {
     return this.http.post<ArchivoSubidoOut>(this.baseUrl, formData, { params });
   }
 
+  /** Descarga un archivo ya subido (CU-08, 6.1.b). Se baja como blob y se guarda con
+   * el nombre original porque el atributo `download` no funciona entre orígenes distintos. */
+  descargar(ruta: string, nombre: string): Observable<void> {
+    return new Observable<void>((suscriptor) => {
+      this.http.get(this.urlPublica(ruta), { responseType: 'blob' }).subscribe({
+        next: (blob) => {
+          const url = URL.createObjectURL(blob);
+          const enlace = document.createElement('a');
+          enlace.href = url;
+          enlace.download = nombre;
+          document.body.appendChild(enlace);
+          enlace.click();
+          enlace.remove();
+          URL.revokeObjectURL(url);
+          suscriptor.next();
+          suscriptor.complete();
+        },
+        error: (error) => suscriptor.error(error),
+      });
+    });
+  }
+
   /** URL absoluta para abrir/descargar un archivo ya subido. */
   urlPublica(ruta: string): string {
     return `${environment.apiUrl}${ruta}`;

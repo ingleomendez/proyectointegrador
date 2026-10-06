@@ -45,10 +45,16 @@ class AvanceSemanalService:
     def listar_mios(self, estudiante_id: int) -> list[AvanceSemanal]:
         """CU-08, paso 4: historial de avances de la práctica del estudiante
         autenticado. Si no tiene una postulación activa, no tiene avances."""
-        postulacion = self.postulacion_repo.get_activa_de_estudiante(estudiante_id)
-        if postulacion is None:
-            return []
-        return self.repo.listar_por_postulacion(postulacion.id)
+        # CU-08, excepción 2.1.a: con la práctica FINALIZADA el estudiante sigue
+        # viendo su historial (solo lectura); por eso no basta con la postulación
+        # "activa" (una FINALIZADA ya no cuenta como activa).
+        for postulacion in self.postulacion_repo.listar_por_estudiante(estudiante_id):
+            if postulacion.estado in (
+                PostulacionEstadoEnum.APROBADA,
+                PostulacionEstadoEnum.FINALIZADA,
+            ):
+                return self.repo.listar_por_postulacion(postulacion.id)
+        return []
 
     def listar_por_postulacion(self, postulacion_id: int) -> list[AvanceSemanal]:
         """CU-05 (Director): historial de avances de una práctica, para ver las
@@ -187,7 +193,6 @@ class AvanceSemanalService:
         avance = self.repo.get_by_id(avance_id)
         if avance is None:
             raise NoEncontradoError(f"No existe un avance con id={avance_id}.")
-
         avance.observacion_docente_asesor = data.observacion_docente_asesor
         avance.fecha_observacion_docente = datetime.utcnow()
         self.repo.guardar(avance)

@@ -29,6 +29,27 @@
   </div>
 }
 
+@if (confirmacionReenvio(); as u) {
+  <div class="aviso-confirmacion">
+    <p>
+      ¿Reenviar las credenciales a {{ u.nombre_completo }}? Se generará una contraseña temporal
+      nueva (la anterior dejará de funcionar) y se enviará a {{ u.correo_institucional }}.
+    </p>
+    <div class="barra-acciones">
+      <button mat-flat-button color="primary" type="button" [disabled]="procesando()" (click)="confirmarReenvio()">
+        Sí, reenviar
+      </button>
+      <button mat-button type="button" [disabled]="procesando()" (click)="confirmacionReenvio.set(null)">
+        Cancelar
+      </button>
+    </div>
+  </div>
+}
+
+@if (mensajeExito(); as mensaje) {
+  <p class="mensaje-exito">{{ mensaje }}</p>
+}
+
 @if (errorAccion(); as mensaje) {
   <p class="mensaje-error">{{ mensaje }}</p>
 }
@@ -69,6 +90,15 @@
             <td class="acciones">
               <a mat-button color="primary" [routerLink]="['/director/usuarios', u.id, 'editar']">Editar</a>
               @if (u.estado === UsuarioEstadoEnum.ACTIVO) {
+                <button
+                  mat-button
+                  type="button"
+                  [disabled]="procesando() || u.id === miId()"
+                  [title]="u.id === miId() ? 'No puedes reenviarte las credenciales a ti mismo' : 'Genera una contraseña temporal nueva y la envía por correo'"
+                  (click)="pedirReenvio(u)"
+                >
+                  Reenviar credenciales
+                </button>
                 <button
                   mat-button
                   type="button"

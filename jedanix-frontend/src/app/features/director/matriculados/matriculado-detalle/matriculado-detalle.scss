@@ -59,3 +59,19 @@
   margin: 0 0 8px;
   font-size: 1.1rem;
 }
+
+.banner-alerta {
+  background: linear-gradient(120deg, #ffe0b2, #fff3e0);
+  border-color: #ffb74d;
+  box-shadow: 0 6px 18px rgba(245, 124, 0, 0.16);
+  color: #4e2a00;
+
+  mat-icon {
+    color: #e65100;
+  }
+}
+
+.fila-no-reportada td {
+  color: var(--mat-sys-on-surface-variant);
+  background: rgba(255, 205, 210, 0.22);
+}

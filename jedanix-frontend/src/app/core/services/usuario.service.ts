@@ -62,6 +62,11 @@ export class UsuarioService {
     return this.http.patch<UsuarioOut>(`${this.baseUrl}/${id}/inactivar`, {}, { params });
   }
 
+  /** CU-01, excepción 19.1.a: genera una contraseña temporal nueva y la envía por correo. */
+  reenviarCredenciales(id: number): Observable<UsuarioOut> {
+    return this.http.post<UsuarioOut>(`${this.baseUrl}/${id}/reenviar-credenciales`, {});
+  }
+
   reactivar(id: number): Observable<UsuarioOut> {
     return this.http.patch<UsuarioOut>(`${this.baseUrl}/${id}/reactivar`, {});
   }

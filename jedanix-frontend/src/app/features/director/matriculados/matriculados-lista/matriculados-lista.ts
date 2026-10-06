@@ -7,14 +7,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 import { PostulacionListItem } from '../../../../core/models/postulacion.model';
-import { AvanceService } from '../../../../core/services/avance.service';
-import { EmpresaService } from '../../../../core/services/empresa.service';
 import { PostulacionService } from '../../../../core/services/postulacion.service';
 import { mensajeDeError } from '../../../../core/utils/errores';
-import { alcanzoCien, horasAceptadas, porcentajeDeHoras } from '../horas';
+import { porcentajeDeHoras } from '../horas';
 
 interface FilaMatriculado {
   postulacion: PostulacionListItem;
@@ -31,7 +29,8 @@ type Vista = 'todos' | 'cierre';
  * matriculados con nombre, empresa receptora y porcentaje de horas completadas;
  * filtro por empresa (4-5) y orden por porcentaje (4.1.a). El subconjunto
  * "Pendiente de aprobación práctica" (100 % de horas) es la puerta de entrada
- * al cierre formal (CU-05, pasos 1-2).
+ * al cierre formal (CU-05, pasos 1-2); tras un rechazo del cierre el estudiante
+ * sale de él hasta que se acepte un avance posterior (flujo 9.1.a).
  */
 @Component({
   selector: 'app-matriculados-lista',
@@ -50,8 +49,6 @@ type Vista = 'todos' | 'cierre';
 })
 export class MatriculadosLista {
   private readonly postulacionService = inject(PostulacionService);
-  private readonly empresaService = inject(EmpresaService);
-  private readonly avanceService = inject(AvanceService);
 
   protected readonly cargando = signal(true);
   protected readonly errorCarga = signal<string | null>(null);
@@ -98,40 +95,18 @@ export class MatriculadosLista {
     });
   }
 
-  /** Cruza cada práctica con las horas requeridas de su empresa y con sus avances aceptados. */
+  /** El listado del backend ya trae horas aceptadas, requeridas y si está pendiente de cierre. */
   private cargar(): Observable<FilaMatriculado[]> {
     return this.postulacionService.listarMatriculados().pipe(
-      switchMap((matriculados) => {
-        if (matriculados.length === 0) {
-          return of<FilaMatriculado[]>([]);
-        }
-        const empresasIds = [...new Set(matriculados.map((m) => m.empresa.id))];
-        return forkJoin({
-          horas: forkJoin(
-            empresasIds.map((id) =>
-              this.empresaService.obtener(id).pipe(map((e) => [id, e.horas_requeridas] as const)),
-            ),
-          ),
-          avances: forkJoin(
-            matriculados.map((m) => this.avanceService.listarDePostulacion(m.id)),
-          ),
-        }).pipe(
-          map(({ horas, avances }) => {
-            const requeridasPorEmpresa = new Map(horas);
-            return matriculados.map((postulacion, i) => {
-              const aceptadas = horasAceptadas(avances[i]);
-              const requeridas = requeridasPorEmpresa.get(postulacion.empresa.id) ?? 0;
-              return {
-                postulacion,
-                aceptadas,
-                requeridas,
-                porcentaje: porcentajeDeHoras(aceptadas, requeridas),
-                pendienteCierre: alcanzoCien(aceptadas, requeridas),
-              };
-            });
-          }),
-        );
-      }),
+      map((matriculados) =>
+        matriculados.map((postulacion) => ({
+          postulacion,
+          aceptadas: postulacion.horas_acumuladas,
+          requeridas: postulacion.horas_requeridas,
+          porcentaje: porcentajeDeHoras(postulacion.horas_acumuladas, postulacion.horas_requeridas),
+          pendienteCierre: postulacion.pendiente_cierre,
+        })),
+      ),
     );
   }
 }

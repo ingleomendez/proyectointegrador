@@ -12,7 +12,12 @@ from app.repositories.avance_repository import AvanceSemanalRepository
 from app.repositories.empresa_repository import EmpresaReceptoraRepository
 from app.repositories.postulacion_repository import PostulacionRepository
 from app.repositories.usuario_repository import UsuarioRepository
-from app.schemas.postulacion import PostulacionCierre, PostulacionCreate, PostulacionDecision
+from app.schemas.postulacion import (
+    PostulacionCierre,
+    PostulacionCreate,
+    PostulacionDecision,
+    PostulacionUpdate,
+)
 from app.services.exceptions import ConflictoError, NoEncontradoError, ReglaDeNegocioError
 from app.services.notificaciones_client import notificar
 
@@ -91,6 +96,11 @@ class PostulacionService:
         if empresa.estado != EmpresaEstadoEnum.ACTIVA:
             raise ReglaDeNegocioError("Esta empresa receptora no está activa.")
 
+        self._validar_pertenencia(
+            empresa,
+            [r.pregunta_id for r in data.respuestas_bitacora],
+            [d.documento_requerido_id for d in data.documentos_postulacion],
+        )
         if data.enviar:
             self._validar_completitud(
                 empresa,
@@ -126,6 +136,66 @@ class PostulacionService:
             self._notificar_directores("postulacion.enviada", {"empresa": empresa.nombre})
         return postulacion
 
+    def actualizar_borrador(
+        self, estudiante_id: int, postulacion_id: int, data: PostulacionUpdate
+    ) -> Postulacion:
+        """Flujo alterno 9.1.a de CU-06 ("Guardar y salir" y retomar desde el
+        paso 11 con lo ya guardado precargado): reemplaza las respuestas de la
+        bitácora y los documentos de un BORRADOR propio. Con `enviar=True` lo
+        envía formalmente (pasos 20-27) tras revalidar que todo esté completo."""
+        postulacion = self.repo.get_by_id(postulacion_id)
+        if postulacion is None or postulacion.estudiante_id != estudiante_id:
+            raise NoEncontradoError(
+                f"No existe una postulación con id={postulacion_id} para este estudiante."
+            )
+        if postulacion.estado != PostulacionEstadoEnum.BORRADOR:
+            raise ReglaDeNegocioError("Solo se puede modificar una postulación en estado BORRADOR.")
+
+        empresa = postulacion.empresa
+        self._validar_pertenencia(
+            empresa,
+            [r.pregunta_id for r in data.respuestas_bitacora],
+            [d.documento_requerido_id for d in data.documentos_postulacion],
+        )
+        if data.enviar:
+            self._validar_completitud(
+                empresa,
+                {r.pregunta_id for r in data.respuestas_bitacora},
+                {d.documento_requerido_id for d in data.documentos_postulacion},
+            )
+
+        # Se vacían las colecciones y se hace flush ANTES de insertar lo nuevo:
+        # la unidad de trabajo de SQLAlchemy ejecuta los INSERT antes que los
+        # DELETE dentro de un mismo flush, lo que chocaría con las restricciones
+        # de unicidad (una respuesta/documento por pregunta/requisito).
+        postulacion.respuestas_bitacora.clear()
+        postulacion.documentos_postulacion.clear()
+        self.db.flush()
+
+        for r in data.respuestas_bitacora:
+            self.repo.agregar_respuesta_bitacora(
+                postulacion,
+                RespuestaBitacora(pregunta_id=r.pregunta_id, respuesta_texto=r.respuesta_texto),
+            )
+        for d in data.documentos_postulacion:
+            self.repo.agregar_documento(
+                postulacion,
+                DocumentoPostulacion(
+                    documento_requerido_id=d.documento_requerido_id, archivo=d.archivo
+                ),
+            )
+
+        if data.enviar:
+            postulacion.estado = PostulacionEstadoEnum.PENDIENTE_DE_APROBACION
+            postulacion.fecha_postulacion = datetime.utcnow()
+        self.repo.guardar(postulacion)
+        self.db.commit()
+        self.db.refresh(postulacion)
+
+        if data.enviar:
+            self._notificar_directores("postulacion.enviada", {"empresa": empresa.nombre})
+        return postulacion
+
     def enviar_borrador(self, estudiante_id: int, postulacion_id: int) -> Postulacion:
         """Flujo alterno 9.1.a: promueve un BORRADOR ya existente a
         PENDIENTE_DE_APROBACION, revalidando bitácora y documentos completos."""
@@ -151,20 +221,40 @@ class PostulacionService:
         self._notificar_directores("postulacion.enviada", {"empresa": postulacion.empresa.nombre})
         return postulacion
 
+    @staticmethod
+    def _validar_pertenencia(
+        empresa, pregunta_ids: list[int], documento_ids: list[int]
+    ) -> None:
+        """Las preguntas y documentos recibidos deben ser los de la empresa elegida
+        y no repetirse (una respuesta por pregunta, un archivo por documento)."""
+        validas_preguntas = {p.id for p in empresa.preguntas_bitacora}
+        validos_documentos = {d.id for d in empresa.documentos_requeridos}
+        if not set(pregunta_ids) <= validas_preguntas or len(set(pregunta_ids)) != len(pregunta_ids):
+            raise ReglaDeNegocioError(
+                "Las respuestas deben corresponder a preguntas de la bitácora de la empresa, "
+                "sin repetir ninguna."
+            )
+        if not set(documento_ids) <= validos_documentos or len(set(documento_ids)) != len(
+            documento_ids
+        ):
+            raise ReglaDeNegocioError(
+                "Los documentos deben corresponder a los requeridos por la empresa, sin repetir ninguno."
+            )
+
     def _validar_completitud(
         self, empresa, pregunta_ids_respondidas: set[int], documento_ids_cargados: set[int]
     ) -> None:
         """Excepciones 21.1.a (documentos incompletos) y 22.1.a (bitácora
         incompleta): solo se exigen al ENVIAR formalmente, nunca al guardar
         como borrador."""
-        preguntas_ids = {p.id for p in empresa.preguntas_bitacora}
+        preguntas_ids = {p.id for p in empresa.preguntas_bitacora if p.activa}
         faltantes = preguntas_ids - pregunta_ids_respondidas
         if faltantes:
             raise ReglaDeNegocioError(
                 f"Faltan responder {len(faltantes)} pregunta(s) obligatoria(s) de la bitácora."
             )
 
-        documentos_ids = {d.id for d in empresa.documentos_requeridos}
+        documentos_ids = {d.id for d in empresa.documentos_requeridos if d.activa}
         faltantes_doc = documentos_ids - documento_ids_cargados
         if faltantes_doc:
             raise ReglaDeNegocioError(
@@ -237,6 +327,13 @@ class PostulacionService:
                     f"Aún no se completan las horas requeridas ({horas_aceptadas} de "
                     f"{postulacion.empresa.horas_requeridas})."
                 )
+            # Flujo 9.1.a: tras rechazar el cierre, el estudiante debe corregir
+            # (un avance nuevo aceptado) antes de volver a quedar pendiente de cierre.
+            if not postulacion.pendiente_cierre:
+                raise ReglaDeNegocioError(
+                    "El cierre fue rechazado anteriormente; el estudiante aún no tiene "
+                    "avances aceptados posteriores a esa observación."
+                )
 
             postulacion.estado = PostulacionEstadoEnum.FINALIZADA
             postulacion.fecha_cierre = datetime.utcnow()
@@ -250,6 +347,7 @@ class PostulacionService:
                 raise ReglaDeNegocioError("La observación es obligatoria al rechazar el cierre.")
 
             postulacion.observacion_cierre = data.observacion_cierre
+            postulacion.fecha_rechazo_cierre = datetime.utcnow()
             self.repo.guardar(postulacion)
             self.db.commit()
             notificar(

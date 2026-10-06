@@ -152,7 +152,9 @@ class AvanceSemanalListItem(BaseModel):
     estudiante_nombre: str
     empresa_nombre: str
     semana_calendario: date
+    actividades_a_desarrollar: str
     fecha_envio: datetime
     estado: AvanceEstadoEnum
     horas_totales: Decimal
     calificacion_coordinador: Decimal | None
+    tiene_observacion_docente: bool = False

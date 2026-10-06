@@ -9,6 +9,7 @@ import {
   PostulacionDecision,
   PostulacionListItem,
   PostulacionOut,
+  PostulacionUpdate,
 } from '../models/postulacion.model';
 
 /** CU-06: postulación del Estudiante a una empresa receptora. */
@@ -19,6 +20,12 @@ export class PostulacionService {
 
   crear(data: PostulacionCreate): Observable<PostulacionOut> {
     return this.http.post<PostulacionOut>(this.baseUrl, data);
+  }
+
+  /** Flujo alterno 9.1.a: reemplaza documentos y respuestas de un BORRADOR propio
+   * ("Guardar y salir") o lo envía formalmente con `enviar: true`. */
+  actualizarBorrador(postulacionId: number, data: PostulacionUpdate): Observable<PostulacionOut> {
+    return this.http.put<PostulacionOut>(`${this.baseUrl}/${postulacionId}`, data);
   }
 
   /** Flujo alterno 9.1.a: promueve un BORRADOR propio a PENDIENTE_DE_APROBACION. */

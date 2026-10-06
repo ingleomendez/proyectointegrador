@@ -34,9 +34,6 @@ type Vista = 'cargando' | 'error' | 'sin-practica' | 'en-tramite' | 'matriculado
  * Casos: sin práctica (2.1.a, campos en blanco y enlace a "Solicitud de
  * práctica"), solicitud en trámite (2.1.b), práctica matriculada y práctica
  * finalizada (misma información, solo lectura).
- *
- * Nota: el modelo de empresa no tiene teléfono ni dirección, que CU-07 paso 9
- * menciona; se omiten hasta que exista ese dato en `empresas_receptoras`.
  */
 @Component({
   selector: 'app-mi-practica',

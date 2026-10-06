@@ -81,6 +81,12 @@ class AvanceSemanal(Base):
     # Datos de contexto para las pantallas del Coordinador / Docente Asesor /
     # Director: los esquemas de salida los leen con `from_attributes`.
     @property
+    def tiene_observacion_docente(self) -> bool:
+        """Bandera para los listados (CU-10, paso 3: "avances pendientes de
+        observación") sin tener que pedir el detalle de cada avance."""
+        return bool(self.observacion_docente_asesor)
+
+    @property
     def estudiante_nombre(self) -> str:
         return self.postulacion.estudiante.nombre_completo
 

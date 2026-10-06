@@ -39,6 +39,23 @@ class ObjetivoPracticaService:
             raise NoEncontradoError("Aún no se han planteado objetivos para esta práctica.")
         return objetivo
 
+    def obtener(self, objetivo_id: int) -> ObjetivoPractica:
+        objetivo = self.db.get(ObjetivoPractica, objetivo_id)
+        if objetivo is None:
+            raise NoEncontradoError(f"No existe un planteamiento de objetivos con id={objetivo_id}.")
+        return objetivo
+
+    def obtener_de_postulacion(self, postulacion_id: int) -> ObjetivoPractica:
+        """GET /objetivos/postulacion/{id} (Director): objetivos de una práctica
+        concreta. Lo usa CU-04 para saber desde qué semana corre el seguimiento
+        (fecha en que se aprobaron los objetivos) y marcar las "No reportadas"."""
+        if self.postulacion_repo.get_by_id(postulacion_id) is None:
+            raise NoEncontradoError(f"No existe una postulación con id={postulacion_id}.")
+        objetivo = self.repo.get_by_postulacion_id(postulacion_id)
+        if objetivo is None:
+            raise NoEncontradoError("Aún no se han planteado objetivos para esta práctica.")
+        return objetivo
+
     def listar_pendientes_docente(self, docente_asesor_id: int) -> list[ObjetivoPractica]:
         """CU-11, pasos 11-13: cola de objetivos pendientes de decisión del
         Docente Asesor autenticado."""

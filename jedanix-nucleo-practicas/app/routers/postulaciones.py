@@ -14,6 +14,7 @@ from app.schemas.postulacion import (
     PostulacionDecision,
     PostulacionListItem,
     PostulacionOut,
+    PostulacionUpdate,
 )
 from app.services.postulacion_service import PostulacionService
 
@@ -50,6 +51,22 @@ def enviar_borrador(
 ) -> Postulacion:
     """Flujo alterno 9.1.a: promueve un BORRADOR propio a PENDIENTE_DE_APROBACION."""
     return PostulacionService(db).enviar_borrador(usuario_actual.id, postulacion_id)
+
+
+@router.put(
+    "/{postulacion_id}",
+    response_model=PostulacionOut,
+    dependencies=[Depends(requiere_rol(RolEnum.ESTUDIANTE))],
+)
+def actualizar_borrador(
+    postulacion_id: int,
+    data: PostulacionUpdate,
+    usuario_actual: Usuario = Depends(get_current_usuario),
+    db: Session = Depends(get_db),
+) -> Postulacion:
+    """Flujo alterno 9.1.a: "Guardar y salir" sobre un BORRADOR propio (o envío
+    formal con `enviar=true`), reemplazando documentos y respuestas."""
+    return PostulacionService(db).actualizar_borrador(usuario_actual.id, postulacion_id, data)
 
 
 @router.get(

@@ -1,34 +1,67 @@
-<mat-toolbar color="primary">
-  <a routerLink="/" class="marca">JEDANIX</a>
+<div class="disposicion">
+  <aside class="barra-lateral" [class.abierta]="menuAbierto()" aria-label="Barra lateral">
+    <a routerLink="/" class="marca" (click)="cerrarMenu()">
+      <span class="logo">J</span>
+      <span class="marca-texto">
+        JEDANIX
+        <small>Gestión de prácticas</small>
+      </span>
+    </a>
 
-  <nav class="menu" aria-label="Navegación principal">
-    @for (item of menu(); track item.ruta) {
-      <a class="item-menu" [routerLink]="item.ruta" routerLinkActive="activo" [title]="item.etiqueta">
-        <mat-icon>{{ item.icono }}</mat-icon>
-        <span class="etiqueta-menu">{{ item.etiqueta }}</span>
+    <nav class="menu" aria-label="Navegación principal">
+      @for (item of menu(); track item.ruta) {
+        @if (item.deshabilitado) {
+          <span class="item-menu deshabilitado" [title]="item.ayuda ?? ''" aria-disabled="true">
+            <mat-icon>{{ item.icono }}</mat-icon>
+            <span>{{ item.etiqueta }}</span>
+            <mat-icon class="candado">lock</mat-icon>
+          </span>
+        } @else {
+          <a class="item-menu" [routerLink]="item.ruta" routerLinkActive="activo">
+            <mat-icon>{{ item.icono }}</mat-icon>
+            <span>{{ item.etiqueta }}</span>
+          </a>
+        }
+      }
+    </nav>
+
+    <div class="pie-lateral">
+      <a class="item-menu" routerLink="/perfil" routerLinkActive="activo">
+        <mat-icon>account_circle</mat-icon>
+        <span>Mi Perfil</span>
       </a>
-    }
-  </nav>
 
-  <span class="espaciador"></span>
+      @if (authService.usuario(); as usuario) {
+        <div class="tarjeta-usuario">
+          <span class="avatar">{{ inicial() }}</span>
+          <span class="datos-usuario">
+            <strong>{{ usuario.nombreCompleto }}</strong>
+            <small>{{ nombreRol() }}</small>
+          </span>
+        </div>
+      }
 
-  @if (authService.usuario(); as usuario) {
-    <span class="usuario-info">{{ usuario.nombreCompleto }} · {{ nombreRol() }}</span>
+      <button type="button" class="item-menu salir" (click)="cerrarSesion()">
+        <mat-icon>logout</mat-icon>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  @if (menuAbierto()) {
+    <div class="velo" (click)="cerrarMenu()" aria-hidden="true"></div>
   }
-  <a mat-icon-button routerLink="/perfil" aria-label="Mi perfil" title="Mi perfil">
-    <mat-icon>account_circle</mat-icon>
-  </a>
-  <button
-    mat-icon-button
-    type="button"
-    (click)="cerrarSesion()"
-    aria-label="Cerrar sesión"
-    title="Cerrar sesión"
-  >
-    <mat-icon>logout</mat-icon>
-  </button>
-</mat-toolbar>
 
-<main class="contenido">
-  <router-outlet></router-outlet>
-</main>
+  <div class="principal">
+    <header class="barra-movil">
+      <button type="button" class="boton-menu" (click)="alternarMenu()" aria-label="Abrir menú">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="marca-movil">JEDANIX</span>
+    </header>
+
+    <main class="contenido">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

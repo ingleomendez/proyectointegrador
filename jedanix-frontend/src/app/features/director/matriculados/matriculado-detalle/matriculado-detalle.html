@@ -29,12 +29,41 @@
         <span>Cierre formal el {{ p.fecha_cierre | date: 'dd/MM/yyyy HH:mm' }}.</span>
       </div>
     </div>
+  } @else if (cierreRechazado()) {
+    <div class="banner-cierre banner-neutro">
+      <mat-icon>undo</mat-icon>
+      <div>
+        <strong>Cierre rechazado: pendiente de corrección</strong>
+        <span>
+          Observación: {{ p.observacion_cierre }}. Volverá a "Pendiente de aprobación práctica" cuando
+          se acepte un avance posterior.
+        </span>
+      </div>
+    </div>
   } @else {
     <div class="banner-cierre banner-neutro">
       <mat-icon>hourglass_top</mat-icon>
       <div>
         <strong>No está en "Pendiente de aprobación práctica"</strong>
         <span>Aún no completa el 100 % de las horas requeridas.</span>
+      </div>
+    </div>
+  }
+
+  <!-- Alerta de seguimiento: semanas cerradas sin avance (CU-08, notas) -->
+  @if (noReportadas().length > 0) {
+    <div class="banner-cierre banner-alerta">
+      <mat-icon>warning</mat-icon>
+      <div>
+        <strong>
+          {{ noReportadas().length === 1 ? '1 semana sin reportar' : noReportadas().length + ' semanas sin reportar' }}
+        </strong>
+        <span>
+          El estudiante no registró avance en la(s) semana(s) del
+          @for (semana of noReportadas(); track semana; let ultima = $last) {
+            {{ semana | date: 'dd/MM/yyyy' }}{{ ultima ? '.' : ', ' }}
+          }
+        </span>
       </div>
     </div>
   }
@@ -106,24 +135,35 @@
           </tr>
         </thead>
         <tbody>
-          @for (f of historial(); track f.avance.id) {
-            <tr>
-              <td>{{ f.avance.semana_calendario | date: 'dd/MM/yyyy' }}</td>
-              <td>{{ f.avance.fecha_envio | date: 'dd/MM/yyyy HH:mm' }}</td>
-              <td>{{ f.avance.horas_totales }}</td>
-              <td>
-                <span
-                  class="chip"
-                  [class.chip-aprobado]="f.avance.estado === AvanceEstadoEnum.ACEPTADO"
-                  [class.chip-observado]="f.avance.estado === AvanceEstadoEnum.OBSERVADO"
-                  [class.chip-pendiente]="f.avance.estado === AvanceEstadoEnum.PENDIENTE_DE_REVISION"
-                >
-                  {{ etiqueta(f.avance.estado) }}
-                </span>
-              </td>
-              <td>{{ f.avance.calificacion_coordinador ?? '—' }}</td>
-              <td>{{ f.observacionDocente ?? '—' }}</td>
-            </tr>
+          @for (f of historial(); track f.semana) {
+            @if (f.avance; as avance) {
+              <tr>
+                <td>{{ avance.semana_calendario | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ avance.fecha_envio | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ avance.horas_totales }}</td>
+                <td>
+                  <span
+                    class="chip"
+                    [class.chip-aprobado]="avance.estado === AvanceEstadoEnum.ACEPTADO"
+                    [class.chip-observado]="avance.estado === AvanceEstadoEnum.OBSERVADO"
+                    [class.chip-pendiente]="avance.estado === AvanceEstadoEnum.PENDIENTE_DE_REVISION"
+                  >
+                    {{ etiqueta(avance.estado) }}
+                  </span>
+                </td>
+                <td>{{ avance.calificacion_coordinador ?? '—' }}</td>
+                <td>{{ f.observacionDocente ?? '—' }}</td>
+              </tr>
+            } @else {
+              <tr class="fila-no-reportada">
+                <td>{{ f.semana | date: 'dd/MM/yyyy' }}</td>
+                <td>—</td>
+                <td>0</td>
+                <td><span class="chip chip-rechazado">No reportada</span></td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+            }
           }
         </tbody>
       </table>

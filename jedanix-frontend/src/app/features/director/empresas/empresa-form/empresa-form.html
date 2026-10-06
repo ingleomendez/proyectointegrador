@@ -36,6 +36,20 @@
       <mat-error>Ingresa un número de horas mayor que cero.</mat-error>
     </mat-form-field>
 
+    <div class="fila-campos">
+      <mat-form-field appearance="outline">
+        <mat-label>Teléfono</mat-label>
+        <input matInput type="tel" formControlName="telefono" autocomplete="off" />
+        <mat-error>El teléfono es obligatorio.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Dirección</mat-label>
+        <input matInput formControlName="direccion" autocomplete="off" />
+        <mat-error>La dirección es obligatoria.</mat-error>
+      </mat-form-field>
+    </div>
+
     <h2>Responsables</h2>
     <div class="fila-campos">
       <mat-form-field appearance="outline">
@@ -67,7 +81,7 @@
 
     @if (!esEdicion) {
       <h2>Bitácora</h2>
-      <p class="subtitulo">Preguntas que el estudiante responderá al postularse (al menos una).</p>
+      <p class="subtitulo">Preguntas de texto libre que el estudiante responderá al postularse (al menos una).</p>
       <div formArrayName="preguntas_bitacora">
         @for (pregunta of preguntas.controls; track $index) {
           <div class="fila-campos" [formGroupName]="$index">
@@ -75,14 +89,6 @@
               <mat-label>Pregunta {{ $index + 1 }}</mat-label>
               <input matInput formControlName="enunciado" />
               <mat-error>El enunciado es obligatorio.</mat-error>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Tipo de respuesta</mat-label>
-              <mat-select formControlName="tipo_respuesta">
-                @for (tipo of tiposRespuesta; track tipo) {
-                  <mat-option [value]="tipo">{{ etiquetaTipo[tipo] }}</mat-option>
-                }
-              </mat-select>
             </mat-form-field>
             <button
               mat-icon-button
@@ -127,7 +133,7 @@
       </div>
     } @else {
       <p class="subtitulo">
-        Las preguntas de bitácora y los documentos requeridos se agregan desde el detalle de la empresa.
+        Las preguntas de bitácora y los documentos requeridos se agregan, editan o eliminan desde el detalle de la empresa.
       </p>
     }
 

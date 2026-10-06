@@ -85,6 +85,10 @@
     </mat-card-header>
     <mat-card-content>
       <dl class="datos">
+        <dt>Teléfono</dt>
+        <dd>{{ empresa()?.telefono || '—' }}</dd>
+        <dt>Dirección</dt>
+        <dd>{{ empresa()?.direccion || '—' }}</dd>
         <dt>Docente Asesor</dt>
         <dd>{{ empresa()?.docente_asesor?.nombre_completo }}</dd>
         <dt>Fecha de inicio</dt>

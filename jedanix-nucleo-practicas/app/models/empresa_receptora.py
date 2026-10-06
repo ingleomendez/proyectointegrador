@@ -28,6 +28,12 @@ class EmpresaReceptora(Base):
     requisitos_generales: Mapped[str] = mapped_column(Text, nullable=False)
     horas_requeridas: Mapped[int] = mapped_column(Integer, nullable=False)
 
+    # CU-07, paso 9: el estudiante ve el teléfono y la dirección de la empresa.
+    # Nulos solo en empresas creadas antes de que existieran estos campos; el
+    # formulario del Director los exige al crear o editar.
+    telefono: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    direccion: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
     estado: Mapped[EmpresaEstadoEnum] = mapped_column(
         PgEnum(EmpresaEstadoEnum, name="empresa_estado_enum", native_enum=True),
         nullable=False,

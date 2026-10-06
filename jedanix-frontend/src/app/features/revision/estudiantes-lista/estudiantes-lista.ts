@@ -16,7 +16,6 @@ import { ObjetivoService } from '../../../core/services/objetivo.service';
 import { PostulacionService } from '../../../core/services/postulacion.service';
 import { mensajeDeError } from '../../../core/utils/errores';
 import { rutaInicioDeRol } from '../../../core/utils/menu-rol';
-import { detallesDeAvances } from '../revision.util';
 
 interface FilaEstudiante {
   postulacion: PostulacionListItem;
@@ -105,14 +104,10 @@ export class EstudiantesLista {
           ),
         );
     }
+    // El listado ya indica si el Docente Asesor observó cada avance (CU-10, paso 3).
     return this.avanceService.listarDocente().pipe(
-      switchMap((avances) => detallesDeAvances(this.avanceService, avances)),
-      switchMap((detalles) =>
-        of(
-          conteo(
-            detalles.filter((d) => !d.observacion_docente_asesor).map((d) => d.postulacion_id),
-          ),
-        ),
+      switchMap((avances) =>
+        of(conteo(avances.filter((a) => !a.tiene_observacion_docente).map((a) => a.postulacion_id))),
       ),
     );
   }

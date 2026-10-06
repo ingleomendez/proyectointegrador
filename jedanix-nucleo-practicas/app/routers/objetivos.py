@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -48,6 +48,21 @@ def obtener_mis_objetivos(
     return ObjetivoPracticaService(db).obtener_de_mi_practica(usuario_actual.id)
 
 
+# ---- CU-04 (Director): objetivos de una práctica concreta ----
+
+
+@router.get(
+    "/postulacion/{postulacion_id}",
+    response_model=ObjetivoPracticaOut,
+    dependencies=[Depends(requiere_rol(RolEnum.DIRECTOR))],
+)
+def obtener_objetivos_de_postulacion(
+    postulacion_id: int, db: Session = Depends(get_db)
+) -> ObjetivoPractica:
+    """404 si la práctica aún no tiene objetivos planteados."""
+    return ObjetivoPracticaService(db).obtener_de_postulacion(postulacion_id)
+
+
 # ---- CU-11 (Docente Asesor) ----
 
 
@@ -68,6 +83,17 @@ def listar_objetivos_pendientes(
     dependencies=[Depends(requiere_rol(RolEnum.DOCENTE_ASESOR))],
 )
 def decidir_objetivos(
-    objetivo_id: int, data: ObjetivoPracticaDecision, db: Session = Depends(get_db)
+    objetivo_id: int,
+    data: ObjetivoPracticaDecision,
+    usuario_actual: Usuario = Depends(get_current_usuario),
+    db: Session = Depends(get_db),
 ) -> ObjetivoPractica:
-    return ObjetivoPracticaService(db).decidir_objetivos(objetivo_id, data)
+    """CU-11: solo el Docente Asesor asignado a la empresa del estudiante decide."""
+    servicio = ObjetivoPracticaService(db)
+    objetivo = servicio.obtener(objetivo_id)
+    if objetivo.postulacion.empresa.docente_asesor_id != usuario_actual.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Estos objetivos pertenecen a un estudiante que no tienes asignado.",
+        )
+    return servicio.decidir_objetivos(objetivo_id, data)

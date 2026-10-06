@@ -10,20 +10,25 @@ import { catchError, forkJoin, of, switchMap } from 'rxjs';
 
 import { AvanceSemanalListItem, AvanceSemanalOut } from '../../../../core/models/avance.model';
 import { EmpresaReceptoraOut } from '../../../../core/models/empresa.model';
-import { AvanceEstadoEnum, PostulacionEstadoEnum } from '../../../../core/models/enums.model';
+import { AvanceEstadoEnum, ObjetivoEstadoEnum, PostulacionEstadoEnum } from '../../../../core/models/enums.model';
+import { ObjetivoPracticaOut } from '../../../../core/models/objetivo.model';
 import { PostulacionOut } from '../../../../core/models/postulacion.model';
 import { UsuarioOut } from '../../../../core/models/usuario.model';
 import { AvanceService } from '../../../../core/services/avance.service';
 import { EmpresaService } from '../../../../core/services/empresa.service';
+import { ObjetivoService } from '../../../../core/services/objetivo.service';
 import { PostulacionService } from '../../../../core/services/postulacion.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { mensajeDeError } from '../../../../core/utils/errores';
-import { etiquetaEstadoAvance } from '../../../../core/utils/semana';
+import { etiquetaEstadoAvance, semanasNoReportadas } from '../../../../core/utils/semana';
 import { detallesDeAvances } from '../../../revision/revision.util';
-import { alcanzoCien, horasAceptadas, porcentajeDeHoras } from '../horas';
+import { horasAceptadas, porcentajeDeHoras } from '../horas';
 
 interface FilaHistorial {
-  avance: AvanceSemanalListItem;
+  /** Semana calendario (lunes, `YYYY-MM-DD`). */
+  semana: string;
+  /** `null` cuando la semana quedó "No reportada" (CU-08, excepción 5.1.b). */
+  avance: AvanceSemanalListItem | null;
   observacionDocente: string | null;
 }
 
@@ -33,7 +38,8 @@ interface FilaHistorial {
  * historial cronológico de avances (fecha, horas, calificación y observación),
  * acumulado de horas frente a las requeridas y, de forma destacada, si está en
  * el subconjunto "Pendiente de aprobación práctica" (con acceso directo al
- * cierre formal, flujo 6.1.a).
+ * cierre formal, flujo 6.1.a). Las semanas ya cerradas sin avance aparecen
+ * como "No reportada" y generan una alerta de seguimiento (CU-08, notas).
  */
 @Component({
   selector: 'app-matriculado-detalle',
@@ -53,6 +59,7 @@ export class MatriculadoDetalle {
   private readonly postulacionService = inject(PostulacionService);
   private readonly empresaService = inject(EmpresaService);
   private readonly avanceService = inject(AvanceService);
+  private readonly objetivoService = inject(ObjetivoService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly route = inject(ActivatedRoute);
 
@@ -68,16 +75,27 @@ export class MatriculadoDetalle {
   protected readonly empresa = signal<EmpresaReceptoraOut | null>(null);
   protected readonly estudiante = signal<UsuarioOut | null>(null);
   protected readonly historial = signal<FilaHistorial[]>([]);
+  /** Lunes de las semanas cerradas sin avance, de la más reciente a la más antigua. */
+  protected readonly noReportadas = signal<string[]>([]);
 
-  protected readonly aceptadas = computed(() => horasAceptadas(this.historial().map((f) => f.avance)));
+  protected readonly aceptadas = computed(() =>
+    horasAceptadas(this.historial().flatMap((f) => (f.avance ? [f.avance] : []))),
+  );
   protected readonly requeridas = computed(() => this.empresa()?.horas_requeridas ?? 0);
   protected readonly porcentaje = computed(() => porcentajeDeHoras(this.aceptadas(), this.requeridas()));
-  /** Pasos 16-17: llegó al 100 % y la práctica sigue sin cerrarse. */
-  protected readonly pendienteCierre = computed(
-    () =>
-      this.postulacion()?.estado === PostulacionEstadoEnum.APROBADA &&
-      alcanzoCien(this.aceptadas(), this.requeridas()),
-  );
+  /** Pasos 16-17: llegó al 100 % y la práctica sigue sin cerrarse (el backend
+   * también la saca de aquí tras un rechazo del cierre, flujo 9.1.a). */
+  protected readonly pendienteCierre = computed(() => this.postulacion()?.pendiente_cierre ?? false);
+  /** Cierre rechazado que aún espera un avance aceptado posterior. */
+  protected readonly cierreRechazado = computed(() => {
+    const p = this.postulacion();
+    return (
+      p?.estado === PostulacionEstadoEnum.APROBADA &&
+      !!p.fecha_rechazo_cierre &&
+      !p.pendiente_cierre &&
+      this.porcentaje() >= 100
+    );
+  });
 
   constructor() {
     this.postulacionService
@@ -90,6 +108,10 @@ export class MatriculadoDetalle {
             estudiante: this.usuarioService
               .obtener(postulacion.estudiante.id)
               .pipe(catchError(() => of(null))),
+            // 404 = aún no hay objetivos: todavía no corre el seguimiento semanal.
+            objetivo: this.objetivoService
+              .obtenerDePostulacion(this.postulacionId)
+              .pipe(catchError(() => of(null))),
             avances: this.avanceService
               .listarDePostulacion(this.postulacionId)
               .pipe(
@@ -101,6 +123,7 @@ export class MatriculadoDetalle {
                     switchMap((detalles: AvanceSemanalOut[]) =>
                       of(
                         ordenados.map((avance) => ({
+                          semana: avance.semana_calendario,
                           avance,
                           observacionDocente:
                             detalles.find((d) => d.id === avance.id)?.observacion_docente_asesor ?? null,
@@ -114,10 +137,18 @@ export class MatriculadoDetalle {
         }),
       )
       .subscribe({
-        next: ({ empresa, estudiante, avances }) => {
+        next: ({ empresa, estudiante, objetivo, avances }) => {
           this.empresa.set(empresa);
           this.estudiante.set(estudiante);
-          this.historial.set(avances);
+          const faltantes = this.calcularNoReportadas(objetivo, avances);
+          this.noReportadas.set(faltantes);
+          // Historial cronológico (más antigua primero) con las semanas vencidas intercaladas.
+          const sinReporte: FilaHistorial[] = faltantes.map((semana) => ({
+            semana,
+            avance: null,
+            observacionDocente: null,
+          }));
+          this.historial.set([...avances, ...sinReporte].sort((a, b) => a.semana.localeCompare(b.semana)));
           this.cargando.set(false);
         },
         error: (error) => {
@@ -125,5 +156,23 @@ export class MatriculadoDetalle {
           this.cargando.set(false);
         },
       });
+  }
+
+  /** Semanas cerradas sin avance, desde que los objetivos fueron aprobados
+   * (antes de eso el estudiante no puede registrar) hasta la semana anterior a
+   * la actual, o hasta el cierre si la práctica ya finalizó. */
+  private calcularNoReportadas(
+    objetivo: ObjetivoPracticaOut | null,
+    filas: FilaHistorial[],
+  ): string[] {
+    if (objetivo?.estado !== ObjetivoEstadoEnum.APROBADOS) {
+      return [];
+    }
+    const finalizada = this.postulacion()?.estado === PostulacionEstadoEnum.FINALIZADA;
+    return semanasNoReportadas(
+      objetivo.fecha_decision,
+      filas.map((f) => f.semana),
+      finalizada ? this.postulacion()?.fecha_cierre : null,
+    );
   }
 }

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -11,12 +11,14 @@ from app.models.usuario import Usuario
 from app.schemas.empresa_receptora import (
     DocumentoRequeridoCreate,
     DocumentoRequeridoOut,
+    DocumentoRequeridoUpdate,
     EmpresaReceptoraCreate,
     EmpresaReceptoraListItem,
     EmpresaReceptoraOut,
     EmpresaReceptoraUpdate,
     PreguntaBitacoraCreate,
     PreguntaBitacoraOut,
+    PreguntaBitacoraUpdate,
 )
 from app.services.empresa_service import EmpresaReceptoraService
 
@@ -94,6 +96,77 @@ def agregar_documento_requerido(
     empresa_id: int, data: DocumentoRequeridoCreate, db: Session = Depends(get_db)
 ):
     return EmpresaReceptoraService(db).agregar_documento_requerido(empresa_id, data)
+
+
+@router.put(
+    "/{empresa_id}/preguntas/{pregunta_id}",
+    response_model=PreguntaBitacoraOut,
+    dependencies=[Depends(requiere_rol(RolEnum.DIRECTOR))],
+)
+def actualizar_pregunta(
+    empresa_id: int,
+    pregunta_id: int,
+    data: PreguntaBitacoraUpdate,
+    confirmar_duplicado: bool = Query(default=False),
+    db: Session = Depends(get_db),
+):
+    """CU-02, flujo alterno 4.1.a. Enunciado duplicado -> 409 con
+    `requiere_confirmacion`; repetir con `?confirmar_duplicado=true`."""
+    return EmpresaReceptoraService(db).actualizar_pregunta(
+        empresa_id, pregunta_id, data, confirmar_duplicado=confirmar_duplicado
+    )
+
+
+@router.delete(
+    "/{empresa_id}/preguntas/{pregunta_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(requiere_rol(RolEnum.DIRECTOR))],
+)
+def eliminar_pregunta(
+    empresa_id: int,
+    pregunta_id: int,
+    confirmar: bool = Query(default=False),
+    db: Session = Depends(get_db),
+) -> Response:
+    """Excepción 22.1.a: respuestas en postulaciones en curso -> 409 con
+    `requiere_confirmacion`; repetir con `?confirmar=true`."""
+    EmpresaReceptoraService(db).eliminar_pregunta(empresa_id, pregunta_id, confirmar=confirmar)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.put(
+    "/{empresa_id}/documentos-requeridos/{documento_id}",
+    response_model=DocumentoRequeridoOut,
+    dependencies=[Depends(requiere_rol(RolEnum.DIRECTOR))],
+)
+def actualizar_documento_requerido(
+    empresa_id: int,
+    documento_id: int,
+    data: DocumentoRequeridoUpdate,
+    db: Session = Depends(get_db),
+):
+    return EmpresaReceptoraService(db).actualizar_documento_requerido(
+        empresa_id, documento_id, data
+    )
+
+
+@router.delete(
+    "/{empresa_id}/documentos-requeridos/{documento_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(requiere_rol(RolEnum.DIRECTOR))],
+)
+def eliminar_documento_requerido(
+    empresa_id: int,
+    documento_id: int,
+    confirmar: bool = Query(default=False),
+    db: Session = Depends(get_db),
+) -> Response:
+    """Excepción 22.1.a: cargas en postulaciones en curso -> 409 con
+    `requiere_confirmacion`; repetir con `?confirmar=true`."""
+    EmpresaReceptoraService(db).eliminar_documento_requerido(
+        empresa_id, documento_id, confirmar=confirmar
+    )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.patch(

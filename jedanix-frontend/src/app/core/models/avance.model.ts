@@ -74,10 +74,14 @@ export interface AvanceSemanalListItem {
   estudiante_nombre: string;
   empresa_nombre: string;
   semana_calendario: string;
+  /** Resumen del avance (CU-08, paso 4). Opcional hasta que el backend lo incluya en el listado. */
+  actividades_a_desarrollar?: string;
   fecha_envio: string;
   estado: AvanceEstadoEnum;
   horas_totales: Decimal;
   calificacion_coordinador: Decimal | null;
+  /** CU-10: el Docente Asesor ya dejó observación (evita pedir el detalle de cada avance). */
+  tiene_observacion_docente?: boolean;
 }
 
 /** CU-09: exactamente uno de los dos (calificar -> ACEPTADO, observar ->

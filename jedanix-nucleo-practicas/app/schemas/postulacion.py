@@ -62,6 +62,17 @@ class PostulacionCreate(BaseModel):
     documentos_postulacion: list[DocumentoPostulacionInput] = Field(default_factory=list)
 
 
+class PostulacionUpdate(BaseModel):
+    """CU-06, flujo alterno 9.1.a ("Guardar y salir" y retomar): reemplaza las
+    respuestas de la bitácora y los documentos de un BORRADOR propio. Con
+    `enviar=True` además lo envía formalmente (pasos 20-27), validando que la
+    bitácora y los documentos queden completos."""
+
+    enviar: bool = False
+    respuestas_bitacora: list[RespuestaBitacoraInput] = Field(default_factory=list)
+    documentos_postulacion: list[DocumentoPostulacionInput] = Field(default_factory=list)
+
+
 class PostulacionDecision(BaseModel):
     """CU-03, pasos 13-15 y flujo alterno 13.1.a: decisión del Director sobre una
     solicitud pendiente. `motivo_rechazo` es obligatorio solo si `aprobar=False`
@@ -95,6 +106,8 @@ class PostulacionOut(BaseModel):
     fecha_decision: datetime | None
     fecha_cierre: datetime | None
     observacion_cierre: str | None
+    fecha_rechazo_cierre: datetime | None
+    pendiente_cierre: bool
     respuestas_bitacora: list[RespuestaBitacoraOut]
     documentos_postulacion: list[DocumentoPostulacionOut]
 
@@ -110,3 +123,10 @@ class PostulacionListItem(BaseModel):
     empresa: EmpresaReceptoraListItem
     estado: PostulacionEstadoEnum
     fecha_postulacion: datetime | None
+    fecha_decision: datetime | None
+    observacion_cierre: str | None
+    # CU-04, paso 3: porcentaje de horas completadas (horas ACEPTADAS / requeridas).
+    horas_acumuladas: float
+    horas_requeridas: int
+    # CU-04, pasos 16-17: pertenece al subconjunto "Pendiente de aprobación práctica".
+    pendiente_cierre: bool

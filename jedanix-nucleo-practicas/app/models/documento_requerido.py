@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import Boolean, ForeignKey, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -20,6 +20,10 @@ class DocumentoRequerido(Base):
         ForeignKey("empresas_receptoras.id", ondelete="CASCADE"), nullable=False
     )
     nombre_documento: Mapped[str] = mapped_column(String(150), nullable=False)
+    # Baja lógica, igual que en `PreguntaBitacora` (CU-02, excepción 22.1.a).
+    activa: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=True, server_default=text("true")
+    )
 
     # --- Relaciones ---
     empresa: Mapped["EmpresaReceptora"] = relationship(

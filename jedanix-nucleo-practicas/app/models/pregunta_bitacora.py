@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, Text
+from sqlalchemy import Boolean, ForeignKey, Text, text
 from sqlalchemy import Enum as PgEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -34,6 +34,12 @@ class PreguntaBitacora(Base):
     enunciado: Mapped[str] = mapped_column(Text, nullable=False)
     tipo_respuesta: Mapped[TipoRespuestaEnum] = mapped_column(
         PgEnum(TipoRespuestaEnum, name="tipo_respuesta_enum", native_enum=True), nullable=False
+    )
+    # Baja lógica (CU-02, excepción 22.1.a): una pregunta eliminada que ya tiene
+    # respuestas queda `activa=False`: deja de pedirse en postulaciones nuevas
+    # pero las ya enviadas conservan la respuesta original.
+    activa: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=True, server_default=text("true")
     )
 
     # --- Relaciones ---

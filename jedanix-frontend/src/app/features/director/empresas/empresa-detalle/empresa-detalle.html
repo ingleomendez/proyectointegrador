@@ -60,6 +60,10 @@
         <dd>{{ e.requisitos_generales }}</dd>
         <dt>Horas requeridas</dt>
         <dd>{{ e.horas_requeridas }}</dd>
+        <dt>Teléfono</dt>
+        <dd>{{ e.telefono || 'Sin registrar' }}</dd>
+        <dt>Dirección</dt>
+        <dd>{{ e.direccion || 'Sin registrar' }}</dd>
         <dt>Coordinador</dt>
         <dd>{{ e.coordinador.nombre_completo }} ({{ e.coordinador.correo_institucional }})</dd>
         <dt>Docente Asesor</dt>
@@ -74,11 +78,50 @@
       @if (e.preguntas_bitacora.length === 0) {
         <p class="mensaje-vacio">Esta empresa no tiene preguntas de bitácora.</p>
       } @else {
-        <ol>
+        <ol class="lista-editable">
           @for (p of e.preguntas_bitacora; track p.id) {
-            <li>{{ p.enunciado }} <span class="chip chip-neutro">{{ etiquetaTipo[p.tipo_respuesta] }}</span></li>
+            <li>
+              @if (edicion()?.tipo === 'pregunta' && edicion()?.id === p.id) {
+                <form class="fila-campos" (ngSubmit)="guardarEdicion()">
+                  <mat-form-field appearance="outline" class="campo-ancho" subscriptSizing="dynamic">
+                    <mat-label>Enunciado</mat-label>
+                    <input matInput [formControl]="controlEdicion" />
+                    <mat-error>El enunciado es obligatorio.</mat-error>
+                  </mat-form-field>
+                  <button mat-flat-button color="primary" type="submit" [disabled]="procesando()">Guardar</button>
+                  <button mat-button type="button" (click)="cancelarEdicion()">Cancelar</button>
+                </form>
+                @if (confirmarDuplicadaEdicion(); as c) {
+                  <div class="aviso-confirmacion">
+                    <p>{{ c.mensaje }}</p>
+                    <div class="barra-acciones">
+                      <button mat-flat-button color="primary" type="button" [disabled]="procesando()" (click)="guardarEdicion(true)">
+                        Guardar de todas formas
+                      </button>
+                      <button mat-button type="button" (click)="confirmarDuplicadaEdicion.set(null)">Cancelar</button>
+                    </div>
+                  </div>
+                }
+              } @else {
+                <span class="texto-item">{{ p.enunciado }}</span>
+                <span class="acciones-item">
+                  <button mat-icon-button type="button" aria-label="Editar pregunta" [disabled]="procesando()" (click)="iniciarEdicion('pregunta', p.id, p.enunciado)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button type="button" aria-label="Eliminar pregunta" [disabled]="procesando()" (click)="pedirEliminar('pregunta', p.id, p.enunciado)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </span>
+              }
+            </li>
           }
         </ol>
+      }
+
+      @if (confirmarEliminar(); as c) {
+        @if (c.tipo === 'pregunta') {
+          <ng-container *ngTemplateOutlet="avisoEliminar; context: { c: c }"></ng-container>
+        }
       }
 
       <form [formGroup]="formPregunta" (ngSubmit)="agregarPregunta()" class="fila-campos">
@@ -86,14 +129,6 @@
           <mat-label>Nueva pregunta</mat-label>
           <input matInput formControlName="enunciado" />
           <mat-error>El enunciado es obligatorio.</mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label>Tipo de respuesta</mat-label>
-          <mat-select formControlName="tipo_respuesta">
-            @for (tipo of tiposRespuesta; track tipo) {
-              <mat-option [value]="tipo">{{ etiquetaTipo[tipo] }}</mat-option>
-            }
-          </mat-select>
         </mat-form-field>
         <button mat-flat-button color="primary" type="submit" [disabled]="procesando()">Agregar</button>
       </form>
@@ -118,11 +153,39 @@
       @if (e.documentos_requeridos.length === 0) {
         <p class="mensaje-vacio">Esta empresa no exige documentos para postularse.</p>
       } @else {
-        <ul>
+        <ul class="lista-editable">
           @for (d of e.documentos_requeridos; track d.id) {
-            <li>{{ d.nombre_documento }}</li>
+            <li>
+              @if (edicion()?.tipo === 'documento' && edicion()?.id === d.id) {
+                <form class="fila-campos" (ngSubmit)="guardarEdicion()">
+                  <mat-form-field appearance="outline" class="campo-ancho" subscriptSizing="dynamic">
+                    <mat-label>Nombre del documento</mat-label>
+                    <input matInput [formControl]="controlEdicion" />
+                    <mat-error>El nombre del documento es obligatorio.</mat-error>
+                  </mat-form-field>
+                  <button mat-flat-button color="primary" type="submit" [disabled]="procesando()">Guardar</button>
+                  <button mat-button type="button" (click)="cancelarEdicion()">Cancelar</button>
+                </form>
+              } @else {
+                <span class="texto-item">{{ d.nombre_documento }}</span>
+                <span class="acciones-item">
+                  <button mat-icon-button type="button" aria-label="Editar documento" [disabled]="procesando()" (click)="iniciarEdicion('documento', d.id, d.nombre_documento)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button type="button" aria-label="Eliminar documento" [disabled]="procesando()" (click)="pedirEliminar('documento', d.id, d.nombre_documento)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </span>
+              }
+            </li>
           }
         </ul>
+      }
+
+      @if (confirmarEliminar(); as c) {
+        @if (c.tipo === 'documento') {
+          <ng-container *ngTemplateOutlet="avisoEliminar; context: { c: c }"></ng-container>
+        }
       }
 
       <form [formGroup]="formDocumento" (ngSubmit)="agregarDocumento()" class="fila-campos">
@@ -136,3 +199,17 @@
     </mat-card-content>
   </mat-card>
 }
+
+<ng-template #avisoEliminar let-c="c">
+  <div class="aviso-confirmacion">
+    <p>{{ c.mensaje }}</p>
+    <div class="barra-acciones">
+      <button mat-flat-button color="warn" type="button" [disabled]="procesando()" (click)="eliminar()">
+        {{ c.forzado ? 'Eliminar de todas formas' : 'Sí, eliminar' }}
+      </button>
+      <button mat-button type="button" [disabled]="procesando()" (click)="confirmarEliminar.set(null)">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</ng-template>

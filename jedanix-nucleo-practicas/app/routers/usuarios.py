@@ -108,6 +108,17 @@ def inactivar_usuario(
     return UsuarioService(db).inactivar_usuario(usuario_id, forzar=forzar)
 
 
+@router.post(
+    "/{usuario_id}/reenviar-credenciales",
+    response_model=UsuarioOut,
+    dependencies=[Depends(requiere_rol(RolEnum.DIRECTOR))],
+)
+def reenviar_credenciales(usuario_id: int, db: Session = Depends(get_db)) -> Usuario:
+    """CU-01, excepción 19.1.a: genera una contraseña temporal nueva y la envía
+    al correo institucional del usuario."""
+    return UsuarioService(db).reenviar_credenciales(usuario_id)
+
+
 @router.patch(
     "/{usuario_id}/reactivar",
     response_model=UsuarioOut,

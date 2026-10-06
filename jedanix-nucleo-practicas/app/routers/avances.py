@@ -88,11 +88,23 @@ def listar_avances_coordinador(
     dependencies=[Depends(requiere_rol(RolEnum.COORDINADOR))],
 )
 def calificar_avance(
-    avance_id: int, data: AvanceCalificacion, db: Session = Depends(get_db)
+    avance_id: int,
+    data: AvanceCalificacion,
+    usuario_actual: Usuario = Depends(get_current_usuario),
+    db: Session = Depends(get_db),
 ) -> AvanceSemanal:
     """Exactamente uno de `calificacion_coordinador`/`comentario_coordinador`
-    (lo exige el esquema): califica -> ACEPTADO, comenta -> OBSERVADO."""
-    return AvanceSemanalService(db).calificar_avance(avance_id, data)
+    (lo exige el esquema): califica -> ACEPTADO, comenta -> OBSERVADO. CU-09
+    (notas): el Coordinador solo gestiona estudiantes de las empresas que el
+    Director le asignó."""
+    servicio = AvanceSemanalService(db)
+    avance = servicio.obtener(avance_id)
+    if avance.postulacion.empresa.coordinador_id != usuario_actual.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Este avance pertenece a un estudiante que no tienes asignado.",
+        )
+    return servicio.calificar_avance(avance_id, data)
 
 
 # ---- CU-10 (Docente Asesor) ----
@@ -115,11 +127,22 @@ def listar_avances_docente(
     dependencies=[Depends(requiere_rol(RolEnum.DOCENTE_ASESOR))],
 )
 def observar_avance(
-    avance_id: int, data: AvanceObservacionDocente, db: Session = Depends(get_db)
+    avance_id: int,
+    data: AvanceObservacionDocente,
+    usuario_actual: Usuario = Depends(get_current_usuario),
+    db: Session = Depends(get_db),
 ) -> AvanceSemanal:
     """Independiente de CU-09: nunca cambia el `estado` del avance, solo deja
-    una observación cualitativa."""
-    return AvanceSemanalService(db).observar_avance_docente(avance_id, data)
+    una observación cualitativa. Solo para estudiantes de las empresas donde el
+    usuario es el Docente Asesor asignado (CU-10)."""
+    servicio = AvanceSemanalService(db)
+    avance = servicio.obtener(avance_id)
+    if avance.postulacion.empresa.docente_asesor_id != usuario_actual.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Este avance pertenece a un estudiante que no tienes asignado.",
+        )
+    return servicio.observar_avance_docente(avance_id, data)
 
 
 # ---- Detalle (ruta dinámica al final) ----

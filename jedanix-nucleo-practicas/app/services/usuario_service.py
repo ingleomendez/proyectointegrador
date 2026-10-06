@@ -123,6 +123,33 @@ class UsuarioService:
         self.db.commit()
         return usuario
 
+    # ---- CU-01, excepción 19.1.a: reenviar credenciales ----
+
+    def reenviar_credenciales(self, usuario_id: int) -> Usuario:
+        """Reenvío manual desde el listado cuando el correo inicial no llegó.
+        El Núcleo solo guarda el hash de la contraseña, así que la original no
+        se puede recuperar: se genera una contraseña temporal NUEVA (la anterior
+        deja de servir) y se envía por correo. Solo para cuentas ACTIVAS."""
+        usuario = self.repo.get_by_id(usuario_id)
+        if usuario is None:
+            raise NoEncontradoError(f"No existe un usuario con id={usuario_id}.")
+        if usuario.estado != UsuarioEstadoEnum.ACTIVO:
+            raise ReglaDeNegocioError(
+                "Solo se pueden reenviar credenciales a cuentas activas; reactiva la cuenta primero."
+            )
+
+        password_temporal = _generar_password_temporal()
+        usuario.contrasena_hash = hash_password(password_temporal)
+        self.repo.guardar(usuario)
+        self.db.commit()
+
+        notificar(
+            "usuario.credenciales_reenviadas",
+            usuario.correo_institucional,
+            {"nombre_completo": usuario.nombre_completo, "password_temporal": password_temporal},
+        )
+        return usuario
+
     # ---- Gestionar Perfil: el propio usuario autenticado ----
 
     def actualizar_perfil(self, usuario_id: int, data: PerfilUpdate) -> Usuario:

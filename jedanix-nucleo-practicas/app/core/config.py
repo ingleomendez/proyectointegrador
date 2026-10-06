@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 120
     NOTIFICACIONES_SERVICE_URL: str
     NOTIFICACIONES_TIMEOUT_SECONDS: float = 2.0
+    # Clave compartida con el servicio de Notificaciones (cabecera X-API-Key). Vacía = no se envía.
+    NOTIFICACIONES_API_KEY: str = ""
     ENVIRONMENT: str = "development"
     # Orígenes del frontend que CORS deja pasar, separados por comas. Para otro
     # dominio/puerto (despliegue, otro equipo en la red) se define en el `.env`.

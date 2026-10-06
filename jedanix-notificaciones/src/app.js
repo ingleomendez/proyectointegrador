@@ -4,6 +4,7 @@ const express = require('express');
 const { pool } = require('./db');
 const config = require('./config');
 const { EventoInvalidoError } = require('./services/notificacionService');
+const { requiereClaveInterna } = require('./middleware/claveInterna');
 
 const app = express();
 
@@ -17,6 +18,9 @@ app.get('/salud', async (_req, res) => {
     res.status(503).json({ servicio: 'jedanix-notificaciones', estado: 'error', base_de_datos: err.message });
   }
 });
+
+// /salud queda abierta (monitoreo); el resto exige la clave interna si está configurada.
+app.use(requiereClaveInterna(config.claveInterna));
 
 app.use(require('./routes/eventos'));
 app.use(require('./routes/notificaciones'));

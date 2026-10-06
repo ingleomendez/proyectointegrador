@@ -25,6 +25,8 @@ const config = {
     usuario: (process.env.SMTP_USER || '').trim(),
     clave: process.env.SMTP_PASS || '',
   },
+  // Clave compartida con el Núcleo (cabecera X-API-Key). Vacía = sin protección (solo desarrollo).
+  claveInterna: (process.env.NOTIFICACIONES_API_KEY || '').trim(),
   remitente: process.env.MAIL_FROM || 'JEDANIX <no-reply@jedanix.local>',
   frontendUrl: (process.env.FRONTEND_URL || 'http://localhost:4200').replace(/\/+$/, ''),
   reintentos: {

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_usuario, requiere_rol
+from app.core.programas import PROGRAMAS_ACADEMICOS
 from app.models.enums import RolEnum
 from app.models.usuario import Usuario
 from app.schemas.usuario import (
@@ -61,6 +62,17 @@ def listar_usuarios(
     db: Session = Depends(get_db),
 ) -> list[Usuario]:
     return UsuarioService(db).listar(rol=rol)
+
+
+@router.get(
+    "/programas-academicos",
+    response_model=list[str],
+    dependencies=[Depends(requiere_rol(RolEnum.DIRECTOR))],
+)
+def listar_programas_academicos() -> list[str]:
+    """CU-01, paso 11: opciones del selector "Programa académico". Va antes de
+    "/{usuario_id}" para que "programas-academicos" no se lea como un id."""
+    return list(PROGRAMAS_ACADEMICOS)
 
 
 @router.get(

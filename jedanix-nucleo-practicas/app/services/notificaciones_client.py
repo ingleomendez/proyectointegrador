@@ -34,9 +34,18 @@ def notificar(evento: str, destinatario_correo: str, datos: dict | None = None) 
         "destinatario_correo": destinatario_correo,
         "datos": datos or {},
     }
+    headers = {"X-API-Key": settings.NOTIFICACIONES_API_KEY} if settings.NOTIFICACIONES_API_KEY else {}
     try:
         with httpx.Client(timeout=settings.NOTIFICACIONES_TIMEOUT_SECONDS) as client:
-            client.post(f"{settings.NOTIFICACIONES_SERVICE_URL}/eventos", json=payload)
+            respuesta = client.post(
+                f"{settings.NOTIFICACIONES_SERVICE_URL}/eventos", json=payload, headers=headers
+            )
+        if respuesta.status_code >= 400:
+            # No es un error para el usuario, pero sí algo que el operador debe ver
+            # (p. ej. clave interna distinta en los dos .env).
+            logger.warning(
+                "Notificaciones rechazó el evento '%s' (HTTP %s).", evento, respuesta.status_code
+            )
     except Exception:  # noqa: BLE001 — cualquier falla de red/timeout se traga a propósito
         logger.warning(
             "No se pudo notificar el evento '%s' a %s", evento, destinatario_correo, exc_info=True

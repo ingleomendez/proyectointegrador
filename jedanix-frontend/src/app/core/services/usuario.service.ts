@@ -38,6 +38,11 @@ export class UsuarioService {
     return this.http.get<UsuarioListItem[]>(this.baseUrl, { params });
   }
 
+  /** CU-01, paso 11: opciones del selector "Programa académico". */
+  programasAcademicos(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/programas-academicos`);
+  }
+
   obtener(id: number): Observable<UsuarioOut> {
     return this.http.get<UsuarioOut>(`${this.baseUrl}/${id}`);
   }

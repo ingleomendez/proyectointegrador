@@ -45,6 +45,16 @@ Con `npm run dev` el servicio se reinicia solo al guardar cambios. `npm test` co
 - **Con `SMTP_HOST`**: envía correos reales con Nodemailer (canal `SMTP`). Ejemplo con Gmail: `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`,
   `SMTP_SECURE=false`, `SMTP_USER=tu-correo@gmail.com`, `SMTP_PASS=<contraseña de aplicación>`.
 
+## Seguridad entre servicios
+
+Por defecto cualquiera que llegue al puerto 4000 puede enviar eventos. Para restringirlo al Núcleo, define la **misma** clave en los dos `.env`:
+
+- En `jedanix-notificaciones/.env`: `NOTIFICACIONES_API_KEY=una-clave-larga-y-aleatoria`
+- En `jedanix-nucleo-practicas/.env`: `NOTIFICACIONES_API_KEY=una-clave-larga-y-aleatoria`
+
+El Núcleo la envía en la cabecera `X-API-Key`; sin ella (o con otra) este servicio responde **401** en `/eventos` y `/notificaciones`.
+`/salud` queda abierta para monitoreo. Reinicia ambos servicios tras cambiarla.
+
 ## API
 
 | Método y ruta | Quién la usa | Descripción |
@@ -91,6 +101,7 @@ src/
   index.js                      arranque (esquema, servidor, job de reintentos)
   app.js                        Express: rutas, errores { detail }
   config.js  db.js              configuración (.env) y pool de PostgreSQL
+  middleware/claveInterna.js    clave compartida con el Núcleo (X-API-Key)
   routes/eventos.js             POST /eventos
   routes/notificaciones.js      historial y reenvío manual
   services/plantillas.js        motor de plantillas (un mensaje por evento)
@@ -98,5 +109,5 @@ src/
   services/notificacionService.js   registro, envío, estados
   jobs/reintentos.js            job de reintentos
 sql/schema.sql                  tabla notificaciones (idempotente)
-test/plantillas.test.js
+test/plantillas.test.js, test/claveInterna.test.js
 ```

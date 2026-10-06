@@ -31,6 +31,9 @@ async function main() {
         ? 'Correo: MODO SIMULADO (SMTP_HOST vacío) — los mensajes se imprimen aquí en consola.'
         : `Correo: SMTP real vía ${config.smtp.host}:${config.smtp.puerto}`,
     );
+    if (!config.claveInterna) {
+      console.warn('Aviso: NOTIFICACIONES_API_KEY no está definida; cualquiera con acceso a este puerto puede enviar eventos.');
+    }
     reintentos.iniciar();
   });
 

@@ -5,6 +5,7 @@ import string
 
 from sqlalchemy.orm import Session
 
+from app.core.programas import PROGRAMAS_ACADEMICOS
 from app.core.security import create_access_token, hash_password, verify_password
 from app.models.enums import RolEnum, UsuarioEstadoEnum
 from app.models.usuario import Usuario
@@ -54,6 +55,18 @@ class UsuarioService:
             raise NoEncontradoError(f"No existe un usuario con id={usuario_id}.")
         return usuario
 
+    @staticmethod
+    def _validar_programa(programa: str | None, actual: str | None = None) -> None:
+        """CU-01, paso 11/16: el programa debe ser uno del catálogo. Si el usuario ya
+        tenía un valor anterior (texto libre de versiones previas) y no lo cambia,
+        se acepta tal cual para no bloquear la edición de otros campos."""
+        if programa is None or programa == actual:
+            return
+        if programa not in PROGRAMAS_ACADEMICOS:
+            raise ReglaDeNegocioError(
+                "El programa académico debe ser uno de los programas disponibles en la lista."
+            )
+
     # ---- CU-01: crear usuario ----
 
     def crear_usuario(self, data: UsuarioCreate) -> Usuario:
@@ -63,6 +76,7 @@ class UsuarioService:
         datos: el correo duplicado (excepción 15.1.a)."""
         if self.repo.existe_correo(data.correo_institucional):
             raise ConflictoError("El correo ya está registrado por otro usuario.")
+        self._validar_programa(data.programa_academico)
 
         password_temporal = _generar_password_temporal()
         usuario = Usuario(
@@ -95,6 +109,8 @@ class UsuarioService:
         usuario = self.repo.get_by_id(usuario_id)
         if usuario is None:
             raise NoEncontradoError(f"No existe un usuario con id={usuario_id}.")
+
+        self._validar_programa(data.programa_academico, actual=usuario.programa_academico)
 
         cambia_rol = data.rol != usuario.rol
         if cambia_rol and usuario.rol in _ROLES_CON_ASIGNACIONES:

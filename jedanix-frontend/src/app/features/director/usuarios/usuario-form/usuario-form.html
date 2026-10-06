@@ -52,7 +52,11 @@
     @if (esEstudiante()) {
       <mat-form-field appearance="outline">
         <mat-label>Programa académico</mat-label>
-        <input matInput formControlName="programa_academico" />
+        <mat-select formControlName="programa_academico">
+          @for (programa of programas(); track programa) {
+            <mat-option [value]="programa">{{ programa }}</mat-option>
+          }
+        </mat-select>
         <mat-error>El programa académico es obligatorio para el rol Estudiante.</mat-error>
       </mat-form-field>
     }

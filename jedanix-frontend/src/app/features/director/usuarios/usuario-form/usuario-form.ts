@@ -58,6 +58,7 @@ export class UsuarioForm {
   protected readonly creado = signal<string | null>(null);
   private readonly rolSeleccionado = signal<RolEnum | null>(null);
   protected readonly esEstudiante = computed(() => this.rolSeleccionado() === RolEnum.ESTUDIANTE);
+  protected readonly programas = signal<string[]>([]);
 
   protected readonly form = new FormGroup({
     nombre_completo: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -70,6 +71,11 @@ export class UsuarioForm {
   });
 
   constructor() {
+    this.usuarioService.programasAcademicos().subscribe({
+      next: (lista) => this.programas.update((actual) => this.unir(lista, actual)),
+      error: () => this.errorCarga.set('No se pudo cargar la lista de programas académicos.'),
+    });
+
     this.form.controls.rol.valueChanges.subscribe((rol) => {
       this.rolSeleccionado.set(rol);
       this.ajustarPrograma();
@@ -85,6 +91,10 @@ export class UsuarioForm {
             rol: u.rol,
             programa_academico: u.programa_academico ?? '',
           });
+          if (u.programa_academico) {
+            // Valor anterior que ya no esté en la lista: se conserva como opción.
+            this.programas.update((actual) => this.unir(actual, [u.programa_academico as string]));
+          }
           this.ajustarPrograma();
           this.cargando.set(false);
         },
@@ -156,6 +166,10 @@ export class UsuarioForm {
   protected crearOtro(): void {
     this.creado.set(null);
     this.form.reset({ nombre_completo: '', correo_institucional: '', rol: null, programa_academico: '' });
+  }
+
+  private unir(a: string[], b: string[]): string[] {
+    return Array.from(new Set([...a, ...b])).sort((x, y) => x.localeCompare(y, 'es'));
   }
 
   private ajustarPrograma(): void {

@@ -5,17 +5,34 @@ const { pool, inicializarEsquema } = require('./db');
 const app = require('./app');
 const reintentos = require('./jobs/reintentos');
 
-async function main() {
-  try {
-    await inicializarEsquema();
-  } catch (err) {
-    console.error(
-      `\n[db] No se pudo conectar o preparar la base de datos (${err.message}).\n` +
-        '     Verifica que exista la base "jedanix_notificaciones" y que DATABASE_URL en .env sea correcta.\n',
-    );
-    process.exit(1);
-  }
+const esperar = (ms) => new Promise((resolver) => setTimeout(resolver, ms));
 
+let apagando = false;
+
+/**
+ * Prepara la base SIN tumbar el servicio: en hosting gratuito la base (Neon)
+ * también está dormida al arrancar y puede fallar la primera conexión. Antes el
+ * proceso terminaba y Render lo reiniciaba con esperas cada vez más largas
+ * (minutos de HTTP 502). Ahora el servidor ya escucha y la base se reintenta.
+ */
+async function prepararBaseDeDatos() {
+  for (let intento = 1; !apagando; intento += 1) {
+    try {
+      await inicializarEsquema();
+      console.log('[db] Base de datos lista.');
+      return;
+    } catch (err) {
+      const espera = Math.min(2000 * intento, 15000);
+      console.error(
+        `[db] No se pudo preparar la base de datos (${err.message}). ` +
+          `Verifica DATABASE_URL. Reintento ${intento} en ${espera / 1000}s.`,
+      );
+      await esperar(espera);
+    }
+  }
+}
+
+async function main() {
   const servidor = app.listen(config.puerto, (err) => {
     // Express 5 entrega el error de listen() aquí (p. ej. puerto ocupado por otra instancia).
     if (err) {
@@ -35,9 +52,11 @@ async function main() {
       console.warn('Aviso: NOTIFICACIONES_API_KEY no está definida; cualquiera con acceso a este puerto puede enviar eventos.');
     }
     reintentos.iniciar();
+    prepararBaseDeDatos();
   });
 
   const apagar = () => {
+    apagando = true;
     reintentos.detener();
     servidor.close(() => pool.end().finally(() => process.exit(0)));
   };

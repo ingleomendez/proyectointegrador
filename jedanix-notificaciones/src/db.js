@@ -5,7 +5,16 @@ const path = require('node:path');
 const { Pool } = require('pg');
 const config = require('./config');
 
-const pool = new Pool({ connectionString: config.databaseUrl });
+// Neon (plan gratuito) suspende su base tras unos minutos sin uso y la primera
+// conexión al despertar puede tardar o cortarse. Por eso: tiempo de espera
+// propio, conexiones inactivas de vida corta y keep-alive.
+const pool = new Pool({
+  connectionString: config.databaseUrl,
+  max: 5,
+  connectionTimeoutMillis: 20000,
+  idleTimeoutMillis: 10000,
+  keepAlive: true,
+});
 
 pool.on('error', (err) => {
   console.error('[db] Error inesperado en una conexión inactiva:', err.message);

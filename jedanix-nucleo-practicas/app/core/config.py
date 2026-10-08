@@ -10,9 +10,9 @@ class Settings(BaseSettings):
     NOTIFICACIONES_SERVICE_URL: str
     NOTIFICACIONES_TIMEOUT_SECONDS: float = 2.0
     # Reintentos del aviso cuando Notificaciones está despertando (hosting gratuito:
-    # Render responde 502 hasta ~1 min). Total ≈ REINTENTOS x ESPERA_SEGUNDOS.
-    NOTIFICACIONES_REINTENTOS: int = 8
-    NOTIFICACIONES_ESPERA_SEGUNDOS: float = 8.0
+    # Render responde 502 hasta ~1 min). Total ≈ REINTENTOS x ESPERA_SEGUNDOS (~4 min, cubre un arranque en frío lento).
+    NOTIFICACIONES_REINTENTOS: int = 24
+    NOTIFICACIONES_ESPERA_SEGUNDOS: float = 10.0
     # True = el aviso sale en un hilo aparte y no hace esperar la petición del usuario.
     NOTIFICACIONES_ASINCRONO: bool = True
     # Clave compartida con el servicio de Notificaciones (cabecera X-API-Key). Vacía = no se envía.

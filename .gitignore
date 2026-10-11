@@ -22,3 +22,4 @@ uploads/
 .idea/
 .DS_Store
 Thumbs.db
+*.asta.lock

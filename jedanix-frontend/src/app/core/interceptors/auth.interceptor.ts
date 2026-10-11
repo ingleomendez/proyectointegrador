@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
+import { despertarNotificaciones } from '../utils/despertar-notificaciones';
 
 /** Adjunta `Authorization: Bearer <token>` a toda petición saliente cuando
  * hay una sesión activa -- equivalente, del lado del frontend, a lo que
@@ -11,8 +12,17 @@ import { AuthService } from '../services/auth.service';
  * Además, si el backend responde 401 estando logueado (el token venció),
  * cierra la sesión y manda al login en vez de dejar cada pantalla mostrando
  * "No se pudieron cargar...". Un 401 del propio login (credenciales malas)
- * no cuenta: ahí no hay sesión previa que cerrar. */
+ * no cuenta: ahí no hay sesión previa que cerrar.
+ *
+ * Y antes de cualquier petición que modifica datos (POST/PUT/PATCH/DELETE,
+ * incluido el inicio de sesión) despierta a Notificaciones desde el navegador:
+ * esas son las que pueden disparar un correo y, con hosting gratuito, el
+ * servicio de correos suele estar dormido. */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
+    despertarNotificaciones();
+  }
+
   const authService = inject(AuthService);
   const token = authService.obtenerToken();
 

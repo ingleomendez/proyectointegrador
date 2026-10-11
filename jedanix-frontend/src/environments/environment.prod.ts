@@ -3,4 +3,7 @@
 export const environment = {
   production: true,
   apiUrl: 'https://jedanix-nucleo.onrender.com',
+  // URL pública del servicio Notificaciones: el navegador lo "despierta" antes de
+  // acciones que envían correo (Render gratis lo duerme tras 15 min sin visitas).
+  notificacionesUrl: 'https://jedanix-notificaciones.onrender.com',
 };

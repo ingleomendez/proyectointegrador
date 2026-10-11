@@ -1,0 +1,30 @@
+.jedanix.frontend.comun [3]: Login,Perfil,InicioRol
+.jedanix.frontend.core [9]: Environment,Utilidades,AuthInterceptor,Guards,Shell,AppRoutes,,,
+.jedanix.frontend.director [10]: UsuariosLista,UsuarioForm,EmpresasListaDirector,EmpresaDetalleDirector,EmpresaForm,SolicitudesLista,SolicitudDetalle,MatriculadosLista,MatriculadoDetalle,CierrePractica
+.jedanix.frontend.estudiante [11]: Inicio,EmpresasLista,EmpresaDetalle,PostulacionNueva,PostulacionesLista,PostulacionDetalle,MiPractica,Objetivos,AvancesLista,AvanceNuevo,AvanceDetalle
+.jedanix.frontend.revision [3]: EstudiantesLista,EstudianteDetalle,AvanceRevision
+.jedanix.frontend.servicios [39]: AuthService,UsuarioService,EmpresaService,PostulacionService,ObjetivoService,AvanceService,ArchivoService,EstadoEstudianteService,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+.jedanix.nucleo.core [9]: Settings,Security,Deps,Database,NotificacionesClient,AppMain,,,
+.jedanix.nucleo.dominio [29]: RolEnum,UsuarioEstadoEnum,GrupoSanguineoEnum,FactorRhEnum,EmpresaEstadoEnum,TipoRespuestaEnum,PostulacionEstadoEnum,ObjetivoEstadoEnum,AvanceEstadoEnum,TipoArchivoSoporteEnum,Usuario,Estudiante,Director,CoordinadorPractica,DocenteAsesor,EmpresaReceptora,PreguntaBitacora,DocumentoRequerido,Postulacion,RespuestaBitacora,DocumentoPostulacion,ObjetivoPractica,AvanceSemanal,DiaTrabajado,SoporteAvance,ArchivoSubido,,,
+.jedanix.nucleo.excepciones [5]: ServiceError,NoEncontradoError,ReglaDeNegocioError,ConflictoError,RequiereConfirmacionError
+.jedanix.nucleo.repositories [7]: UsuarioRepository,EmpresaReceptoraRepository,PostulacionRepository,AvanceSemanalRepository,ObjetivoPracticaRepository,,
+.jedanix.nucleo.routers [7]: AuthRouter,UsuariosRouter,EmpresasRouter,PostulacionesRouter,ObjetivosRouter,AvancesRouter,ArchivosRouter
+.jedanix.nucleo.services [7]: UsuarioService,EmpresaReceptoraService,PostulacionService,AvanceSemanalService,ObjetivoPracticaService,,
+.jedanix.notificaciones [16]: NotificacionEstado,Notificacion,EventoInvalidoError,Config,Db,Plantillas,Mailer,NotificacionService,ClaveInterna,EventosRouter,NotificacionesRouter,JobReintentos,App,Index,,
+.java.lang [5]: String,Object,Integer,Exception,Void
+.java.util [4]: List,Observable,Map,Set
+.java.time [2]: LocalDateTime,LocalDate
+.java.math [1]: BigDecimal
+ [59]: Estudiante,Director,Gestionar 
+Perfil,CU-01
+Gestionar usuarios del sistema,CU-02
+Gestionar empresas receptoras,CU-03
+Gestionar solicitudes de practica,CU-04
+Consultar matriculados y seguimiento,CU-05
+Realizar cierre formal de practica,CU-06
+Postularse a una practica,CU-07
+Consultar mi practica,CU-08
+Gestionar seguimiento de practica,CU-10
+Revisar avances y registrar observaciones,CU-11
+Aprobar objetivos del estudiante,CU-09
+Revisar y calificar avances de practica,Docente Asesor,Coordinador de practica,ItemMenu,RolEnum,ContextoEstudiante,AccesoInicio,HttpEvent,HttpRequest,Router,Session,UsuarioCreate,UsuarioUpdateDirector,PerfilUpdate,TokenResponse,LoginRequest,EmpresaReceptoraCreate,EmpresaReceptoraUpdate,PreguntaBitacoraCreate,DocumentoRequeridoCreate,PreguntaBitacoraUpdate,DocumentoRequeridoUpdate,PostulacionCreate,PostulacionUpdate,PostulacionDecision,PostulacionCierre,AvanceSemanalCreate,AvanceCalificacion,AvanceObservacionDocente,ObjetivoPracticaCreate,ObjetivoPracticaDecision,HttpClient,Signal,SesionUsuario,Computed,UsuarioOut,UsuarioListItem,EmpresaReceptoraListItem,EmpresaReceptoraOut,PostulacionOut,PostulacionListItem,ObjetivoPracticaOut,AvanceSemanalOut,AvanceSemanalListItem,ArchivoSubidoOut,File

@@ -1,0 +1,25 @@
+paquete previo borrado
+line.type fail
+operandos=1 guard0=Guard
+opmethods setGuard,getGuard,getName,setName,getFullName,getFullNamespace
+OK CU01_Crear_Usuario: mensajes=35 fragmentos=7 alto=2105
+line.type fail
+operandos=1 guard0=Guard
+opmethods setGuard,getGuard,getName,setName,getFullName,getFullNamespace
+OK CU02_Registrar_Empresa: mensajes=31 fragmentos=8 alto=1821
+line.type fail
+operandos=1 guard0=Guard
+opmethods setGuard,getGuard,getName,setName,getFullName,getFullNamespace
+OK CU03_Aprobar_Matricula: mensajes=48 fragmentos=12 alto=2829
+line.type fail
+operandos=1 guard0=Guard
+opmethods setGuard,getGuard,getName,setName,getFullName,getFullNamespace
+OK CU08_Registrar_Avance: mensajes=46 fragmentos=18 alto=2921
+line.type fail
+operandos=1 guard0=Guard
+opmethods setGuard,getGuard,getName,setName,getFullName,getFullNamespace
+OK CU09_CU10_Revisar_Avances: mensajes=57 fragmentos=12 alto=3213
+line.type fail
+operandos=1 guard0=Guard
+opmethods setGuard,getGuard,getName,setName,getFullName,getFullNamespace
+OK CU11_Objetivos: mensajes=53 fragmentos=18 alto=3293

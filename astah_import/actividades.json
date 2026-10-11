@@ -1,0 +1,719 @@
+[
+ {
+  "key": "A1_Proceso_Completo_Practica",
+  "titulo": "Actividades — Proceso completo de una práctica (de la solicitud al cierre)",
+  "lanes": [
+   "Director",
+   "Estudiante",
+   "Docente Asesor",
+   "Coordinador de Práctica",
+   "Sistema"
+  ],
+  "nodes": [
+   {
+    "id": "n0",
+    "t": "ini",
+    "lane": 0,
+    "row": 0,
+    "txt": "",
+    "w": 0
+   },
+   {
+    "id": "n1",
+    "t": "act",
+    "lane": 0,
+    "row": 1,
+    "txt": "Crear usuarios (CU-01)\nRegistrar empresas (CU-02)",
+    "w": 0
+   },
+   {
+    "id": "n2",
+    "t": "act",
+    "lane": 1,
+    "row": 2,
+    "txt": "Postularse a una empresa\nbitácora + documentos (CU-06)",
+    "w": 0
+   },
+   {
+    "id": "n3",
+    "t": "act",
+    "lane": 4,
+    "row": 3,
+    "txt": "Guardar la postulación y\nnotificar al Director",
+    "w": 0
+   },
+   {
+    "id": "n4",
+    "t": "act",
+    "lane": 0,
+    "row": 4,
+    "txt": "Revisar la solicitud (CU-03)",
+    "w": 0
+   },
+   {
+    "id": "n5",
+    "t": "dec",
+    "lane": 0,
+    "row": 5,
+    "txt": "¿Aprueba?",
+    "w": 0
+   },
+   {
+    "id": "n6",
+    "t": "act",
+    "lane": 4,
+    "row": 6,
+    "txt": "Registrar rechazo con motivo\ny notificar al estudiante",
+    "w": 0
+   },
+   {
+    "id": "n8",
+    "t": "fin",
+    "lane": 4,
+    "row": 7,
+    "txt": "",
+    "w": 0
+   },
+   {
+    "id": "n9",
+    "t": "act",
+    "lane": 0,
+    "row": 6,
+    "txt": "Aprobar la matrícula\n(estudiante MATRICULADO)",
+    "w": 0
+   },
+   {
+    "id": "n11",
+    "t": "act",
+    "lane": 1,
+    "row": 7,
+    "txt": "Plantear los objetivos\nde la práctica (CU-11)",
+    "w": 0
+   },
+   {
+    "id": "n12",
+    "t": "act",
+    "lane": 2,
+    "row": 8,
+    "txt": "Revisar los objetivos",
+    "w": 0
+   },
+   {
+    "id": "n13",
+    "t": "dec",
+    "lane": 2,
+    "row": 9,
+    "txt": "¿Aprueba?",
+    "w": 0
+   },
+   {
+    "id": "n14",
+    "t": "act",
+    "lane": 2,
+    "row": 10,
+    "txt": "Rechazar con observación",
+    "w": 0
+   },
+   {
+    "id": "n15",
+    "t": "act",
+    "lane": 1,
+    "row": 11,
+    "txt": "Registrar avance\nsemanal (CU-08)",
+    "w": 0
+   },
+   {
+    "id": "n16",
+    "t": "act",
+    "lane": 3,
+    "row": 12,
+    "txt": "Revisar el avance:\ncalificar u observar (CU-09)",
+    "w": 0
+   },
+   {
+    "id": "n17",
+    "t": "dec",
+    "lane": 3,
+    "row": 13,
+    "txt": "¿Calificó?",
+    "w": 0
+   },
+   {
+    "id": "n18",
+    "t": "act",
+    "lane": 1,
+    "row": 14,
+    "txt": "Corregir y reenviar\nel avance",
+    "w": 0
+   },
+   {
+    "id": "n19",
+    "t": "dec",
+    "lane": 4,
+    "row": 15,
+    "txt": "¿Horas aceptadas ≥\nhoras requeridas?",
+    "w": 0
+   },
+   {
+    "id": "n20",
+    "t": "act",
+    "lane": 0,
+    "row": 16,
+    "txt": "Decidir el cierre (CU-05)",
+    "w": 0
+   },
+   {
+    "id": "n21",
+    "t": "dec",
+    "lane": 0,
+    "row": 17,
+    "txt": "¿Aprueba el cierre?",
+    "w": 0
+   },
+   {
+    "id": "n22",
+    "t": "act",
+    "lane": 0,
+    "row": 18,
+    "txt": "Rechazar el cierre\ncon observación",
+    "w": 0
+   },
+   {
+    "id": "n23",
+    "t": "act",
+    "lane": 4,
+    "row": 18,
+    "txt": "Finalizar la práctica\ny notificar a los involucrados",
+    "w": 0
+   },
+   {
+    "id": "n24",
+    "t": "fin",
+    "lane": 4,
+    "row": 19,
+    "txt": "",
+    "w": 0
+   }
+  ],
+  "flows": [
+   {
+    "a": "n0",
+    "b": "n1",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n1",
+    "b": "n2",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n2",
+    "b": "n3",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n3",
+    "b": "n4",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n4",
+    "b": "n5",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n5",
+    "b": "n9",
+    "g": "sí",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n5",
+    "b": "n6",
+    "g": "no",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n6",
+    "b": "n8",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n9",
+    "b": "n11",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n11",
+    "b": "n12",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n12",
+    "b": "n13",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n13",
+    "b": "n15",
+    "g": "sí",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n13",
+    "b": "n14",
+    "g": "no",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n14",
+    "b": "n11",
+    "g": "",
+    "bx": -25,
+    "by": 0
+   },
+   {
+    "a": "n15",
+    "b": "n16",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n16",
+    "b": "n17",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n17",
+    "b": "n19",
+    "g": "sí",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n17",
+    "b": "n18",
+    "g": "no (observado)",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n18",
+    "b": "n15",
+    "g": "",
+    "bx": -35,
+    "by": 0
+   },
+   {
+    "a": "n19",
+    "b": "n15",
+    "g": "no: semana siguiente",
+    "bx": 25,
+    "by": 0
+   },
+   {
+    "a": "n19",
+    "b": "n20",
+    "g": "sí",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n20",
+    "b": "n21",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n21",
+    "b": "n23",
+    "g": "sí",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n21",
+    "b": "n22",
+    "g": "no",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "n22",
+    "b": "n15",
+    "g": "",
+    "bx": 55,
+    "by": 0
+   },
+   {
+    "a": "n23",
+    "b": "n24",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   }
+  ]
+ },
+ {
+  "key": "A2_Seguimiento_Semanal_Avance",
+  "titulo": "Actividades — Seguimiento semanal: registrar, revisar y observar un avance",
+  "lanes": [
+   "Estudiante",
+   "Sistema",
+   "Coordinador de Práctica",
+   "Docente Asesor"
+  ],
+  "nodes": [
+   {
+    "id": "a0",
+    "t": "ini",
+    "lane": 0,
+    "row": 0,
+    "txt": "",
+    "w": 0
+   },
+   {
+    "id": "a1",
+    "t": "act",
+    "lane": 0,
+    "row": 1,
+    "txt": "Elegir la semana y\nllenar el formulario\n(días, horas, actividades)",
+    "w": 0
+   },
+   {
+    "id": "a2",
+    "t": "act",
+    "lane": 0,
+    "row": 2,
+    "txt": "Subir los soportes\nPDF / PNG / JPG (≤ 10 MB)",
+    "w": 0
+   },
+   {
+    "id": "a3",
+    "t": "dec",
+    "lane": 0,
+    "row": 3,
+    "txt": "¿Completo y horas\ncoinciden con la suma?",
+    "w": 0
+   },
+   {
+    "id": "a4",
+    "t": "act",
+    "lane": 0,
+    "row": 4,
+    "txt": "Enviar el avance (CU-08)",
+    "w": 0
+   },
+   {
+    "id": "a5",
+    "t": "dec",
+    "lane": 1,
+    "row": 5,
+    "txt": "¿Práctica MATRICULADA,\nobjetivos APROBADOS\ny semana libre?",
+    "w": 0
+   },
+   {
+    "id": "a6",
+    "t": "act",
+    "lane": 0,
+    "row": 6,
+    "txt": "Ver el mensaje de error\n(422 / 409)",
+    "w": 0
+   },
+   {
+    "id": "a7",
+    "t": "fin",
+    "lane": 0,
+    "row": 7,
+    "txt": "",
+    "w": 0
+   },
+   {
+    "id": "a8",
+    "t": "act",
+    "lane": 1,
+    "row": 6,
+    "txt": "Guardar el avance\nPENDIENTE_DE_REVISION",
+    "w": 0
+   },
+   {
+    "id": "f1",
+    "t": "fork",
+    "lane": 1,
+    "row": 7,
+    "txt": "",
+    "w": 780
+   },
+   {
+    "id": "a10",
+    "t": "act",
+    "lane": 1,
+    "row": 8,
+    "txt": "Notificar al Coordinador\ny al Docente Asesor",
+    "w": 0
+   },
+   {
+    "id": "a11",
+    "t": "act",
+    "lane": 2,
+    "row": 9,
+    "txt": "Revisar soportes y horas",
+    "w": 0
+   },
+   {
+    "id": "a12",
+    "t": "dec",
+    "lane": 2,
+    "row": 10,
+    "txt": "¿Califica?",
+    "w": 0
+   },
+   {
+    "id": "a13",
+    "t": "act",
+    "lane": 1,
+    "row": 11,
+    "txt": "Guardar la nota 0.0–5.0\n(ACEPTADO) y notificar",
+    "w": 0
+   },
+   {
+    "id": "a14",
+    "t": "act",
+    "lane": 0,
+    "row": 11,
+    "txt": "Recibir la observación\n(OBSERVADO) del Coordinador",
+    "w": 0
+   },
+   {
+    "id": "a15",
+    "t": "act",
+    "lane": 0,
+    "row": 12,
+    "txt": "Corregir y reenviar",
+    "w": 0
+   },
+   {
+    "id": "a16",
+    "t": "act",
+    "lane": 3,
+    "row": 8,
+    "txt": "Revisar el avance\ny los soportes (CU-10)",
+    "w": 0
+   },
+   {
+    "id": "a17",
+    "t": "act",
+    "lane": 3,
+    "row": 9,
+    "txt": "Registrar la observación\n(no cambia el estado)\ny notificar al estudiante",
+    "w": 0
+   },
+   {
+    "id": "ff1",
+    "t": "ff",
+    "lane": 1,
+    "row": 9,
+    "txt": "",
+    "w": 0
+   },
+   {
+    "id": "ff2",
+    "t": "ff",
+    "lane": 3,
+    "row": 10,
+    "txt": "",
+    "w": 0
+   },
+   {
+    "id": "a19",
+    "t": "fin",
+    "lane": 1,
+    "row": 12,
+    "txt": "",
+    "w": 0
+   }
+  ],
+  "flows": [
+   {
+    "a": "a0",
+    "b": "a1",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a1",
+    "b": "a2",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a2",
+    "b": "a3",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a3",
+    "b": "a4",
+    "g": "sí",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a3",
+    "b": "a1",
+    "g": "no",
+    "bx": -35,
+    "by": 0
+   },
+   {
+    "a": "a4",
+    "b": "a5",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a5",
+    "b": "a8",
+    "g": "sí",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a5",
+    "b": "a6",
+    "g": "no",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a6",
+    "b": "a7",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a8",
+    "b": "f1",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "f1",
+    "b": "a10",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "f1",
+    "b": "a11",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "f1",
+    "b": "a16",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a11",
+    "b": "a12",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a12",
+    "b": "a13",
+    "g": "sí: califica",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a12",
+    "b": "a14",
+    "g": "no: observa",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a14",
+    "b": "a15",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a15",
+    "b": "a4",
+    "g": "",
+    "bx": -35,
+    "by": 0
+   },
+   {
+    "a": "a16",
+    "b": "a17",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a10",
+    "b": "ff1",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a13",
+    "b": "a19",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   },
+   {
+    "a": "a17",
+    "b": "ff2",
+    "g": "",
+    "bx": 0,
+    "by": 0
+   }
+  ]
+ }
+]

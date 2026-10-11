@@ -1,0 +1,4 @@
+est=true uc11=true asociacionesPrevias=0
+renombrado: CU-11\nGestionar objetivos de la practica
+asociacion Estudiante-CU-11 creada
+OK

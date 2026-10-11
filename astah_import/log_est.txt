@@ -1,0 +1,5 @@
+paquete previo borrado
+OK E1_Postulacion: estados=5 transiciones=10
+OK E2_Avance: estados=3 transiciones=6
+OK E3_Objetivos: estados=3 transiciones=5
+OK E4_Notificacion: estados=3 transiciones=7

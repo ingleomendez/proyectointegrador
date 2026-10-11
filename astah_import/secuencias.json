@@ -1,0 +1,2777 @@
+[
+ {
+  "key": "CU01_Crear_Usuario",
+  "titulo": "CU-01 Gestionar Usuarios del Sistema — crear usuario (Director)",
+  "participantes": [
+   {
+    "id": "U",
+    "nombre": "Director",
+    "actor": true
+   },
+   {
+    "id": "UI",
+    "nombre": "SPA Angular",
+    "actor": false
+   },
+   {
+    "id": "RT",
+    "nombre": "Router FastAPI<br/>/usuarios",
+    "actor": false
+   },
+   {
+    "id": "SV",
+    "nombre": "UsuarioService",
+    "actor": false
+   },
+   {
+    "id": "DB",
+    "nombre": "PostgreSQL<br/>jedanix_nucleo",
+    "actor": false
+   },
+   {
+    "id": "NT",
+    "nombre": "Servicio de<br/>Notificaciones",
+    "actor": false
+   },
+   {
+    "id": "BR",
+    "nombre": "Brevo",
+    "actor": false
+   }
+  ],
+  "items": [
+   [
+    "msg",
+    "U",
+    "UI",
+    "Selecciona «Usuarios»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /usuarios · Bearer JWT",
+    "sync"
+   ],
+   [
+    "note",
+    "RT",
+    "SV",
+    "Seguridad: valida JWT y rol DIRECTOR → 401 / 403 si falla"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "listar()",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT usuarios",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "filas",
+    "ret"
+   ],
+   [
+    "msg",
+    "SV",
+    "RT",
+    "lista de usuarios",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 [nombre, correo, rol, estado]",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Muestra el listado",
+    "ret"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "«Crear usuario»: rol, nombre, correo (+ programa si es Estudiante)",
+    "sync"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "«Guardar»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "POST /usuarios {UsuarioCreate} · Bearer JWT",
+    "sync"
+   ],
+   [
+    "note",
+    "RT",
+    "SV",
+    "Seguridad: valida JWT y rol DIRECTOR → 401 / 403 si falla"
+   ],
+   [
+    "alt",
+    "nombre vacío, correo inválido o programa faltante (Estudiante)"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 errores por campo",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Resalta los campos con error",
+    "ret"
+   ],
+   [
+    "else",
+    "datos válidos"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "crear_usuario(data)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "existe_correo(correo)?",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "sí / no",
+    "ret"
+   ],
+   [
+    "alt",
+    "el correo ya existe"
+   ],
+   [
+    "msg",
+    "SV",
+    "RT",
+    "ConflictoError",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "409 «El correo ya está registrado»",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Indica que el correo ya está en uso",
+    "ret"
+   ],
+   [
+    "else",
+    "correo disponible"
+   ],
+   [
+    "msg",
+    "SV",
+    "SV",
+    "genera contraseña temporal y la guarda con bcrypt",
+    "self"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "INSERT usuario (ACTIVO, rol, programa) · COMMIT",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "usuario creado",
+    "ret"
+   ],
+   [
+    "msg",
+    "SV",
+    "NT",
+    "POST /eventos «usuario.creado» a el nuevo usuario {nombre, password_temporal} · X-API-Key (hilo daemon, sin esperar)",
+    "async"
+   ],
+   [
+    "msg",
+    "SV",
+    "RT",
+    "Usuario",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "201 Usuario",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Confirma la creación y agrega al listado",
+    "ret"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "note",
+    "NT",
+    "BR",
+    "Envío asíncrono del correo (después de responder 202)"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "INSERT notificaciones (PENDIENTE)",
+    "self"
+   ],
+   [
+    "msg",
+    "NT",
+    "SV",
+    "202 {id, estado: PENDIENTE}",
+    "ret"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "renderiza la plantilla del evento",
+    "self"
+   ],
+   [
+    "msg",
+    "NT",
+    "BR",
+    "POST /v3/smtp/email (HTTPS 443)",
+    "sync"
+   ],
+   [
+    "alt",
+    "Brevo acepta el mensaje"
+   ],
+   [
+    "msg",
+    "BR",
+    "NT",
+    "201 messageId",
+    "ret"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "UPDATE notificaciones → ENVIADA (borra la contraseña temporal)",
+    "self"
+   ],
+   [
+    "note",
+    "BR",
+    "",
+    "Brevo entrega el correo a el correo institucional del nuevo usuario"
+   ],
+   [
+    "else",
+    "Brevo falla o no responde"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "UPDATE notificaciones → FALLIDA (ultimo_error)",
+    "self"
+   ],
+   [
+    "note",
+    "NT",
+    "",
+    "Job de reintentos cada 60 s (máx. 5 intentos) o reenvío manual"
+   ],
+   [
+    "end"
+   ],
+   [
+    "opt",
+    "Falló el envío (excepción 19.1.a)"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "«Reenviar credenciales»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "POST /usuarios/{id}/reenviar-credenciales",
+    "sync"
+   ],
+   [
+    "note",
+    "RT",
+    "NT",
+    "genera nueva contraseña temporal y repite el evento usuario.creado"
+   ],
+   [
+    "end"
+   ]
+  ]
+ },
+ {
+  "key": "CU02_Registrar_Empresa",
+  "titulo": "CU-02 Gestionar Empresas Receptoras — registrar empresa (Director)",
+  "participantes": [
+   {
+    "id": "U",
+    "nombre": "Director",
+    "actor": true
+   },
+   {
+    "id": "UI",
+    "nombre": "SPA Angular",
+    "actor": false
+   },
+   {
+    "id": "RT",
+    "nombre": "Router FastAPI<br/>/empresas",
+    "actor": false
+   },
+   {
+    "id": "SV",
+    "nombre": "EmpresaReceptoraService",
+    "actor": false
+   },
+   {
+    "id": "DB",
+    "nombre": "PostgreSQL<br/>jedanix_nucleo",
+    "actor": false
+   }
+  ],
+  "items": [
+   [
+    "msg",
+    "U",
+    "UI",
+    "Selecciona «Empresas Receptoras»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /empresas · Bearer JWT",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "listar_empresas()",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT empresas (con coordinador y docente asesor)",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "filas",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 [nombre, estado, coordinador, docente asesor]",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Muestra el listado",
+    "ret"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "«Registrar nueva empresa»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /usuarios?rol=COORDINADOR  y  ?rol=DOCENTE_ASESOR",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 usuarios disponibles para los selectores",
+    "ret"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "Datos generales: nombre, descripción, requisitos, horas, teléfono, dirección",
+    "sync"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "Responsables: elige Coordinador y Docente Asesor",
+    "sync"
+   ],
+   [
+    "loop",
+    "por cada pregunta de la bitácora"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "Agrega pregunta (enunciado y tipo de respuesta)",
+    "sync"
+   ],
+   [
+    "end"
+   ],
+   [
+    "loop",
+    "por cada documento requerido"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "Agrega documento requerido (nombre)",
+    "sync"
+   ],
+   [
+    "end"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "«Guardar empresa»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "POST /empresas {EmpresaReceptoraCreate} · Bearer JWT",
+    "sync"
+   ],
+   [
+    "note",
+    "RT",
+    "SV",
+    "Seguridad: valida JWT y rol DIRECTOR → 401 / 403 si falla"
+   ],
+   [
+    "alt",
+    "campos vacíos, sin Coordinador/Docente Asesor o sin preguntas de bitácora"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 errores por campo",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Resalta lo que falta e impide guardar",
+    "ret"
+   ],
+   [
+    "else",
+    "datos válidos"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "crear_empresa(data)",
+    "sync"
+   ],
+   [
+    "note",
+    "SV",
+    "DB",
+    "Una sola transacción: o se guarda todo o nada"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "INSERT empresa_receptora (ACTIVA, coordinador_id, docente_asesor_id)",
+    "sync"
+   ],
+   [
+    "loop",
+    "por cada pregunta de la bitácora"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "INSERT pregunta_bitacora",
+    "sync"
+   ],
+   [
+    "end"
+   ],
+   [
+    "loop",
+    "por cada documento requerido"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "INSERT documento_requerido",
+    "sync"
+   ],
+   [
+    "end"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "COMMIT",
+    "sync"
+   ],
+   [
+    "alt",
+    "se pierde la conexión con la base de datos"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "error",
+    "ret"
+   ],
+   [
+    "msg",
+    "SV",
+    "SV",
+    "ROLLBACK: no queda ningún registro parcial",
+    "self"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "500 «Intenta de nuevo»",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Notifica el error para reintentar",
+    "ret"
+   ],
+   [
+    "else",
+    "transacción exitosa"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "empresa con su bitácora y documentos",
+    "ret"
+   ],
+   [
+    "msg",
+    "SV",
+    "RT",
+    "EmpresaReceptora",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "201 EmpresaReceptora",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Confirma el registro y agrega la empresa al listado",
+    "ret"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "note",
+    "U",
+    "DB",
+    "La empresa ya queda visible para que los estudiantes se postulen (CU-06)"
+   ]
+  ]
+ },
+ {
+  "key": "CU03_Aprobar_Matricula",
+  "titulo": "CU-03 Gestionar Solicitudes de Práctica — aprobar o rechazar matrícula (Director)",
+  "participantes": [
+   {
+    "id": "U",
+    "nombre": "Director",
+    "actor": true
+   },
+   {
+    "id": "UI",
+    "nombre": "SPA Angular",
+    "actor": false
+   },
+   {
+    "id": "RT",
+    "nombre": "Router FastAPI<br/>/postulaciones",
+    "actor": false
+   },
+   {
+    "id": "SV",
+    "nombre": "PostulacionService",
+    "actor": false
+   },
+   {
+    "id": "DB",
+    "nombre": "PostgreSQL<br/>jedanix_nucleo",
+    "actor": false
+   },
+   {
+    "id": "NT",
+    "nombre": "Servicio de<br/>Notificaciones",
+    "actor": false
+   },
+   {
+    "id": "BR",
+    "nombre": "Brevo",
+    "actor": false
+   }
+  ],
+  "items": [
+   [
+    "msg",
+    "U",
+    "UI",
+    "Selecciona «Solicitudes Prácticas»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /postulaciones/pendientes · Bearer JWT",
+    "sync"
+   ],
+   [
+    "note",
+    "RT",
+    "SV",
+    "Seguridad: valida JWT y rol DIRECTOR → 401 / 403 si falla"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "listar_pendientes()",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT postulaciones PENDIENTE_DE_APROBACION",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "filas",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 solicitudes",
+    "ret"
+   ],
+   [
+    "alt",
+    "no hay solicitudes pendientes"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Mensaje «No hay solicitudes por revisar»",
+    "ret"
+   ],
+   [
+    "else",
+    "hay solicitudes"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Muestra las solicitudes agrupadas por empresa",
+    "ret"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "Selecciona una solicitud",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /postulaciones/{id}",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 detalle: estudiante, documentos PDF, respuestas de la bitácora",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Muestra los datos del estudiante, los documentos y las respuestas",
+    "ret"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "Abre y revisa cada documento",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /uploads/{archivo} (PDF guardado en la base de datos)",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 application/pdf",
+    "ret"
+   ],
+   [
+    "end"
+   ],
+   [
+    "alt",
+    "el Director acepta"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "«Aceptar»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "PATCH /postulaciones/{id}/decision {aprobar: true}",
+    "sync"
+   ],
+   [
+    "note",
+    "RT",
+    "SV",
+    "Seguridad: valida JWT y rol DIRECTOR → 401 / 403 si falla"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "decidir_postulacion(id, data)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT postulación",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "postulación",
+    "ret"
+   ],
+   [
+    "alt",
+    "la solicitud ya no está PENDIENTE_DE_APROBACION"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «Solo se pueden decidir solicitudes pendientes»",
+    "ret"
+   ],
+   [
+    "else",
+    "sigue pendiente"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "get_activa_de_estudiante(estudiante_id)",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "otra práctica activa / ninguna",
+    "ret"
+   ],
+   [
+    "alt",
+    "el estudiante ya fue matriculado en otra empresa (14.1.a)"
+   ],
+   [
+    "msg",
+    "SV",
+    "RT",
+    "ConflictoError",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "409 «Sugerido: rechazar esta solicitud»",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Informa la situación al Director",
+    "ret"
+   ],
+   [
+    "else",
+    "sin conflicto"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "UPDATE postulación → APROBADA (fecha_decision) · COMMIT",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "ok",
+    "ret"
+   ],
+   [
+    "msg",
+    "SV",
+    "NT",
+    "POST /eventos «postulacion.aprobada» a el estudiante · X-API-Key (hilo daemon, sin esperar)",
+    "async"
+   ],
+   [
+    "msg",
+    "SV",
+    "RT",
+    "Postulación APROBADA",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 Postulación",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "La solicitud sale de la bandeja de pendientes",
+    "ret"
+   ],
+   [
+    "note",
+    "U",
+    "DB",
+    "El estudiante queda MATRICULADO con el Coordinador y el Docente Asesor de la empresa; se habilitan Objetivos, Mi Práctica y Seguimiento"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "else",
+    "el Director rechaza"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "«Rechazar» + escribe el motivo",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "PATCH /postulaciones/{id}/decision {aprobar: false, motivo_rechazo}",
+    "sync"
+   ],
+   [
+    "note",
+    "RT",
+    "SV",
+    "Seguridad: valida JWT y rol DIRECTOR → 401 / 403 si falla"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "decidir_postulacion(id, data)",
+    "sync"
+   ],
+   [
+    "alt",
+    "el motivo de rechazo está vacío (13.1.a.1)"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «El motivo de rechazo es obligatorio»",
+    "ret"
+   ],
+   [
+    "else",
+    "motivo informado"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "UPDATE postulación → RECHAZADA (motivo, fecha_decision) · COMMIT",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "ok",
+    "ret"
+   ],
+   [
+    "msg",
+    "SV",
+    "NT",
+    "POST /eventos «postulacion.rechazada» a el estudiante {motivo} · X-API-Key (hilo daemon, sin esperar)",
+    "async"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 Postulación RECHAZADA",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "La solicitud sale de la bandeja de pendientes",
+    "ret"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "note",
+    "NT",
+    "BR",
+    "Envío asíncrono del correo (después de responder 202)"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "INSERT notificaciones (PENDIENTE)",
+    "self"
+   ],
+   [
+    "msg",
+    "NT",
+    "SV",
+    "202 {id, estado: PENDIENTE}",
+    "ret"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "renderiza la plantilla del evento",
+    "self"
+   ],
+   [
+    "msg",
+    "NT",
+    "BR",
+    "POST /v3/smtp/email (HTTPS 443)",
+    "sync"
+   ],
+   [
+    "alt",
+    "Brevo acepta el mensaje"
+   ],
+   [
+    "msg",
+    "BR",
+    "NT",
+    "201 messageId",
+    "ret"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "UPDATE notificaciones → ENVIADA",
+    "self"
+   ],
+   [
+    "note",
+    "BR",
+    "",
+    "Brevo entrega el correo a el estudiante"
+   ],
+   [
+    "else",
+    "Brevo falla o no responde"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "UPDATE notificaciones → FALLIDA (ultimo_error)",
+    "self"
+   ],
+   [
+    "note",
+    "NT",
+    "",
+    "Job de reintentos cada 60 s (máx. 5 intentos) o reenvío manual"
+   ],
+   [
+    "end"
+   ]
+  ]
+ },
+ {
+  "key": "CU08_Registrar_Avance",
+  "titulo": "CU-08 Gestionar Seguimiento de Práctica — registrar avance semanal (Estudiante)",
+  "participantes": [
+   {
+    "id": "U",
+    "nombre": "Estudiante",
+    "actor": true
+   },
+   {
+    "id": "UI",
+    "nombre": "SPA Angular",
+    "actor": false
+   },
+   {
+    "id": "RT",
+    "nombre": "Router FastAPI<br/>/avances y /archivos",
+    "actor": false
+   },
+   {
+    "id": "SV",
+    "nombre": "AvanceSemanalService",
+    "actor": false
+   },
+   {
+    "id": "DB",
+    "nombre": "PostgreSQL<br/>jedanix_nucleo",
+    "actor": false
+   },
+   {
+    "id": "NT",
+    "nombre": "Servicio de<br/>Notificaciones",
+    "actor": false
+   },
+   {
+    "id": "BR",
+    "nombre": "Brevo",
+    "actor": false
+   }
+  ],
+  "items": [
+   [
+    "msg",
+    "U",
+    "UI",
+    "Selecciona «Seguimiento Prácticas»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /avances/me · Bearer JWT",
+    "sync"
+   ],
+   [
+    "note",
+    "RT",
+    "SV",
+    "Seguridad: valida JWT y rol ESTUDIANTE → 401 / 403 si falla"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "listar_mios(estudiante_id)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT avances de la práctica MATRICULADA",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "filas",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 historial de avances",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Muestra la tabla de reportes (semana, estado, calificación)",
+    "ret"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "«Registrar avance»",
+    "sync"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "Actividades, nº de días (1–6) y, por cada día, descripción y horas",
+    "sync"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "Horas totales, beneficio económico y textos finales",
+    "sync"
+   ],
+   [
+    "loop",
+    "por cada soporte de evidencia"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "Selecciona el archivo (PDF, PNG o JPG)",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "POST /archivos?permitir_imagenes=true (multipart)",
+    "sync"
+   ],
+   [
+    "alt",
+    "formato inválido o tamaño > 10 MB"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «Solo PDF, PNG o JPG» / «Supera 10 MB»",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Rechaza el archivo e indica el límite",
+    "ret"
+   ],
+   [
+    "else",
+    "archivo válido"
+   ],
+   [
+    "msg",
+    "RT",
+    "DB",
+    "INSERT archivos_subidos (contenido, tipo, tamaño)",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "201 {archivo: /uploads/…}",
+    "ret"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "msg",
+    "U",
+    "UI",
+    "«Enviar avance»",
+    "sync"
+   ],
+   [
+    "alt",
+    "campos obligatorios incompletos u horas totales ≠ suma de las horas diarias"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Muestra ambos valores y pide corregir (no llama al servidor)",
+    "ret"
+   ],
+   [
+    "else",
+    "el formulario es consistente"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "POST /avances {AvanceSemanalCreate: semana, días[], soportes[]}",
+    "sync"
+   ],
+   [
+    "note",
+    "RT",
+    "SV",
+    "Seguridad: valida JWT y rol ESTUDIANTE → 401 / 403 si falla"
+   ],
+   [
+    "alt",
+    "esquema inválido: horas del día fuera de (0, 24], más de 6 días, sin soportes"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 errores por campo",
+    "ret"
+   ],
+   [
+    "else",
+    "esquema válido"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "registrar_avance(estudiante_id, data)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "get_activa_de_estudiante()",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "postulación",
+    "ret"
+   ],
+   [
+    "alt",
+    "la práctica no está MATRICULADA (o ya FINALIZADA)"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «Debe tener una práctica MATRICULADA»",
+    "ret"
+   ],
+   [
+    "else",
+    "práctica MATRICULADA"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT objetivos de la postulación",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "objetivo",
+    "ret"
+   ],
+   [
+    "alt",
+    "los objetivos no están APROBADOS (CU-11)"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «Primero deben aprobarse los objetivos»",
+    "ret"
+   ],
+   [
+    "else",
+    "objetivos APROBADOS"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT avance de la semana",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "avance existente / ninguno",
+    "ret"
+   ],
+   [
+    "alt",
+    "ya existe un avance para esa semana y no está OBSERVADO"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "409 «Ya existe un avance para la semana»",
+    "ret"
+   ],
+   [
+    "else",
+    "semana libre, o corrección de un avance OBSERVADO"
+   ],
+   [
+    "alt",
+    "existe un avance OBSERVADO (6.1.c)"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "UPDATE avance (reemplaza campos, días y soportes) → PENDIENTE_DE_REVISION",
+    "sync"
+   ],
+   [
+    "else",
+    "avance nuevo"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "INSERT avance_semanal (PENDIENTE_DE_REVISION)",
+    "sync"
+   ],
+   [
+    "end"
+   ],
+   [
+    "loop",
+    "por cada día trabajado y cada soporte"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "INSERT dia_trabajado / soporte_avance",
+    "sync"
+   ],
+   [
+    "end"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "COMMIT",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "avance guardado (un solo registro por semana)",
+    "ret"
+   ],
+   [
+    "msg",
+    "SV",
+    "NT",
+    "POST /eventos «avance.registrado» a el Coordinador y el Docente Asesor de la empresa · X-API-Key (hilo daemon, sin esperar)",
+    "async"
+   ],
+   [
+    "msg",
+    "SV",
+    "RT",
+    "AvanceSemanal",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "201 AvanceSemanal",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "U",
+    "Agrega el reporte a la tabla: PENDIENTE DE REVISIÓN y recalcula el % de horas",
+    "ret"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "note",
+    "NT",
+    "BR",
+    "Envío asíncrono del correo (después de responder 202)"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "INSERT notificaciones (PENDIENTE)",
+    "self"
+   ],
+   [
+    "msg",
+    "NT",
+    "SV",
+    "202 {id, estado: PENDIENTE}",
+    "ret"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "renderiza la plantilla del evento",
+    "self"
+   ],
+   [
+    "msg",
+    "NT",
+    "BR",
+    "POST /v3/smtp/email (HTTPS 443)",
+    "sync"
+   ],
+   [
+    "alt",
+    "Brevo acepta el mensaje"
+   ],
+   [
+    "msg",
+    "BR",
+    "NT",
+    "201 messageId",
+    "ret"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "UPDATE notificaciones → ENVIADA",
+    "self"
+   ],
+   [
+    "note",
+    "BR",
+    "",
+    "Brevo entrega el correo a el Coordinador y el Docente Asesor (un correo por revisor)"
+   ],
+   [
+    "else",
+    "Brevo falla o no responde"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "UPDATE notificaciones → FALLIDA (ultimo_error)",
+    "self"
+   ],
+   [
+    "note",
+    "NT",
+    "",
+    "Job de reintentos cada 60 s (máx. 5 intentos) o reenvío manual"
+   ],
+   [
+    "end"
+   ]
+  ]
+ },
+ {
+  "key": "CU09_CU10_Revisar_Avances",
+  "titulo": "CU-09 y CU-10 — calificar (Coordinador) y observar (Docente Asesor) un avance semanal",
+  "participantes": [
+   {
+    "id": "C",
+    "nombre": "Coordinador<br/>de Práctica",
+    "actor": true
+   },
+   {
+    "id": "DA",
+    "nombre": "Docente<br/>Asesor",
+    "actor": true
+   },
+   {
+    "id": "UI",
+    "nombre": "SPA Angular",
+    "actor": false
+   },
+   {
+    "id": "RT",
+    "nombre": "Router FastAPI<br/>/avances",
+    "actor": false
+   },
+   {
+    "id": "SV",
+    "nombre": "AvanceSemanalService",
+    "actor": false
+   },
+   {
+    "id": "DB",
+    "nombre": "PostgreSQL<br/>jedanix_nucleo",
+    "actor": false
+   },
+   {
+    "id": "NT",
+    "nombre": "Servicio de<br/>Notificaciones",
+    "actor": false
+   },
+   {
+    "id": "BR",
+    "nombre": "Brevo",
+    "actor": false
+   }
+  ],
+  "items": [
+   [
+    "note",
+    "C",
+    "RT",
+    "PARTE A — CU-09: el Coordinador califica"
+   ],
+   [
+    "msg",
+    "C",
+    "UI",
+    "Selecciona «Estudiantes»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /avances/coordinador?solo_pendientes=true · Bearer JWT",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "RT",
+    "valida el JWT y requiere_rol(COORDINADOR)",
+    "self"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "listar_por_coordinador(coordinador_id)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT avances de las empresas del Coordinador",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "filas",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 avances (los de otros coordinadores no aparecen)",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "C",
+    "Lista estudiantes con avances pendientes de calificar",
+    "ret"
+   ],
+   [
+    "msg",
+    "C",
+    "UI",
+    "Selecciona un avance PENDIENTE DE REVISIÓN",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /avances/{id}",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 detalle: días, horas, soportes, textos del estudiante",
+    "ret"
+   ],
+   [
+    "msg",
+    "C",
+    "UI",
+    "Abre los soportes y revisa que las actividades coincidan con las horas",
+    "sync"
+   ],
+   [
+    "alt",
+    "el Coordinador califica"
+   ],
+   [
+    "msg",
+    "C",
+    "UI",
+    "Ingresa la nota (0.0 a 5.0) y «Guardar calificación»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "PATCH /avances/{id}/calificacion {calificacion_coordinador}",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "RT",
+    "verifica que la empresa del avance sea del Coordinador",
+    "self"
+   ],
+   [
+    "alt",
+    "el avance pertenece a otro Coordinador"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "403 «No tienes asignado a este estudiante»",
+    "ret"
+   ],
+   [
+    "else",
+    "nota fuera de 0.0–5.0"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «Rango permitido 0.0 a 5.0»",
+    "ret"
+   ],
+   [
+    "else",
+    "nota válida"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "calificar_avance(id, data)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "UPDATE avance → ACEPTADO (calificación, fecha) · COMMIT",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "ok",
+    "ret"
+   ],
+   [
+    "msg",
+    "SV",
+    "NT",
+    "POST /eventos «avance.calificado» al estudiante · X-API-Key (sin esperar)",
+    "async"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 AvanceSemanal ACEPTADO",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "C",
+    "Actualiza el contador de pendientes del estudiante",
+    "ret"
+   ],
+   [
+    "end"
+   ],
+   [
+    "else",
+    "el Coordinador observa"
+   ],
+   [
+    "msg",
+    "C",
+    "UI",
+    "Escribe el comentario y «Observar»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "PATCH /avances/{id}/calificacion {comentario_coordinador}",
+    "sync"
+   ],
+   [
+    "alt",
+    "comentario vacío o ambos campos informados"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «Informa solo la nota o solo el comentario»",
+    "ret"
+   ],
+   [
+    "else",
+    "comentario válido"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "calificar_avance(id, data)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "UPDATE avance → OBSERVADO (comentario) · COMMIT",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "NT",
+    "POST /eventos «avance.observado» al estudiante · X-API-Key (sin esperar)",
+    "async"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 AvanceSemanal OBSERVADO",
+    "ret"
+   ],
+   [
+    "note",
+    "UI",
+    "",
+    "El estudiante corrige y reenvía (CU-08, 6.1.c)"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "note",
+    "C",
+    "RT",
+    "PARTE B — CU-10: el Docente Asesor observa (independiente de la nota)"
+   ],
+   [
+    "msg",
+    "DA",
+    "UI",
+    "Selecciona «Estudiantes»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /avances/docente · Bearer JWT",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "RT",
+    "valida el JWT y requiere_rol(DOCENTE_ASESOR)",
+    "self"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "listar_por_docente_asesor(docente_id)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT avances de las empresas del Docente Asesor",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "filas",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 avances",
+    "ret"
+   ],
+   [
+    "msg",
+    "DA",
+    "UI",
+    "Selecciona un avance y revisa el detalle y los soportes",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /avances/{id}",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 detalle (incluye la nota del Coordinador si existe)",
+    "ret"
+   ],
+   [
+    "msg",
+    "DA",
+    "UI",
+    "Escribe la observación y «Guardar observación»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "PATCH /avances/{id}/observacion {observacion_docente_asesor}",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "RT",
+    "verifica que la empresa del avance sea del Docente Asesor",
+    "self"
+   ],
+   [
+    "alt",
+    "el avance pertenece a otro Docente Asesor"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "403 «No tienes asignado a este estudiante»",
+    "ret"
+   ],
+   [
+    "else",
+    "observación vacía"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 errores por campo",
+    "ret"
+   ],
+   [
+    "else",
+    "observación válida"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "observar_avance_docente(id, data)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "UPDATE avance (observacion_docente_asesor, fecha) · COMMIT",
+    "sync"
+   ],
+   [
+    "note",
+    "SV",
+    "DB",
+    "No cambia el estado del avance: es informativa"
+   ],
+   [
+    "msg",
+    "SV",
+    "NT",
+    "POST /eventos «avance.observacion_docente» al estudiante · X-API-Key (sin esperar)",
+    "async"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 AvanceSemanal",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "DA",
+    "Muestra la observación guardada",
+    "ret"
+   ],
+   [
+    "end"
+   ],
+   [
+    "note",
+    "NT",
+    "BR",
+    "Envío asíncrono del correo (después de responder 202)"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "INSERT notificaciones (PENDIENTE)",
+    "self"
+   ],
+   [
+    "msg",
+    "NT",
+    "SV",
+    "202 {id, estado: PENDIENTE}",
+    "ret"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "renderiza la plantilla del evento",
+    "self"
+   ],
+   [
+    "msg",
+    "NT",
+    "BR",
+    "POST /v3/smtp/email (HTTPS 443)",
+    "sync"
+   ],
+   [
+    "alt",
+    "Brevo acepta el mensaje"
+   ],
+   [
+    "msg",
+    "BR",
+    "NT",
+    "201 messageId",
+    "ret"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "UPDATE notificaciones → ENVIADA",
+    "self"
+   ],
+   [
+    "note",
+    "BR",
+    "",
+    "Brevo entrega el correo a el estudiante (por cada evento anterior)"
+   ],
+   [
+    "else",
+    "Brevo falla o no responde"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "UPDATE notificaciones → FALLIDA (ultimo_error)",
+    "self"
+   ],
+   [
+    "note",
+    "NT",
+    "",
+    "Job de reintentos cada 60 s (máx. 5 intentos) o reenvío manual"
+   ],
+   [
+    "end"
+   ]
+  ]
+ },
+ {
+  "key": "CU11_Objetivos",
+  "titulo": "CU-11 Gestionar Objetivos de la Práctica — Estudiante plantea, Docente Asesor decide",
+  "participantes": [
+   {
+    "id": "E",
+    "nombre": "Estudiante",
+    "actor": true
+   },
+   {
+    "id": "DA",
+    "nombre": "Docente<br/>Asesor",
+    "actor": true
+   },
+   {
+    "id": "UI",
+    "nombre": "SPA Angular",
+    "actor": false
+   },
+   {
+    "id": "RT",
+    "nombre": "Router FastAPI<br/>/objetivos",
+    "actor": false
+   },
+   {
+    "id": "SV",
+    "nombre": "ObjetivoPracticaService",
+    "actor": false
+   },
+   {
+    "id": "DB",
+    "nombre": "PostgreSQL<br/>jedanix_nucleo",
+    "actor": false
+   },
+   {
+    "id": "NT",
+    "nombre": "Servicio de<br/>Notificaciones",
+    "actor": false
+   },
+   {
+    "id": "BR",
+    "nombre": "Brevo",
+    "actor": false
+   }
+  ],
+  "items": [
+   [
+    "note",
+    "E",
+    "RT",
+    "PARTE A — el Estudiante plantea sus objetivos"
+   ],
+   [
+    "msg",
+    "E",
+    "UI",
+    "Selecciona «Objetivos» (habilitado al quedar MATRICULADO)",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /objetivos/me · Bearer JWT",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "RT",
+    "valida el JWT y requiere_rol(ESTUDIANTE)",
+    "self"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "obtener_mios(estudiante_id)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT objetivos de la práctica",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "objetivo / ninguno",
+    "ret"
+   ],
+   [
+    "alt",
+    "aún no hay objetivos (404)"
+   ],
+   [
+    "msg",
+    "UI",
+    "E",
+    "Muestra la caja de texto vacía",
+    "ret"
+   ],
+   [
+    "else",
+    "RECHAZADOS"
+   ],
+   [
+    "msg",
+    "UI",
+    "E",
+    "Caja precargada + observación del Docente Asesor",
+    "ret"
+   ],
+   [
+    "else",
+    "APROBADOS"
+   ],
+   [
+    "msg",
+    "UI",
+    "E",
+    "Solo lectura: no permite editar ni reenviar",
+    "ret"
+   ],
+   [
+    "end"
+   ],
+   [
+    "msg",
+    "E",
+    "UI",
+    "Escribe los objetivos y «Enviar»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "POST /objetivos {contenido}",
+    "sync"
+   ],
+   [
+    "alt",
+    "contenido vacío"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 errores por campo",
+    "ret"
+   ],
+   [
+    "else",
+    "contenido informado"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "enviar_objetivos(estudiante_id, data)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "get_activa_de_estudiante() y SELECT objetivos",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "postulación y objetivo",
+    "ret"
+   ],
+   [
+    "alt",
+    "la práctica no está MATRICULADA"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «Debe estar MATRICULADO»",
+    "ret"
+   ],
+   [
+    "else",
+    "ya están APROBADOS"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «Ya están aprobados; no se pueden editar»",
+    "ret"
+   ],
+   [
+    "else",
+    "primer envío o reenvío tras RECHAZADOS (4.1.a)"
+   ],
+   [
+    "alt",
+    "existían objetivos RECHAZADOS"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "UPDATE objetivo (nuevo contenido) → PENDIENTE_DE_APROBACION · COMMIT",
+    "sync"
+   ],
+   [
+    "else",
+    "primer envío"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "INSERT objetivo_practica (PENDIENTE_DE_APROBACION) · COMMIT",
+    "sync"
+   ],
+   [
+    "end"
+   ],
+   [
+    "msg",
+    "SV",
+    "NT",
+    "POST /eventos «objetivos.pendientes» al Docente Asesor {estudiante} · X-API-Key (sin esperar)",
+    "async"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "201 ObjetivoPractica",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "E",
+    "Deja la caja en solo lectura mientras está pendiente",
+    "ret"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "note",
+    "E",
+    "RT",
+    "PARTE B — el Docente Asesor decide"
+   ],
+   [
+    "msg",
+    "DA",
+    "UI",
+    "Selecciona «Estudiantes»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "GET /objetivos/pendientes",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "RT",
+    "valida el JWT y requiere_rol(DOCENTE_ASESOR)",
+    "self"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "listar_pendientes_docente(docente_id)",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "SELECT objetivos PENDIENTE_DE_APROBACION de sus empresas",
+    "sync"
+   ],
+   [
+    "msg",
+    "DB",
+    "SV",
+    "filas",
+    "ret"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 objetivos pendientes",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "DA",
+    "Lista los estudiantes con objetivos por revisar y muestra el texto",
+    "ret"
+   ],
+   [
+    "alt",
+    "el Docente Asesor aprueba"
+   ],
+   [
+    "msg",
+    "DA",
+    "UI",
+    "«Aprobar»",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "PATCH /objetivos/{id}/decision {aprobar: true}",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "RT",
+    "verifica que la empresa del estudiante sea del Docente Asesor (si no, 403)",
+    "self"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "decidir_objetivos(id, data)",
+    "sync"
+   ],
+   [
+    "alt",
+    "el estado ya no es PENDIENTE_DE_APROBACION"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «Solo se deciden objetivos pendientes»",
+    "ret"
+   ],
+   [
+    "else",
+    "pendiente"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "UPDATE objetivo → APROBADOS (fecha_decision) · COMMIT",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "NT",
+    "POST /eventos «objetivos.aprobados» al estudiante · X-API-Key (sin esperar)",
+    "async"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 ObjetivoPractica APROBADOS",
+    "ret"
+   ],
+   [
+    "msg",
+    "UI",
+    "DA",
+    "Retira al estudiante de la lista",
+    "ret"
+   ],
+   [
+    "note",
+    "DA",
+    "DB",
+    "Se habilita «Registrar avance» para el estudiante (CU-08)"
+   ],
+   [
+    "end"
+   ],
+   [
+    "else",
+    "el Docente Asesor rechaza"
+   ],
+   [
+    "msg",
+    "DA",
+    "UI",
+    "«Rechazar» + escribe qué debe mejorar",
+    "sync"
+   ],
+   [
+    "msg",
+    "UI",
+    "RT",
+    "PATCH /objetivos/{id}/decision {aprobar: false, observacion_docente}",
+    "sync"
+   ],
+   [
+    "msg",
+    "RT",
+    "SV",
+    "decidir_objetivos(id, data)",
+    "sync"
+   ],
+   [
+    "alt",
+    "la observación está vacía (17.1.a.1)"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "422 «La observación es obligatoria al rechazar»",
+    "ret"
+   ],
+   [
+    "else",
+    "observación informada"
+   ],
+   [
+    "msg",
+    "SV",
+    "DB",
+    "UPDATE objetivo → RECHAZADOS (observación, fecha) · COMMIT",
+    "sync"
+   ],
+   [
+    "msg",
+    "SV",
+    "NT",
+    "POST /eventos «objetivos.rechazados» al estudiante · X-API-Key (sin esperar)",
+    "async"
+   ],
+   [
+    "msg",
+    "RT",
+    "UI",
+    "200 ObjetivoPractica RECHAZADOS",
+    "ret"
+   ],
+   [
+    "note",
+    "UI",
+    "",
+    "El estudiante corrige y reenvía (vuelve a PENDIENTE)"
+   ],
+   [
+    "end"
+   ],
+   [
+    "end"
+   ],
+   [
+    "note",
+    "NT",
+    "BR",
+    "Envío asíncrono del correo (después de responder 202)"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "INSERT notificaciones (PENDIENTE)",
+    "self"
+   ],
+   [
+    "msg",
+    "NT",
+    "SV",
+    "202 {id, estado: PENDIENTE}",
+    "ret"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "renderiza la plantilla del evento",
+    "self"
+   ],
+   [
+    "msg",
+    "NT",
+    "BR",
+    "POST /v3/smtp/email (HTTPS 443)",
+    "sync"
+   ],
+   [
+    "alt",
+    "Brevo acepta el mensaje"
+   ],
+   [
+    "msg",
+    "BR",
+    "NT",
+    "201 messageId",
+    "ret"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "UPDATE notificaciones → ENVIADA",
+    "self"
+   ],
+   [
+    "note",
+    "BR",
+    "",
+    "Brevo entrega el correo a el Docente Asesor o el estudiante, según el evento"
+   ],
+   [
+    "else",
+    "Brevo falla o no responde"
+   ],
+   [
+    "msg",
+    "NT",
+    "NT",
+    "UPDATE notificaciones → FALLIDA (ultimo_error)",
+    "self"
+   ],
+   [
+    "note",
+    "NT",
+    "",
+    "Job de reintentos cada 60 s (máx. 5 intentos) o reenvío manual"
+   ],
+   [
+    "end"
+   ]
+  ]
+ }
+]

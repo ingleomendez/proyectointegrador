@@ -1,0 +1,5 @@
+p1 ok loc=Point2D.Double[-35.09375, 0.0] w=600 h=175
+p2 ok(p1,null) loc=Point2D.Double[0.0, 0.0] w=600
+p3 ok loc=Point2D.Double[35.09375, 0.0] w=600
+guard ok
+DONE

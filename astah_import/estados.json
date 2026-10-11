@@ -1,0 +1,416 @@
+[
+ {
+  "key": "E1_Postulacion",
+  "titulo": "Estados de la Postulación (solicitud de práctica)",
+  "sub": "Tabla postulaciones.estado — en pantalla «APROBADA» se llama MATRICULADO",
+  "estados": [
+   [
+    "BORRADOR",
+    "mid",
+    [
+     "editable, aún no enviado al Director"
+    ]
+   ],
+   [
+    "PENDIENTE_DE_APROBACION",
+    "wait",
+    [
+     "espera decisión del Director"
+    ]
+   ],
+   [
+    "APROBADA",
+    "ok",
+    [
+     "= MATRICULADO",
+     "habilita Objetivos y Avances"
+    ]
+   ],
+   [
+    "RECHAZADA",
+    "bad",
+    [
+     "guarda motivo_rechazo"
+    ]
+   ],
+   [
+    "FINALIZADA",
+    "end",
+    [
+     "guarda fecha_cierre"
+    ]
+   ]
+  ],
+  "inicial": [
+   [
+    "BORRADOR",
+    "guardar borrador (CU-06)"
+   ],
+   [
+    "PENDIENTE_DE_APROBACION",
+    "enviar solicitud (CU-06)\\n/ notifica al Director"
+   ]
+  ],
+  "finales": [
+   "RECHAZADA",
+   "FINALIZADA"
+  ],
+  "trans": [
+   [
+    "BORRADOR",
+    "BORRADOR",
+    "modificar borrador"
+   ],
+   [
+    "BORRADOR",
+    "PENDIENTE_DE_APROBACION",
+    "enviar borrador\\n[bitácora y documentos completos]\\n/ notifica al Director"
+   ],
+   [
+    "PENDIENTE_DE_APROBACION",
+    "APROBADA",
+    "Director acepta (CU-03)\\n[sin otra práctica activa]\\n/ postulacion.aprobada"
+   ],
+   [
+    "PENDIENTE_DE_APROBACION",
+    "RECHAZADA",
+    "Director rechaza (CU-03)\\n[motivo informado]\\n/ postulacion.rechazada"
+   ],
+   [
+    "APROBADA",
+    "APROBADA",
+    "Director rechaza el cierre (CU-05)\\n[observación informada]\\n/ practica.cierre_rechazado"
+   ],
+   [
+    "APROBADA",
+    "FINALIZADA",
+    "Director aprueba el cierre (CU-05)\\n[horas aceptadas ≥ horas requeridas]\\n/ practica.cerrada"
+   ]
+  ],
+  "notas": [
+   "Regla: un estudiante solo puede tener UNA postulación activa\\n(BORRADOR, PENDIENTE o APROBADA) a la vez."
+  ],
+  "rankdir": "TB",
+  "astah": {
+   "ini": [
+    "guardar borrador",
+    "enviar solicitud\\n/ notifica al Director"
+   ],
+   "trans": [
+    [
+     "modificar",
+     0,
+     0
+    ],
+    [
+     "enviar borrador\\n[completo]",
+     0,
+     0
+    ],
+    [
+     "Director acepta\\n[sin otra práctica activa]\\n/ postulacion.aprobada",
+     0,
+     0
+    ],
+    [
+     "Director rechaza\\n[motivo informado]\\n/ postulacion.rechazada",
+     0,
+     0
+    ],
+    [
+     "rechaza el cierre\\n[observación informada]",
+     0,
+     0
+    ],
+    [
+     "aprueba el cierre\\n[horas aceptadas ≥ requeridas]\\n/ practica.cerrada",
+     0,
+     0
+    ]
+   ]
+  }
+ },
+ {
+  "key": "E2_Avance",
+  "titulo": "Estados del Avance semanal",
+  "sub": "Tabla avances_semanales.estado — un solo registro por postulación y semana",
+  "estados": [
+   [
+    "PENDIENTE_DE_REVISION",
+    "wait",
+    [
+     "espera al Coordinador"
+    ]
+   ],
+   [
+    "ACEPTADO",
+    "ok",
+    [
+     "tiene calificación 0.0 – 5.0",
+     "suma horas oficiales"
+    ]
+   ],
+   [
+    "OBSERVADO",
+    "bad",
+    [
+     "tiene comentario del Coordinador"
+    ]
+   ]
+  ],
+  "inicial": [
+   [
+    "PENDIENTE_DE_REVISION",
+    "estudiante registra avance (CU-08)\\n[práctica MATRICULADA y objetivos APROBADOS]\\n/ avance.registrado"
+   ]
+  ],
+  "finales": [],
+  "trans": [
+   [
+    "PENDIENTE_DE_REVISION",
+    "ACEPTADO",
+    "Coordinador califica (CU-09)\\n[nota entre 0.0 y 5.0]\\n/ avance.calificado"
+   ],
+   [
+    "PENDIENTE_DE_REVISION",
+    "OBSERVADO",
+    "Coordinador observa (CU-09)\\n[comentario informado]\\n/ avance.observado"
+   ],
+   [
+    "OBSERVADO",
+    "PENDIENTE_DE_REVISION",
+    "estudiante corrige y reenvía (CU-08)\\n/ misma fila, borra nota y comentario"
+   ],
+   [
+    "ACEPTADO",
+    "ACEPTADO",
+    "Coordinador recalifica (CU-09, 7.1.a)\\n/ avance.calificado"
+   ],
+   [
+    "ACEPTADO",
+    "OBSERVADO",
+    "Coordinador observa un avance aceptado\\n/ avance.observado"
+   ]
+  ],
+  "notas": [
+   "La observación del Docente Asesor (CU-10) NO cambia el estado: es informativa y se guarda aparte.\\nSolo los avances ACEPTADOS cuentan para las horas acumuladas y para el cierre de la práctica."
+  ],
+  "rankdir": "TB",
+  "astah": {
+   "ini": [
+    "registra avance\\n[matriculada y objetivos aprobados]"
+   ],
+   "trans": [
+    [
+     "califica\\n[nota 0.0 – 5.0]",
+     0,
+     0
+    ],
+    [
+     "observa\\n[comentario informado]",
+     0,
+     0
+    ],
+    [
+     "corrige y reenvía",
+     160,
+     0
+    ],
+    [
+     "recalifica",
+     0,
+     0
+    ],
+    [
+     "observa un aceptado",
+     0,
+     0
+    ]
+   ]
+  }
+ },
+ {
+  "key": "E3_Objetivos",
+  "titulo": "Estados de los Objetivos de la práctica",
+  "sub": "Tabla objetivos_practica.estado — un registro por postulación",
+  "estados": [
+   [
+    "PENDIENTE_DE_APROBACION",
+    "wait",
+    [
+     "espera al Docente Asesor"
+    ]
+   ],
+   [
+    "APROBADOS",
+    "ok",
+    [
+     "solo lectura",
+     "habilita registrar avances"
+    ]
+   ],
+   [
+    "RECHAZADOS",
+    "bad",
+    [
+     "guarda observación_docente"
+    ]
+   ]
+  ],
+  "inicial": [
+   [
+    "PENDIENTE_DE_APROBACION",
+    "estudiante envía objetivos (CU-11)\\n[práctica MATRICULADA, contenido no vacío]\\n/ objetivos.pendientes"
+   ]
+  ],
+  "finales": [
+   "APROBADOS"
+  ],
+  "trans": [
+   [
+    "PENDIENTE_DE_APROBACION",
+    "APROBADOS",
+    "Docente Asesor aprueba (CU-11)\\n/ objetivos.aprobados"
+   ],
+   [
+    "PENDIENTE_DE_APROBACION",
+    "RECHAZADOS",
+    "Docente Asesor rechaza (CU-11)\\n[observación informada]\\n/ objetivos.rechazados"
+   ],
+   [
+    "RECHAZADOS",
+    "PENDIENTE_DE_APROBACION",
+    "estudiante corrige y reenvía (CU-11, 4.1.a)\\n/ misma fila, borra la observación\\n/ objetivos.pendientes"
+   ]
+  ],
+  "notas": [
+   "Desde APROBADOS no hay transición: el sistema responde 422\\n«Los objetivos ya están APROBADOS; no se pueden editar»."
+  ],
+  "rankdir": "TB",
+  "astah": {
+   "ini": [
+    "envía objetivos\\n[práctica matriculada]"
+   ],
+   "trans": [
+    [
+     "aprueba",
+     0,
+     0
+    ],
+    [
+     "rechaza\\n[observación informada]",
+     0,
+     0
+    ],
+    [
+     "corrige y reenvía",
+     160,
+     0
+    ]
+   ]
+  }
+ },
+ {
+  "key": "E4_Notificacion",
+  "titulo": "Estados de la Notificación (microservicio de Notificaciones)",
+  "sub": "Tabla notificaciones.estado — reintento automático cada 60 s, máximo 5 intentos",
+  "estados": [
+   [
+    "PENDIENTE",
+    "wait",
+    [
+     "registrada, responde 202",
+     "aún no enviada"
+    ]
+   ],
+   [
+    "ENVIADA",
+    "ok",
+    [
+     "Brevo aceptó el correo",
+     "borra datos sensibles (contraseña temporal)"
+    ]
+   ],
+   [
+    "FALLIDA",
+    "bad",
+    [
+     "guarda ultimo_error",
+     "intentos acumulados"
+    ]
+   ]
+  ],
+  "inicial": [
+   [
+    "PENDIENTE",
+    "POST /eventos (X-API-Key)\\n[evento válido]\\n/ responde 202 y envía en segundo plano"
+   ]
+  ],
+  "finales": [
+   "ENVIADA"
+  ],
+  "trans": [
+   [
+    "PENDIENTE",
+    "ENVIADA",
+    "Brevo responde 201\\n/ intentos + 1, canal = brevo"
+   ],
+   [
+    "PENDIENTE",
+    "FALLIDA",
+    "Brevo falla o no responde\\n/ intentos + 1, ultimo_error"
+   ],
+   [
+    "FALLIDA",
+    "ENVIADA",
+    "reintento exitoso"
+   ],
+   [
+    "FALLIDA",
+    "FALLIDA",
+    "reintento automático (job cada 60 s)\\n[intentos < 5, espera = intentos × 30 s]\\n/ intentos + 1\\n— o —\\nreenvío manual (CU-01, 19.1.a)\\n/ intentos = 0 y vuelve a enviar"
+   ],
+   [
+    "PENDIENTE",
+    "PENDIENTE",
+    "huérfana > 2 min (el servicio se cayó)\\n/ el job la reprocesa"
+   ]
+  ],
+  "notas": [
+   "Con 5 intentos fallidos la notificación queda FALLIDA hasta que alguien\\nuse el reenvío manual (POST /notificaciones/:id/reenviar)."
+  ],
+  "rankdir": "TB",
+  "astah": {
+   "ini": [
+    "POST /eventos\\n/ responde 202"
+   ],
+   "trans": [
+    [
+     "Brevo responde 201",
+     0,
+     0
+    ],
+    [
+     "Brevo falla\\n/ guarda ultimo_error",
+     0,
+     0
+    ],
+    [
+     "reintento exitoso",
+     0,
+     0
+    ],
+    [
+     "reintento (cada 60 s) o reenvío manual\\n[intentos < 5]",
+     0,
+     0
+    ],
+    [
+     "huérfana > 2 min\\n/ el job la reprocesa",
+     0,
+     0
+    ]
+   ]
+  }
+ }
+]

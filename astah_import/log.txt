@@ -1,0 +1,4 @@
+kind NONE
+kind AGGREGATE
+kind COMPOSITE
+composiciones aplicadas: 20

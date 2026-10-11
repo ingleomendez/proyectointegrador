@@ -1,0 +1,505 @@
+[
+ {
+  "nombre": "Diagrama de Clases 1 - Dominio del Nucleo",
+  "filas": [
+   [
+    "jedanix.nucleo.dominio.Usuario"
+   ],
+   [
+    "jedanix.nucleo.dominio.DocenteAsesor",
+    "jedanix.nucleo.dominio.CoordinadorPractica",
+    "jedanix.nucleo.dominio.Director",
+    "jedanix.nucleo.dominio.Estudiante",
+    "jedanix.nucleo.dominio.ArchivoSubido"
+   ],
+   [
+    "jedanix.nucleo.dominio.EmpresaReceptora",
+    "jedanix.nucleo.dominio.Postulacion"
+   ],
+   [
+    "jedanix.nucleo.dominio.PreguntaBitacora",
+    "jedanix.nucleo.dominio.DocumentoRequerido",
+    "jedanix.nucleo.dominio.RespuestaBitacora",
+    "jedanix.nucleo.dominio.DocumentoPostulacion",
+    "jedanix.nucleo.dominio.ObjetivoPractica",
+    "jedanix.nucleo.dominio.AvanceSemanal"
+   ],
+   [
+    "jedanix.nucleo.dominio.SoporteAvance",
+    "jedanix.nucleo.dominio.DiaTrabajado"
+   ],
+   [
+    "jedanix.nucleo.dominio.RolEnum",
+    "jedanix.nucleo.dominio.UsuarioEstadoEnum",
+    "jedanix.nucleo.dominio.GrupoSanguineoEnum",
+    "jedanix.nucleo.dominio.FactorRhEnum",
+    "jedanix.nucleo.dominio.EmpresaEstadoEnum"
+   ],
+   [
+    "jedanix.nucleo.dominio.TipoRespuestaEnum",
+    "jedanix.nucleo.dominio.PostulacionEstadoEnum",
+    "jedanix.nucleo.dominio.ObjetivoEstadoEnum",
+    "jedanix.nucleo.dominio.AvanceEstadoEnum",
+    "jedanix.nucleo.dominio.TipoArchivoSoporteEnum"
+   ]
+  ],
+  "color": {
+   "jedanix.nucleo.dominio.Usuario": "#DCE6F2",
+   "jedanix.nucleo.dominio.Estudiante": "#DCE6F2",
+   "jedanix.nucleo.dominio.Director": "#DCE6F2",
+   "jedanix.nucleo.dominio.CoordinadorPractica": "#DCE6F2",
+   "jedanix.nucleo.dominio.DocenteAsesor": "#DCE6F2",
+   "jedanix.nucleo.dominio.EmpresaReceptora": "#D9EAD3",
+   "jedanix.nucleo.dominio.PreguntaBitacora": "#D9EAD3",
+   "jedanix.nucleo.dominio.DocumentoRequerido": "#D9EAD3",
+   "jedanix.nucleo.dominio.Postulacion": "#FCE5CD",
+   "jedanix.nucleo.dominio.RespuestaBitacora": "#FCE5CD",
+   "jedanix.nucleo.dominio.DocumentoPostulacion": "#FCE5CD",
+   "jedanix.nucleo.dominio.ObjetivoPractica": "#FCE5CD",
+   "jedanix.nucleo.dominio.AvanceSemanal": "#E4D9F1",
+   "jedanix.nucleo.dominio.DiaTrabajado": "#E4D9F1",
+   "jedanix.nucleo.dominio.SoporteAvance": "#E4D9F1",
+   "jedanix.nucleo.dominio.ArchivoSubido": "#E3E3E3",
+   "jedanix.nucleo.dominio.RolEnum": "#FFF2CC",
+   "jedanix.nucleo.dominio.UsuarioEstadoEnum": "#FFF2CC",
+   "jedanix.nucleo.dominio.GrupoSanguineoEnum": "#FFF2CC",
+   "jedanix.nucleo.dominio.FactorRhEnum": "#FFF2CC",
+   "jedanix.nucleo.dominio.EmpresaEstadoEnum": "#FFF2CC",
+   "jedanix.nucleo.dominio.TipoRespuestaEnum": "#FFF2CC",
+   "jedanix.nucleo.dominio.PostulacionEstadoEnum": "#FFF2CC",
+   "jedanix.nucleo.dominio.ObjetivoEstadoEnum": "#FFF2CC",
+   "jedanix.nucleo.dominio.AvanceEstadoEnum": "#FFF2CC",
+   "jedanix.nucleo.dominio.TipoArchivoSoporteEnum": "#FFF2CC"
+  },
+  "gx": 50,
+  "gy": 80,
+  "comp": [
+   [
+    "jedanix.nucleo.dominio.EmpresaReceptora",
+    "jedanix.nucleo.dominio.PreguntaBitacora"
+   ],
+   [
+    "jedanix.nucleo.dominio.EmpresaReceptora",
+    "jedanix.nucleo.dominio.DocumentoRequerido"
+   ],
+   [
+    "jedanix.nucleo.dominio.Postulacion",
+    "jedanix.nucleo.dominio.RespuestaBitacora"
+   ],
+   [
+    "jedanix.nucleo.dominio.Postulacion",
+    "jedanix.nucleo.dominio.DocumentoPostulacion"
+   ],
+   [
+    "jedanix.nucleo.dominio.Postulacion",
+    "jedanix.nucleo.dominio.ObjetivoPractica"
+   ],
+   [
+    "jedanix.nucleo.dominio.AvanceSemanal",
+    "jedanix.nucleo.dominio.DiaTrabajado"
+   ],
+   [
+    "jedanix.nucleo.dominio.AvanceSemanal",
+    "jedanix.nucleo.dominio.SoporteAvance"
+   ]
+  ]
+ },
+ {
+  "nombre": "Diagrama de Clases 2 - Nucleo Routers y Servicios",
+  "filas": [
+   [
+    "jedanix.nucleo.routers.AuthRouter",
+    "jedanix.nucleo.routers.UsuariosRouter",
+    "jedanix.nucleo.routers.EmpresasRouter",
+    "jedanix.nucleo.routers.PostulacionesRouter"
+   ],
+   [
+    "jedanix.nucleo.routers.ObjetivosRouter",
+    "jedanix.nucleo.routers.AvancesRouter",
+    "jedanix.nucleo.routers.ArchivosRouter"
+   ],
+   [
+    "jedanix.nucleo.services.UsuarioService",
+    "jedanix.nucleo.services.EmpresaReceptoraService",
+    "jedanix.nucleo.services.PostulacionService",
+    "jedanix.nucleo.services.AvanceSemanalService",
+    "jedanix.nucleo.services.ObjetivoPracticaService"
+   ],
+   [
+    "jedanix.nucleo.core.Deps",
+    "jedanix.nucleo.core.Security",
+    "jedanix.nucleo.core.NotificacionesClient",
+    "jedanix.nucleo.core.Settings"
+   ]
+  ],
+  "color": {
+   "jedanix.nucleo.routers.AuthRouter": "#D6E4F5",
+   "jedanix.nucleo.routers.UsuariosRouter": "#D6E4F5",
+   "jedanix.nucleo.routers.EmpresasRouter": "#D6E4F5",
+   "jedanix.nucleo.routers.PostulacionesRouter": "#D6E4F5",
+   "jedanix.nucleo.routers.ObjetivosRouter": "#D6E4F5",
+   "jedanix.nucleo.routers.AvancesRouter": "#D6E4F5",
+   "jedanix.nucleo.routers.ArchivosRouter": "#D6E4F5",
+   "jedanix.nucleo.services.UsuarioService": "#FCE5CD",
+   "jedanix.nucleo.services.EmpresaReceptoraService": "#FCE5CD",
+   "jedanix.nucleo.services.PostulacionService": "#FCE5CD",
+   "jedanix.nucleo.services.AvanceSemanalService": "#FCE5CD",
+   "jedanix.nucleo.services.ObjetivoPracticaService": "#FCE5CD",
+   "jedanix.nucleo.core.Deps": "#E0E0E0",
+   "jedanix.nucleo.core.Security": "#E0E0E0",
+   "jedanix.nucleo.core.NotificacionesClient": "#F9E79F",
+   "jedanix.nucleo.core.Settings": "#E0E0E0"
+  },
+  "estereotipo": {
+   "jedanix.nucleo.routers.AuthRouter": "router",
+   "jedanix.nucleo.routers.UsuariosRouter": "router",
+   "jedanix.nucleo.routers.EmpresasRouter": "router",
+   "jedanix.nucleo.routers.PostulacionesRouter": "router",
+   "jedanix.nucleo.routers.ObjetivosRouter": "router",
+   "jedanix.nucleo.routers.AvancesRouter": "router",
+   "jedanix.nucleo.routers.ArchivosRouter": "router",
+   "jedanix.nucleo.services.UsuarioService": "service",
+   "jedanix.nucleo.services.EmpresaReceptoraService": "service",
+   "jedanix.nucleo.services.PostulacionService": "service",
+   "jedanix.nucleo.services.AvanceSemanalService": "service",
+   "jedanix.nucleo.services.ObjetivoPracticaService": "service",
+   "jedanix.nucleo.core.NotificacionesClient": "client"
+  },
+  "gx": 40,
+  "gy": 90
+ },
+ {
+  "nombre": "Diagrama de Clases 3 - Nucleo Repositorios y Excepciones",
+  "filas": [
+   [
+    "jedanix.nucleo.core.AppMain",
+    "jedanix.nucleo.core.Database"
+   ],
+   [
+    "jedanix.nucleo.services.UsuarioService",
+    "jedanix.nucleo.services.EmpresaReceptoraService",
+    "jedanix.nucleo.services.PostulacionService",
+    "jedanix.nucleo.services.AvanceSemanalService",
+    "jedanix.nucleo.services.ObjetivoPracticaService"
+   ],
+   [
+    "jedanix.nucleo.repositories.UsuarioRepository",
+    "jedanix.nucleo.repositories.EmpresaReceptoraRepository",
+    "jedanix.nucleo.repositories.PostulacionRepository",
+    "jedanix.nucleo.repositories.AvanceSemanalRepository",
+    "jedanix.nucleo.repositories.ObjetivoPracticaRepository"
+   ],
+   [
+    "jedanix.nucleo.excepciones.ServiceError"
+   ],
+   [
+    "jedanix.nucleo.excepciones.NoEncontradoError",
+    "jedanix.nucleo.excepciones.ReglaDeNegocioError",
+    "jedanix.nucleo.excepciones.ConflictoError",
+    "jedanix.nucleo.excepciones.RequiereConfirmacionError"
+   ]
+  ],
+  "color": {
+   "jedanix.nucleo.repositories.UsuarioRepository": "#D9EAD3",
+   "jedanix.nucleo.repositories.EmpresaReceptoraRepository": "#D9EAD3",
+   "jedanix.nucleo.repositories.PostulacionRepository": "#D9EAD3",
+   "jedanix.nucleo.repositories.AvanceSemanalRepository": "#D9EAD3",
+   "jedanix.nucleo.repositories.ObjetivoPracticaRepository": "#D9EAD3",
+   "jedanix.nucleo.services.UsuarioService": "#FCE5CD",
+   "jedanix.nucleo.services.EmpresaReceptoraService": "#FCE5CD",
+   "jedanix.nucleo.services.PostulacionService": "#FCE5CD",
+   "jedanix.nucleo.services.AvanceSemanalService": "#FCE5CD",
+   "jedanix.nucleo.services.ObjetivoPracticaService": "#FCE5CD",
+   "jedanix.nucleo.excepciones.ServiceError": "#F4CCCC",
+   "jedanix.nucleo.excepciones.NoEncontradoError": "#F4CCCC",
+   "jedanix.nucleo.excepciones.ReglaDeNegocioError": "#F4CCCC",
+   "jedanix.nucleo.excepciones.ConflictoError": "#F4CCCC",
+   "jedanix.nucleo.excepciones.RequiereConfirmacionError": "#F4CCCC",
+   "jedanix.nucleo.core.Database": "#E0E0E0",
+   "jedanix.nucleo.core.AppMain": "#E0E0E0"
+  },
+  "estereotipo": {
+   "jedanix.nucleo.repositories.UsuarioRepository": "repository",
+   "jedanix.nucleo.repositories.EmpresaReceptoraRepository": "repository",
+   "jedanix.nucleo.repositories.PostulacionRepository": "repository",
+   "jedanix.nucleo.repositories.AvanceSemanalRepository": "repository",
+   "jedanix.nucleo.repositories.ObjetivoPracticaRepository": "repository",
+   "jedanix.nucleo.services.UsuarioService": "service",
+   "jedanix.nucleo.services.EmpresaReceptoraService": "service",
+   "jedanix.nucleo.services.PostulacionService": "service",
+   "jedanix.nucleo.services.AvanceSemanalService": "service",
+   "jedanix.nucleo.services.ObjetivoPracticaService": "service",
+   "jedanix.nucleo.excepciones.ServiceError": "exception",
+   "jedanix.nucleo.excepciones.NoEncontradoError": "exception",
+   "jedanix.nucleo.excepciones.ReglaDeNegocioError": "exception",
+   "jedanix.nucleo.excepciones.ConflictoError": "exception",
+   "jedanix.nucleo.excepciones.RequiereConfirmacionError": "exception"
+  },
+  "sinOps": {
+   "jedanix.nucleo.services.UsuarioService": true,
+   "jedanix.nucleo.services.EmpresaReceptoraService": true,
+   "jedanix.nucleo.services.PostulacionService": true,
+   "jedanix.nucleo.services.AvanceSemanalService": true,
+   "jedanix.nucleo.services.ObjetivoPracticaService": true
+  },
+  "gx": 40,
+  "gy": 90,
+  "comp": [
+   [
+    "jedanix.nucleo.services.UsuarioService",
+    "jedanix.nucleo.repositories.UsuarioRepository"
+   ],
+   [
+    "jedanix.nucleo.services.UsuarioService",
+    "jedanix.nucleo.repositories.AvanceSemanalRepository"
+   ],
+   [
+    "jedanix.nucleo.services.EmpresaReceptoraService",
+    "jedanix.nucleo.repositories.EmpresaReceptoraRepository"
+   ],
+   [
+    "jedanix.nucleo.services.EmpresaReceptoraService",
+    "jedanix.nucleo.repositories.PostulacionRepository"
+   ],
+   [
+    "jedanix.nucleo.services.PostulacionService",
+    "jedanix.nucleo.repositories.PostulacionRepository"
+   ],
+   [
+    "jedanix.nucleo.services.PostulacionService",
+    "jedanix.nucleo.repositories.EmpresaReceptoraRepository"
+   ],
+   [
+    "jedanix.nucleo.services.PostulacionService",
+    "jedanix.nucleo.repositories.UsuarioRepository"
+   ],
+   [
+    "jedanix.nucleo.services.PostulacionService",
+    "jedanix.nucleo.repositories.AvanceSemanalRepository"
+   ],
+   [
+    "jedanix.nucleo.services.AvanceSemanalService",
+    "jedanix.nucleo.repositories.AvanceSemanalRepository"
+   ],
+   [
+    "jedanix.nucleo.services.AvanceSemanalService",
+    "jedanix.nucleo.repositories.PostulacionRepository"
+   ],
+   [
+    "jedanix.nucleo.services.AvanceSemanalService",
+    "jedanix.nucleo.repositories.ObjetivoPracticaRepository"
+   ],
+   [
+    "jedanix.nucleo.services.ObjetivoPracticaService",
+    "jedanix.nucleo.repositories.ObjetivoPracticaRepository"
+   ],
+   [
+    "jedanix.nucleo.services.ObjetivoPracticaService",
+    "jedanix.nucleo.repositories.PostulacionRepository"
+   ]
+  ]
+ },
+ {
+  "nombre": "Diagrama de Clases 4 - Microservicio de Notificaciones",
+  "filas": [
+   [
+    "jedanix.notificaciones.Index",
+    "jedanix.notificaciones.App"
+   ],
+   [
+    "jedanix.notificaciones.ClaveInterna",
+    "jedanix.notificaciones.EventosRouter",
+    "jedanix.notificaciones.NotificacionesRouter",
+    "jedanix.notificaciones.JobReintentos"
+   ],
+   [
+    "jedanix.notificaciones.NotificacionService"
+   ],
+   [
+    "jedanix.notificaciones.Plantillas",
+    "jedanix.notificaciones.Mailer",
+    "jedanix.notificaciones.EventoInvalidoError",
+    "jedanix.notificaciones.Db"
+   ],
+   [
+    "jedanix.notificaciones.Notificacion",
+    "jedanix.notificaciones.NotificacionEstado",
+    "jedanix.notificaciones.Config"
+   ]
+  ],
+  "color": {
+   "jedanix.notificaciones.Index": "#E0E0E0",
+   "jedanix.notificaciones.App": "#E0E0E0",
+   "jedanix.notificaciones.Config": "#E0E0E0",
+   "jedanix.notificaciones.Db": "#E0E0E0",
+   "jedanix.notificaciones.ClaveInterna": "#D6E4F5",
+   "jedanix.notificaciones.EventosRouter": "#D6E4F5",
+   "jedanix.notificaciones.NotificacionesRouter": "#D6E4F5",
+   "jedanix.notificaciones.NotificacionService": "#FCE5CD",
+   "jedanix.notificaciones.Plantillas": "#FCE5CD",
+   "jedanix.notificaciones.Mailer": "#FCE5CD",
+   "jedanix.notificaciones.JobReintentos": "#FCE5CD",
+   "jedanix.notificaciones.EventoInvalidoError": "#F4CCCC",
+   "jedanix.notificaciones.Notificacion": "#DCE6F2",
+   "jedanix.notificaciones.NotificacionEstado": "#FFF2CC"
+  },
+  "estereotipo": {
+   "jedanix.notificaciones.ClaveInterna": "middleware",
+   "jedanix.notificaciones.EventosRouter": "router",
+   "jedanix.notificaciones.NotificacionesRouter": "router",
+   "jedanix.notificaciones.NotificacionService": "service",
+   "jedanix.notificaciones.JobReintentos": "job",
+   "jedanix.notificaciones.EventoInvalidoError": "exception",
+   "jedanix.notificaciones.Notificacion": "entity"
+  },
+  "gx": 50,
+  "gy": 90
+ },
+ {
+  "nombre": "Diagrama de Clases 5 - Frontend Angular",
+  "filas": [
+   [
+    "jedanix.frontend.director.UsuariosLista",
+    "jedanix.frontend.director.UsuarioForm",
+    "jedanix.frontend.director.EmpresasListaDirector",
+    "jedanix.frontend.director.EmpresaDetalleDirector",
+    "jedanix.frontend.director.EmpresaForm"
+   ],
+   [
+    "jedanix.frontend.director.SolicitudesLista",
+    "jedanix.frontend.director.SolicitudDetalle",
+    "jedanix.frontend.director.MatriculadosLista",
+    "jedanix.frontend.director.MatriculadoDetalle",
+    "jedanix.frontend.director.CierrePractica"
+   ],
+   [
+    "jedanix.frontend.estudiante.Inicio",
+    "jedanix.frontend.estudiante.EmpresasLista",
+    "jedanix.frontend.estudiante.EmpresaDetalle",
+    "jedanix.frontend.estudiante.PostulacionNueva",
+    "jedanix.frontend.estudiante.PostulacionesLista",
+    "jedanix.frontend.estudiante.PostulacionDetalle"
+   ],
+   [
+    "jedanix.frontend.estudiante.MiPractica",
+    "jedanix.frontend.estudiante.Objetivos",
+    "jedanix.frontend.estudiante.AvancesLista",
+    "jedanix.frontend.estudiante.AvanceNuevo",
+    "jedanix.frontend.estudiante.AvanceDetalle"
+   ],
+   [
+    "jedanix.frontend.revision.EstudiantesLista",
+    "jedanix.frontend.revision.EstudianteDetalle",
+    "jedanix.frontend.revision.AvanceRevision",
+    "jedanix.frontend.comun.Login",
+    "jedanix.frontend.comun.Perfil",
+    "jedanix.frontend.comun.InicioRol"
+   ],
+   [
+    "jedanix.frontend.servicios.AuthService",
+    "jedanix.frontend.servicios.UsuarioService",
+    "jedanix.frontend.servicios.EmpresaService",
+    "jedanix.frontend.servicios.PostulacionService"
+   ],
+   [
+    "jedanix.frontend.servicios.ObjetivoService",
+    "jedanix.frontend.servicios.AvanceService",
+    "jedanix.frontend.servicios.ArchivoService",
+    "jedanix.frontend.servicios.EstadoEstudianteService"
+   ],
+   [
+    "jedanix.frontend.core.AppRoutes",
+    "jedanix.frontend.core.Shell",
+    "jedanix.frontend.core.Guards"
+   ],
+   [
+    "jedanix.frontend.core.AuthInterceptor",
+    "jedanix.frontend.core.Utilidades",
+    "jedanix.frontend.core.Environment"
+   ]
+  ],
+  "color": {
+   "jedanix.frontend.director.UsuariosLista": "#D6E4F5",
+   "jedanix.frontend.director.UsuarioForm": "#D6E4F5",
+   "jedanix.frontend.director.EmpresasListaDirector": "#D6E4F5",
+   "jedanix.frontend.director.EmpresaDetalleDirector": "#D6E4F5",
+   "jedanix.frontend.director.EmpresaForm": "#D6E4F5",
+   "jedanix.frontend.director.SolicitudesLista": "#D6E4F5",
+   "jedanix.frontend.director.SolicitudDetalle": "#D6E4F5",
+   "jedanix.frontend.director.MatriculadosLista": "#D6E4F5",
+   "jedanix.frontend.director.MatriculadoDetalle": "#D6E4F5",
+   "jedanix.frontend.director.CierrePractica": "#D6E4F5",
+   "jedanix.frontend.estudiante.Inicio": "#D6E4F5",
+   "jedanix.frontend.estudiante.EmpresasLista": "#D6E4F5",
+   "jedanix.frontend.estudiante.EmpresaDetalle": "#D6E4F5",
+   "jedanix.frontend.estudiante.PostulacionNueva": "#D6E4F5",
+   "jedanix.frontend.estudiante.PostulacionesLista": "#D6E4F5",
+   "jedanix.frontend.estudiante.PostulacionDetalle": "#D6E4F5",
+   "jedanix.frontend.estudiante.MiPractica": "#D6E4F5",
+   "jedanix.frontend.estudiante.Objetivos": "#D6E4F5",
+   "jedanix.frontend.estudiante.AvancesLista": "#D6E4F5",
+   "jedanix.frontend.estudiante.AvanceNuevo": "#D6E4F5",
+   "jedanix.frontend.estudiante.AvanceDetalle": "#D6E4F5",
+   "jedanix.frontend.revision.EstudiantesLista": "#D6E4F5",
+   "jedanix.frontend.revision.EstudianteDetalle": "#D6E4F5",
+   "jedanix.frontend.revision.AvanceRevision": "#D6E4F5",
+   "jedanix.frontend.comun.Login": "#D6E4F5",
+   "jedanix.frontend.comun.Perfil": "#D6E4F5",
+   "jedanix.frontend.comun.InicioRol": "#D6E4F5",
+   "jedanix.frontend.core.Shell": "#D6E4F5",
+   "jedanix.frontend.servicios.AuthService": "#FCE5CD",
+   "jedanix.frontend.servicios.UsuarioService": "#FCE5CD",
+   "jedanix.frontend.servicios.EmpresaService": "#FCE5CD",
+   "jedanix.frontend.servicios.PostulacionService": "#FCE5CD",
+   "jedanix.frontend.servicios.ObjetivoService": "#FCE5CD",
+   "jedanix.frontend.servicios.AvanceService": "#FCE5CD",
+   "jedanix.frontend.servicios.ArchivoService": "#FCE5CD",
+   "jedanix.frontend.servicios.EstadoEstudianteService": "#FCE5CD",
+   "jedanix.frontend.core.AppRoutes": "#E0E0E0",
+   "jedanix.frontend.core.Guards": "#E0E0E0",
+   "jedanix.frontend.core.AuthInterceptor": "#E0E0E0",
+   "jedanix.frontend.core.Utilidades": "#E0E0E0",
+   "jedanix.frontend.core.Environment": "#E0E0E0"
+  },
+  "estereotipo": {
+   "jedanix.frontend.director.UsuariosLista": "component",
+   "jedanix.frontend.director.UsuarioForm": "component",
+   "jedanix.frontend.director.EmpresasListaDirector": "component",
+   "jedanix.frontend.director.EmpresaDetalleDirector": "component",
+   "jedanix.frontend.director.EmpresaForm": "component",
+   "jedanix.frontend.director.SolicitudesLista": "component",
+   "jedanix.frontend.director.SolicitudDetalle": "component",
+   "jedanix.frontend.director.MatriculadosLista": "component",
+   "jedanix.frontend.director.MatriculadoDetalle": "component",
+   "jedanix.frontend.director.CierrePractica": "component",
+   "jedanix.frontend.estudiante.Inicio": "component",
+   "jedanix.frontend.estudiante.EmpresasLista": "component",
+   "jedanix.frontend.estudiante.EmpresaDetalle": "component",
+   "jedanix.frontend.estudiante.PostulacionNueva": "component",
+   "jedanix.frontend.estudiante.PostulacionesLista": "component",
+   "jedanix.frontend.estudiante.PostulacionDetalle": "component",
+   "jedanix.frontend.estudiante.MiPractica": "component",
+   "jedanix.frontend.estudiante.Objetivos": "component",
+   "jedanix.frontend.estudiante.AvancesLista": "component",
+   "jedanix.frontend.estudiante.AvanceNuevo": "component",
+   "jedanix.frontend.estudiante.AvanceDetalle": "component",
+   "jedanix.frontend.revision.EstudiantesLista": "component",
+   "jedanix.frontend.revision.EstudianteDetalle": "component",
+   "jedanix.frontend.revision.AvanceRevision": "component",
+   "jedanix.frontend.comun.Login": "component",
+   "jedanix.frontend.comun.Perfil": "component",
+   "jedanix.frontend.comun.InicioRol": "component",
+   "jedanix.frontend.core.Shell": "component",
+   "jedanix.frontend.servicios.AuthService": "service",
+   "jedanix.frontend.servicios.UsuarioService": "service",
+   "jedanix.frontend.servicios.EmpresaService": "service",
+   "jedanix.frontend.servicios.PostulacionService": "service",
+   "jedanix.frontend.servicios.ObjetivoService": "service",
+   "jedanix.frontend.servicios.AvanceService": "service",
+   "jedanix.frontend.servicios.ArchivoService": "service",
+   "jedanix.frontend.servicios.EstadoEstudianteService": "service"
+  },
+  "gx": 30,
+  "gy": 90
+ }
+]

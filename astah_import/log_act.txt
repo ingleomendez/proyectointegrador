@@ -1,0 +1,3 @@
+paquete previo borrado
+OK A1_Proceso_Completo_Practica: nodos=23 flujos=26
+OK A2_Seguimiento_Semanal_Avance: nodos=21 flujos=22

@@ -1,0 +1,72 @@
+diag: Diagrama de Casos de Uso [zq]
+diag: MER_JEDANIX [xZ]
+diag: Modelo_Relacional_JEDANIX [xZ]
+diag: Diagrama de Componentes - JEDANIX [xI]
+diag: Diagrama de Despliegue - JEDANIX [xT]
+diag: MER_JEDANIX [xZ]
+diag: Modelo_Relacional_JEDANIX [xZ]
+diag: Diagrama de Clases 1 - Dominio del Nucleo [xC]
+diag: Diagrama de Clases 2 - Nucleo Routers y Servicios [xC]
+diag: Diagrama de Clases 3 - Nucleo Repositorios y Excepciones [xC]
+diag: Diagrama de Clases 4 - Microservicio de Notificaciones [xC]
+diag: Diagrama de Clases 5 - Frontend Angular [xC]
+diag: CU-01 Gestionar Usuarios del Sistema — crear usuario (Director) [yY]
+diag: CU-02 Gestionar Empresas Receptoras — registrar empresa (Director) [yY]
+diag: CU-03 Gestionar Solicitudes de Práctica — aprobar o rechazar matrícula (Director) [yY]
+diag: CU-08 Gestionar Seguimiento de Práctica — registrar avance semanal (Estudiante) [yY]
+diag: CU-09 y CU-10 — calificar (Coordinador) y observar (Docente Asesor) un avance semanal [yY]
+diag: CU-11 Gestionar Objetivos de la Práctica — Estudiante plantea, Docente Asesor decide [yY]
+diag: Estados de la Postulación (solicitud de práctica) [zc]
+diag: Estados del Avance semanal [zc]
+diag: Estados de los Objetivos de la práctica [zc]
+diag: Estados de la Notificación (microservicio de Notificaciones) [zc]
+diag: Actividades — Proceso completo de una práctica (de la solicitud al cierre) [xs]
+diag: Actividades — Seguimiento semanal: registrar, revisar y observar un avance [xs]
+P Frame | null
+P Class | Estudiante
+P Class | Director
+P UseCase | Gestionar \nPerfil
+P UseCase | CU-01\nGestionar usuarios del sistema
+P UseCase | CU-02\nGestionar empresas receptoras
+P UseCase | CU-03\nGestionar solicitudes de practica
+P UseCase | CU-04\nConsultar matriculados y seguimiento
+P UseCase | CU-05\nRealizar cierre formal de practica
+P Association |  | src=Director tgt=CU-01
+Gestionar usuarios del sistema | ends=/
+P Association |  | src=CU-02
+Gestionar empresas receptoras tgt=Director | ends=/
+P Association |  | src=CU-03
+Gestionar solicitudes de practica tgt=Director | ends=/
+P Association |  | src=CU-04
+Consultar matriculados y seguimiento tgt=Director | ends=/
+P Association |  | src=CU-05
+Realizar cierre formal de practica tgt=Director | ends=/
+P UseCase | CU-06\nPostularse a una practica
+P UseCase | CU-07\nConsultar mi practica
+P UseCase | CU-08\nGestionar seguimiento de practica
+P Association |  | src=Estudiante tgt=CU-06
+Postularse a una practica | ends=/
+P Association |  | src=CU-07
+Consultar mi practica tgt=Estudiante | ends=/
+P Association |  | src=CU-08
+Gestionar seguimiento de practica tgt=Estudiante | ends=/
+P UseCase | CU-10\nRevisar avances y registrar observaciones
+P UseCase | CU-11\nAprobar objetivos del estudiante
+P UseCase | CU-09\nRevisar y calificar avances de practica
+P Class | Docente Asesor
+P Association |  | src=Docente Asesor tgt=CU-10
+Revisar avances y registrar observaciones | ends=/
+P Association |  | src=Docente Asesor tgt=CU-11
+Aprobar objetivos del estudiante | ends=/
+P Class | Coordinador de practica
+P Association |  | src=Coordinador de practica tgt=CU-09
+Revisar y calificar avances de practica | ends=/
+P Association |  | src=Estudiante tgt=Gestionar 
+Perfil | ends=/
+P Association |  | src=Docente Asesor tgt=Gestionar 
+Perfil | ends=/
+P Association |  | src=Coordinador de practica tgt=Gestionar 
+Perfil | ends=/
+P Association |  | src=Director tgt=Gestionar 
+Perfil | ends=/
+P Rectangle | null

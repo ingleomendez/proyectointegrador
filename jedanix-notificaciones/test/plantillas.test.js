@@ -6,7 +6,7 @@ const plantillas = require('../src/services/plantillas');
 
 // Eventos que hoy emite el Núcleo de Prácticas.
 const EVENTOS_DEL_NUCLEO = [
-  'usuario.creado', 'usuario.credenciales_reenviadas', 'usuario.reactivado', 'postulacion.enviada', 'postulacion.aprobada',
+  'usuario.creado', 'usuario.credenciales_reenviadas', 'usuario.reactivado', 'usuario.restablecer_password', 'postulacion.enviada', 'postulacion.aprobada',
   'postulacion.rechazada', 'practica.cerrada', 'practica.cierre_rechazado', 'avance.registrado',
   'avance.calificado', 'avance.observado', 'avance.observacion_docente', 'objetivos.pendientes',
   'objetivos.aprobados', 'objetivos.rechazados',
@@ -59,4 +59,12 @@ test('sinCamposSensibles quita la contraseña temporal', () => {
 test('un evento desconocido no está soportado', () => {
   assert.strictEqual(plantillas.esEventoSoportado('evento.inventado'), false);
   assert.strictEqual(plantillas.esEventoSoportado('constructor'), false);
+});
+
+test('restablecer_password arma el enlace con el token y no lo deja en los datos guardados', () => {
+  const datos = { nombre_completo: 'Ana', token: 'abc123_-XYZ', minutos: 30 };
+  const msg = plantillas.renderizar('usuario.restablecer_password', datos, 'ana@x.edu');
+  assert.match(msg.texto, /\/restablecer\?token=abc123_-XYZ/);
+  assert.match(msg.html, /Crear contraseña nueva/);
+  assert.ok(!('token' in plantillas.sinCamposSensibles(datos)));
 });

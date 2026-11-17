@@ -22,7 +22,7 @@ const escaparHtml = (valor) =>
 const saludo = (datos) => (datos.nombre_completo ? `Hola ${datos.nombre_completo},` : 'Hola,');
 
 /** Campos de `datos` que nunca deben mostrarse en listados ni quedar guardados tras el envío. */
-const CAMPOS_SENSIBLES = ['password_temporal'];
+const CAMPOS_SENSIBLES = ['password_temporal', 'token'];
 
 /**
  * Cada plantilla devuelve { asunto, parrafos: [...], destacado?, enlace? }.
@@ -60,6 +60,20 @@ const PLANTILLAS = {
     enlace: { texto: 'Ingresar a JEDANIX', ruta: '/login' },
   }),
 
+  'usuario.restablecer_password': (d) => ({
+    asunto: 'JEDANIX: restablece tu contraseña',
+    parrafos: [
+      saludo(d),
+      'Recibimos una solicitud para crear una contraseña nueva en tu cuenta de JEDANIX.',
+      `Usa el botón de abajo para elegirla. El enlace funciona una sola vez y vence en ${d.minutos || 30} minutos.`,
+    ],
+    cierre: ['Si no fuiste tú, ignora este correo: tu contraseña actual sigue funcionando.'],
+    enlace: {
+      texto: 'Crear contraseña nueva',
+      ruta: `/restablecer?token=${encodeURIComponent(d.token || '')}`,
+    },
+  }),
+
   'usuario.reactivado': (d) => ({
     asunto: 'Tu cuenta de JEDANIX fue reactivada',
     parrafos: [saludo(d), 'Tu cuenta fue reactivada. Ya puedes volver a iniciar sesión con tus credenciales habituales.'],
@@ -95,7 +109,7 @@ const PLANTILLAS = {
       d.motivo ? `Motivo: ${d.motivo}` : 'Puedes consultar el motivo en el sistema.',
       'Puedes postularte nuevamente a otra empresa receptora.',
     ],
-    enlace: { texto: 'Ver empresas receptoras', ruta: '/estudiante/empresas' },
+    enlace: { texto: 'Ver empresas receptoras', ruta: '/estudiante/solicitud' },
   }),
 
   'practica.cerrada': (d) => ({
@@ -132,7 +146,7 @@ const PLANTILLAS = {
       saludo(d),
       'El Coordinador de Práctica calificó tu avance semanal y fue aceptado. Las horas se sumarán a tu práctica.',
     ],
-    enlace: { texto: 'Ver mi seguimiento', ruta: '/estudiante/avances' },
+    enlace: { texto: 'Ver mi seguimiento', ruta: '/estudiante/seguimiento' },
   }),
 
   'avance.observado': (d) => ({
@@ -141,7 +155,7 @@ const PLANTILLAS = {
       saludo(d),
       'El Coordinador de Práctica dejó comentarios en tu avance semanal. Debes corregirlo y reenviarlo.',
     ],
-    enlace: { texto: 'Corregir mi avance', ruta: '/estudiante/avances' },
+    enlace: { texto: 'Corregir mi avance', ruta: '/estudiante/seguimiento' },
   }),
 
   'avance.observacion_docente': (d) => ({
@@ -150,7 +164,7 @@ const PLANTILLAS = {
       saludo(d),
       'Tu Docente Asesor dejó una observación en uno de tus avances semanales. Es informativa: no cambia el estado del avance.',
     ],
-    enlace: { texto: 'Ver mi seguimiento', ruta: '/estudiante/avances' },
+    enlace: { texto: 'Ver mi seguimiento', ruta: '/estudiante/seguimiento' },
   }),
 
   'objetivos.pendientes': (d) => ({
@@ -170,7 +184,7 @@ const PLANTILLAS = {
       saludo(d),
       'Tu Docente Asesor aprobó tus objetivos de práctica. Ya puedes registrar tus avances semanales.',
     ],
-    enlace: { texto: 'Registrar un avance', ruta: '/estudiante/avances' },
+    enlace: { texto: 'Registrar un avance', ruta: '/estudiante/seguimiento' },
   }),
 
   'objetivos.rechazados': (d) => ({

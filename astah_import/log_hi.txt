@@ -1,0 +1,19 @@
+11 | IComponentDiagram | Diagrama de Componentes - JEDANIX | Diagrama de Componentes - JEDANIX.png
+12 | IDeploymentDiagram | Diagrama de Despliegue - JEDANIX | Diagrama de Despliegue - JEDANIX.png
+13 | IClassDiagram | Diagrama de Clases 1 - Dominio del Nucleo | jedanix\Diagrama de Clases 1 - Dominio del Nucleo.png
+14 | IClassDiagram | Diagrama de Clases 2 - Nucleo Routers y Servicios | jedanix\Diagrama de Clases 2 - Nucleo Routers y Servicios.png
+15 | IClassDiagram | Diagrama de Clases 3 - Nucleo Repositorios y Excepciones | jedanix\Diagrama de Clases 3 - Nucleo Repositorios y Excepciones.png
+16 | IClassDiagram | Diagrama de Clases 4 - Microservicio de Notificaciones | jedanix\Diagrama de Clases 4 - Microservicio de Notificaciones.png
+17 | IClassDiagram | Diagrama de Clases 5 - Frontend Angular | jedanix\Diagrama de Clases 5 - Frontend Angular.png
+18 | ISequenceDiagram | CU-01 Gestionar Usuarios del Sistema — crear usuario (Director) | jedanix\secuencias\CU-01 Gestionar Usuarios del Sistema — crear usuario (Director).png
+19 | ISequenceDiagram | CU-02 Gestionar Empresas Receptoras — registrar empresa (Director) | jedanix\secuencias\CU-02 Gestionar Empresas Receptoras — registrar empresa (Director).png
+20 | ISequenceDiagram | CU-03 Gestionar Solicitudes de Práctica — aprobar o rechazar matrícula (Director) | jedanix\secuencias\CU-03 Gestionar Solicitudes de Práctica — aprobar o rechazar matrícula (Director).png
+21 | ISequenceDiagram | CU-08 Gestionar Seguimiento de Práctica — registrar avance semanal (Estudiante) | jedanix\secuencias\CU-08 Gestionar Seguimiento de Práctica — registrar avance semanal (Estudiante).png
+22 | ISequenceDiagram | CU-09 y CU-10 — calificar (Coordinador) y observar (Docente Asesor) un avance semanal | jedanix\secuencias\CU-09 y CU-10 — calificar (Coordinador) y observar (Docente Asesor) un avance semanal.png
+23 | ISequenceDiagram | CU-11 Gestionar Objetivos de la Práctica — Estudiante plantea, Docente Asesor decide | jedanix\secuencias\CU-11 Gestionar Objetivos de la Práctica — Estudiante plantea, Docente Asesor decide.png
+24 | IStateMachineDiagram | Estados de la Postulación (solicitud de práctica) | jedanix\estados\Estados de la Postulación (solicitud de práctica).png
+25 | IStateMachineDiagram | Estados del Avance semanal | jedanix\estados\Estados del Avance semanal.png
+26 | IStateMachineDiagram | Estados de los Objetivos de la práctica | jedanix\estados\Estados de los Objetivos de la práctica.png
+27 | IStateMachineDiagram | Estados de la Notificación (microservicio de Notificaciones) | jedanix\estados\Estados de la Notificación (microservicio de Notificaciones).png
+28 | IActivityDiagram | Actividades — Proceso completo de una práctica (de la solicitud al cierre) | jedanix\actividades\Actividades — Proceso completo de una práctica (de la solicitud al cierre).png
+29 | IActivityDiagram | Actividades — Seguimiento semanal: registrar, revisar y observar un avance | jedanix\actividades\Actividades — Seguimiento semanal_ registrar, revisar y observar un avance.png

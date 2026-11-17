@@ -1,0 +1,10 @@
+export MER_JEDANIX -> ER Model\MER_JEDANIX.png pres=30
+export Modelo_Relacional_JEDANIX -> ER Model\Modelo_Relacional_JEDANIX.png pres=30
+export MER_1_Cuentas -> ER Model\MER_1_Cuentas.png pres=10
+export MER_2_Postulacion -> ER Model\MER_2_Postulacion.png pres=15
+export MER_3_Seguimiento -> ER Model\MER_3_Seguimiento.png pres=7
+export MER_4_Notificaciones -> ER Model\MER_4_Notificaciones.png pres=1
+export REL_1_Cuentas -> ER Model\REL_1_Cuentas.png pres=10
+export REL_2_Postulacion -> ER Model\REL_2_Postulacion.png pres=15
+export REL_3_Seguimiento -> ER Model\REL_3_Seguimiento.png pres=7
+export REL_4_Notificaciones -> ER Model\REL_4_Notificaciones.png pres=1

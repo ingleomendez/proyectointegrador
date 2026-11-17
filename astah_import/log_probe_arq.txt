@@ -1,0 +1,81 @@
+ERR comp TypeError: f.getComponentDiagramEditor is not a function
+== ClassEditor
+createAssociationClassPresentation(IAssociationClass,INodePresentation,INodePresentation)
+createClassDiagram(INamedElement,String)
+createContainmentGroup(ILinkPresentation[],String)
+createContainmentLinkPresentation(INodePresentation,INodePresentation)
+createGeneralizationGroup(ILinkPresentation[],String)
+createImage(Image,Point2D)
+createInstanceSpecification(String,Point2D)
+createInstanceSpecification(String,String,Point2D)
+createInstanceSpecificationLink(INodePresentation,INodePresentation)
+createLine(Point2D,Point2D)
+createLinkPresentation(IElement,INodePresentation,INodePresentation)
+createNodePresentation(IElement,INodePresentation,Point2D)
+createNodePresentation(IElement,Point2D)
+createNote(String,Point2D)
+createNoteAnchor(INodePresentation,IPresentation)
+createNoteAnchor(INodePresentation,IPresentation,IElement)
+createRect(Point2D,double,double)
+createText(String,Point2D)
+delete(IDiagram)
+deleteDiagram()
+deletePresentation(IPresentation)
+equals(Object)
+getClass()
+getContainmentGroup(ILinkPresentation)
+getDiagram()
+getGeneralizationGroup(ILinkPresentation)
+hashCode()
+notify()
+notifyAll()
+setDiagram(IDiagram)
+toString()
+wait()
+wait(long)
+wait(long,int)
+== DIAG Diagrama de Componentes - JEDANIX xI
+ | cmp   | 10,-600.09375 1848.060546875x1346.28125 | 
+   PROPS fill.color=#FFFFFF; stereotype_visibility=true; line.color=#000000; visibility=true; notation_type=normal; line.type=line; font.color=#000000; rect.type=null; line.width=1; constraint_visibility=true; auto_resize=true
+Rectangle | null | 30,40 300x440 | 
+   PROPS fill.color.alpha=FF; fill.color=#E3F2FD; stereotype_visibility=true; line.color=#000000; notation_type=normal; line.type=line; font.color=null; rect.type=null; line.width=1; isfilled.color=true; constraint_visibility=true
+Text | Frontend SPA - Angular 22 + Material | 40,50 220.4375x23.09375 | 
+   PROPS fill.color=#FFFFCC; font.struckthrough=false; stereotype_visibility=true; line.color=#000000; visibility=true; font.size=12; alias1=; font.name=Dialog; alias2=; line.type=line; icons=; font.color=#000000; rect.type=null; line.width=2; constraint_visibility=true; fill.color.alpha=FF; notation_type=normal; auto_resize=true; font.underlined=false; font.style=PLAIN
+Rectangle | null | 380,40 300x620 | 
+Text | Nucleo de Practicas - FastAPI (Python) | 390,50 228.74609375x23.09375 | 
+Rectangle | null | 730,40 300x620 | 
+Text | Servicio de Notificaciones - Node 22 + Express 5 | 740,50 280.4609375x23.09375 | 
+Component | Paneles por rol | 70,100 117.6953125x45 | IComponent
+Component | Servicios HTTP | 70,195 121x45 | IComponent
+Component | Autenticacion | 70,290 110.341796875x45 | IComponent
+Component | Despertador | 70,385 102x45 | IComponent
+Component | Seguridad | 420,100 89.67578125x45 | IComponent
+Component | Routers REST | 420,195 113x45 | IComponent
+Component | Servicios de negocio | 420,290 151.041015625x45 | IComponent
+Component | Cliente de notificaciones | 420,385 172.36328125x45 | IComponent
+Component | Repositorios | 420,480 104.341796875x45 | IComponent
+Component | BD jedanix_nucleo | 420,575 138.361328125x46.1875 | IComponent
+Component | API de eventos | 770,100 117.02734375x45 | IComponent
+Component | Plantillas | 770,195 83.6875x45 | IComponent
+Component | Despachador de correo | 770,290 165.044921875x45 | IComponent
+Component | Job de reintentos | 770,385 131.013671875x45 | IComponent
+Component | Repositorio pg | 770,480 115.662109375x45 | IComponent
+Component | BD jedanix_notificaciones | 770,575 180.373046875x46.1875 | IComponent
+Component | Brevo | 1120,300 143.060546875x46.1875 | IComponent
+ | usa |  | IDependency
+ | adjunta JWT |  | IDependency
+ | REST/HTTPS JSON + Bearer JWT |  | IDependency
+ | GET /salud (despertar) |  | IDependency
+ | valida rol |  | IDependency
+ | delega |  | IDependency
+ | usa |  | IDependency
+ | evento |  | IDependency
+ | SQL / TLS |  | IDependency
+ | POST /eventos + X-API-Key |  | IDependency
+ | genera mensaje |  | IDependency
+ | envia |  | IDependency
+ | guarda |  | IDependency
+ | lee pendientes |  | IDependency
+ | reintenta |  | IDependency
+ | SQL / TLS |  | IDependency
+ | HTTPS 443 POST /v3/smtp/email |  | IDependency

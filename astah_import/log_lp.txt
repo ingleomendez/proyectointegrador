@@ -1,0 +1,38 @@
+N Usuarios (navegador web) 30,70 400x78
+N Paneles por rol 60,270 340x100
+N Guardas de ruta y menú por rol 60,400 340x90
+N Interceptor HTTP 60,520 340x90
+N Servicios HTTP 60,640 340x90
+N Despertador de servicios 60,760 340x80
+N Capa API REST (routers) 610,270 640x100
+N Seguridad transversal 610,400 640x84
+N Capa de servicios de dominio 610,515 380x140
+N Cliente de Notificaciones 1020,515 230x140
+N Capa de acceso a datos 610,690 380x110
+N Configuración 1020,690 230x110
+N PostgreSQL jedanix_nucleo 610,880 380x100
+N Controlador de eventos 1460,270 460x100
+N Motor de plantillas 1460,400 460x84
+N Despachador de correo 1460,515 460x100
+N Job de reintentos 1460,645 460x100
+N Repositorio PostgreSQL 1460,775 460x70
+N PostgreSQL jedanix_notificaciones 1550,900 280x100
+N Brevo 1990,505 270x120
+L HTTPS : (230,320) (230,109) shape=line
+L  : (230,445) (230,320) shape=line
+L  : (230,565) (230,445) shape=line
+L  : (230,685) (230,565) shape=line
+L REST/HTTPS JSON + Bearer JWT : (930,320) (230,685) shape=line
+L GET /salud (despertar) : (1690,320) (230,800) shape=line
+L  : (930,442) (930,320) shape=line
+L  : (800,585) (930,442) shape=line
+L  : (1135,585) (800,585) shape=line
+L  : (800,745) (800,585) shape=line
+L SQL / TLS : (800,930) (800,745) shape=line
+L POST /eventos + X-API-Key (asíncrono 2 s) : (1690,320) (1135,585) shape=line
+L  : (1690,442) (1690,320) shape=line
+L  : (1690,565) (1690,442) shape=line
+L reintenta : (1690,695) (1690,565) shape=line
+L  : (1690,810) (1690,695) shape=line
+L SQL / TLS : (1690,950) (1690,810) shape=line
+L HTTPS POST /v3/smtp/email : (2125,565) (1690,565) shape=line

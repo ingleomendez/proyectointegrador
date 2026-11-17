@@ -1,0 +1,63 @@
+relaciones=15
+borrado REL_4_Notificaciones
+borrado REL_3_Seguimiento
+borrado REL_2_Postulacion
+borrado REL_1_Cuentas
+borrado MER_4_Notificaciones
+borrado MER_3_Seguimiento
+borrado MER_2_Postulacion
+borrado MER_1_Cuentas
+shape coordina=line_right_angle pts=4
+shape asesora=line_right_angle pts=4
+shape define=line_right_angle pts=3
+shape exige=line_right_angle pts=4
+shape sube=line_right_angle pts=4
+creado MER_1_Cuentas
+tam com.change_vision.jude.api.inf.exception.InvalidEditingException: Parameter should be set correctly.
+shape coordina=line_right_angle pts=3
+shape asesora=line_right_angle pts=3
+shape define=line_right_angle pts=4
+shape exige=line_right_angle pts=3
+shape postula=line_right_angle pts=3
+shape recibe=line_right_angle pts=4
+shape contiene=line_right_angle pts=4
+shape es respondida en=line_right_angle pts=4
+shape adjunta=line_right_angle pts=4
+shape es cumplido por=line_right_angle pts=4
+shape plantea=line_right_angle pts=4
+creado MER_2_Postulacion
+tam com.change_vision.jude.api.inf.exception.InvalidEditingException: Parameter should be set correctly.
+shape registra=line_right_angle pts=4
+shape detalla=line_right_angle pts=4
+shape adjunta=line_right_angle pts=4
+creado MER_3_Seguimiento
+creado MER_4_Notificaciones
+shape coordina=line_right_angle pts=4
+shape asesora=line_right_angle pts=4
+shape define=line_right_angle pts=4
+shape exige=line_right_angle pts=4
+shape sube=line_right_angle pts=2
+creado REL_1_Cuentas
+tam com.change_vision.jude.api.inf.exception.InvalidEditingException: Parameter should be set correctly.
+tam com.change_vision.jude.api.inf.exception.InvalidEditingException: Parameter should be set correctly.
+tam com.change_vision.jude.api.inf.exception.InvalidEditingException: Parameter should be set correctly.
+tam com.change_vision.jude.api.inf.exception.InvalidEditingException: Parameter should be set correctly.
+shape coordina=line_right_angle pts=3
+shape asesora=line_right_angle pts=3
+shape define=line_right_angle pts=4
+shape exige=line_right_angle pts=3
+shape postula=line_right_angle pts=4
+shape recibe=line_right_angle pts=4
+shape contiene=line_right_angle pts=4
+shape es respondida en=line_right_angle pts=4
+shape adjunta=line_right_angle pts=4
+shape es cumplido por=line_right_angle pts=4
+shape plantea=line_right_angle pts=2
+creado REL_2_Postulacion
+tam com.change_vision.jude.api.inf.exception.InvalidEditingException: Parameter should be set correctly.
+shape registra=line_right_angle pts=4
+shape detalla=line_right_angle pts=4
+shape adjunta=line_right_angle pts=4
+creado REL_3_Seguimiento
+creado REL_4_Notificaciones
+OK

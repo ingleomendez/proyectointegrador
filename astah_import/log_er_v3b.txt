@@ -1,0 +1,13 @@
+horas renombrado
+Empresa receptora ocultas=2 lee=[iijm-22e8af896becba87163beed84f8dfa73,iikv-22e8af896becba87163beed84f8dfa73]
+Pregunta de bitácora ocultas=1 lee=[iim4-22e8af896becba87163beed84f8dfa73]
+Documento requerido ocultas=1 lee=[iind-22e8af896becba87163beed84f8dfa73]
+Postulación ocultas=2 lee=[iiom-22e8af896becba87163beed84f8dfa73,iipv-22e8af896becba87163beed84f8dfa73]
+Respuesta de bitácora ocultas=2 lee=[iir4-22e8af896becba87163beed84f8dfa73,iisd-22e8af896becba87163beed84f8dfa73]
+Documento de postulación ocultas=2 lee=[iitm-22e8af896becba87163beed84f8dfa73,iiuv-22e8af896becba87163beed84f8dfa73]
+Objetivo de la práctica ocultas=1 lee=[iiw4-22e8af896becba87163beed84f8dfa73]
+Avance semanal ocultas=1 lee=[iixd-22e8af896becba87163beed84f8dfa73]
+Día trabajado ocultas=1 lee=[iiym-22e8af896becba87163beed84f8dfa73]
+Soporte de avance ocultas=1 lee=[iizv-22e8af896becba87163beed84f8dfa73]
+Archivo subido ocultas=1 lee=[ij14-22e8af896becba87163beed84f8dfa73]
+OK

@@ -1,0 +1,35 @@
+IERModel ER Model
+  IModel Domain
+  IERSchema Default Schema
+    IEREntity Entity0 L=Entity0 P= type=
+       attrs: 
+IPackage jedanix
+  IPackage frontend
+    IPackage comun
+    IPackage core
+    IPackage director
+    IPackage estudiante
+    IPackage revision
+    IPackage servicios
+  IPackage nucleo
+    IPackage core
+    IPackage dominio
+    IPackage excepciones
+    IPackage repositories
+    IPackage routers
+    IPackage services
+  IPackage notificaciones
+  IPackage arq_componentes
+  IPackage arq_despliegue
+  IPackage secuencias
+  IPackage estados
+  IPackage actividades
+IPackage java
+  IPackage lang
+  IPackage util
+  IPackage time
+  IPackage math
+DIAGRAMA MER_JEDANIX notation=IDEF1X modelType=Logical Model ::  owner=Default Schema
+DIAGRAMA Modelo_Relacional_JEDANIX notation=IDEF1X modelType=Logical Model ::  owner=Default Schema
+DIAGRAMA MER_JEDANIX notation=IDEF1X modelType=Logical Model ::  owner=Default Schema
+DIAGRAMA Modelo_Relacional_JEDANIX notation=IDEF1X modelType=Logical Model ::  owner=Default Schema

@@ -1,0 +1,13 @@
+usuarios=14
+empresas_receptoras=10
+preguntas_bitacora=5
+documentos_requeridos=4
+postulaciones=10
+respuestas_bitacora=4
+documentos_postulacion=5
+objetivo_practica=7
+avances_semanales=16
+dias_trabajados=5
+soportes_avance=5
+archivos_subidos=6
+notificaciones=12

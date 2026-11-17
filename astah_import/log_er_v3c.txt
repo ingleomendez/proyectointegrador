@@ -1,0 +1,10 @@
+relaciones=15
+creado MER_1_Cuentas
+creado MER_2_Postulacion
+creado MER_3_Seguimiento
+creado MER_4_Notificaciones
+creado REL_1_Cuentas
+creado REL_2_Postulacion
+creado REL_3_Seguimiento
+creado REL_4_Notificaciones
+OK

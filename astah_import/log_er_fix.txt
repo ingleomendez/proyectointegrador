@@ -1,0 +1,3 @@
+MER_JEDANIX: curva asesora ok (2 puntos)
+Modelo_Relacional_JEDANIX: curva asesora ok (2 puntos)
+FIX OK

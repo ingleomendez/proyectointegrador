@@ -1,0 +1,4 @@
+renombrado: Coordinador de practica -> Coordinador de práctica
+enlace Estudiante-CU-11 curvado ox=-36.5 oy=-223
+OK
+Diagrama de Casos de Uso.png

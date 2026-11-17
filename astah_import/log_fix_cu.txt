@@ -1,0 +1,10 @@
+renombrado: CU-03 Gestionar solicitudes de practica -> CU-03 Gestionar solicitudes de práctica
+renombrado: CU-05 Realizar cierre formal de practica -> CU-05 Realizar cierre formal de práctica
+renombrado: CU-06 Postularse a una practica -> CU-06 Postularse a una práctica
+renombrado: CU-07 Consultar mi practica -> CU-07 Consultar mi práctica
+renombrado: CU-08 Gestionar seguimiento de practica -> CU-08 Gestionar seguimiento de práctica
+renombrado: CU-11 Gestionar objetivos de la practica -> CU-11 Gestionar objetivos de la práctica
+renombrado: CU-09 Revisar y calificar avances de practica -> CU-09 Revisar y calificar avances de práctica
+enlace Estudiante-CU-11 curvado en 478.5,106.99999999999999
+OK
+Diagrama de Casos de Uso.png

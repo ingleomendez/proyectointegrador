@@ -1,0 +1,13 @@
+REL_1_Cuentas mueve usuarios
+REL_1_Cuentas mueve empresas_receptoras
+REL_1_Cuentas mueve preguntas_bitacora
+REL_1_Cuentas mueve documentos_requeridos
+REL_2_Postulacion mueve empresas_receptoras
+REL_2_Postulacion mueve postulaciones
+REL_2_Postulacion mueve respuestas_bitacora
+REL_2_Postulacion mueve preguntas_bitacora
+REL_2_Postulacion mueve documentos_postulacion
+REL_2_Postulacion mueve documentos_requeridos
+REL_3_Seguimiento mueve dias_trabajados
+REL_3_Seguimiento mueve soportes_avance
+OK

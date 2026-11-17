@@ -1,0 +1,21 @@
+schema=Default Schema
+entidades previas borradas: 13
+entidades creadas
+rel usu->emp fks=1 card antes=0orMore ahora=0orMore
+rel usu->emp fks=1 card antes=0orMore ahora=0orMore
+rel emp->pre fks=1 card antes=0orMore ahora=0orMore
+rel emp->doc fks=1 card antes=0orMore ahora=0orMore
+rel usu->pos fks=1 card antes=0orMore ahora=0orMore
+rel emp->pos fks=1 card antes=0orMore ahora=0orMore
+rel pos->res fks=1 card antes=0orMore ahora=0orMore
+rel pre->res fks=1 card antes=0orMore ahora=0orMore
+rel pos->dpo fks=1 card antes=0orMore ahora=0orMore
+rel doc->dpo fks=1 card antes=0orMore ahora=0orMore
+rel pos->obj fks=1 card antes=0orMore ahora=0or1
+rel pos->ava fks=1 card antes=0orMore ahora=0orMore
+rel ava->día fks=1 card antes=0orMore ahora=1orMore
+rel ava->sop fks=1 card antes=0orMore ahora=1orMore
+rel usu->arc fks=1 card antes=0orMore ahora=0orMore
+MODELO OK
+DIAGRAMA MER_JEDANIX OK (Logical Model / IE)
+DIAGRAMA Modelo_Relacional_JEDANIX OK (Physical Model / IE)

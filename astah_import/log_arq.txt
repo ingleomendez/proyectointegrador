@@ -1,3 +1,98 @@
-borrado previo arq_despliegue
-diagrama desp = Diagrama de Despliegue - JEDANIX
-DESPLIEGUE OK
+old borrado
+box 0
+cls
+node
+box 1
+cls
+node
+box 2
+cls
+node
+box 3
+cls
+node
+box 4
+cls
+node
+box 5
+cls
+node
+box 6
+cls
+node
+box 7
+cls
+node
+box 8
+cls
+node
+box 9
+cls
+node
+box 10
+cls
+node
+box 11
+cls
+node
+box 12
+cls
+node
+box 13
+cls
+node
+box 14
+cls
+node
+box 15
+cls
+node
+box 16
+cls
+node
+box 17
+cls
+node
+box 18
+cls
+node
+box 19
+cls
+node
+edge 0
+dep
+edge 1
+dep
+edge 2
+dep
+edge 3
+dep
+edge 4
+dep
+edge 5
+dep
+edge 6
+dep
+edge 7
+dep
+edge 8
+dep
+edge 9
+dep
+edge 10
+dep
+edge 11
+dep
+edge 12
+dep
+edge 13
+dep
+edge 14
+dep
+edge 15
+dep
+edge 16
+dep
+edge 17
+dep
+ok Diagrama Arquitectonico - JEDANIX

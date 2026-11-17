@@ -1,0 +1,29 @@
+== MER_JEDANIX type=Logical Model level=Attribute
+
+entidad Usuario :: alternate_key_sign_visibility=true | attribute_compartment_visibility=true | attribute_constraint_visibility=true | attribute_initial_value_visibility=false | attribute_stereotype_visibility=true | attribute_type_visibility=true | auto_resize=true | class_figure=normal_class | constraint_visibility=true | er_displaylevel=attribute | fill.color.alpha=FF | fill.color=#FFFFCC | font.color=#000000 | foreign_key_sign_visibility=true | icons= | inversion_entry_sign_visibility=true | invisible_features= | line.color=#000000 | line.type=line | line.width=1 | namaspace_visibility=none | notation_type=normal | null_option_visibility=false | operation_compartment_visibility=true | operation_constraint_visibility=true | operation_parameter_direction_kind_visibility=false | operation_parameter_type_visibility=true | operation_parameter_visibility=true | operation_return_type_visibility=true | operation_stereotype_visibility=true | packageattribute=true | packageoperation=true | privateattribute=true | privateoperation=true | protectedattribute=true | protectedoperation=true | publicattribute=true | publicoperation=true | rect.type=null | stereotype_visibility=true | template_bound_visibility=true | template_formal_parameter_visibility=false | templateparameter_multiline_visibility=false | type_and_length_visibility=false | visibility=true | visibilitye_kind_visibility=true
+relacion tipo=Non-Indentyfying-Relationship :: cardinality_visibility=true | constraint_visibility=true | fill.color=null | font.color=#000000 | line.arrow.type=null | line.color=#000000 | line.shape=line | line.type=null | line.width=-1 | name_direction_reverse=0 | name_direction_visibility=true | name_visibility=false | notation_type=normal | stereotype_visibility=true | verb_phrase_visibility=true
+== ILinkPresentation
+HashMap getProperties()
+IDiagram getDiagram()
+IElement getModel()
+IHyperlink createElementHyperlink(IElement,String)
+IHyperlink createFileHyperlink(String,String,String)
+IHyperlink createURLHyperlink(String,String)
+IHyperlink[] getHyperlinks()
+INodePresentation getSource()
+INodePresentation getTarget()
+IPresentation getSourceEnd()
+IPresentation getTargetEnd()
+Point2D[] getAllPoints()
+Point2D[] getPoints()
+String getID()
+String getLabel()
+String getProperty(String)
+String getType()
+int getDepth()
+void deleteHyperlink(IHyperlink)
+void setAllPoints(Point2D[])
+void setLabel(String)
+void setPoints(Point2D[])
+void setProperties(Map)
+void setProperty(String,String)

@@ -1,0 +1,17 @@
+Association: Director -> CU-01 Gestionar usuarios del sistema
+Association: CU-02 Gestionar empresas receptoras -> Director
+Association: CU-03 Gestionar solicitudes de practica -> Director
+Association: CU-04 Consultar matriculados y seguimiento -> Director
+Association: CU-05 Realizar cierre formal de practica -> Director
+Association: Estudiante -> CU-06 Postularse a una practica
+Association: CU-07 Consultar mi practica -> Estudiante
+Association: CU-08 Gestionar seguimiento de practica -> Estudiante
+Association: Docente Asesor -> CU-10 Revisar avances y registrar observaciones
+Association: Docente Asesor -> CU-11 Gestionar objetivos de la practica
+Association: Coordinador de practica -> CU-09 Revisar y calificar avances de practica
+Association: Estudiante -> Gestionar Perfil
+Association: Docente Asesor -> Gestionar Perfil
+Association: Coordinador de practica -> Gestionar Perfil
+Association: Director -> Gestionar Perfil
+Association: Estudiante -> CU-11 Gestionar objetivos de la practica
+n=34

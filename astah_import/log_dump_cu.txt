@@ -1,0 +1,38 @@
+IUseCase | Gestionar 
+Perfil | 
+IUseCase | CU-01
+Gestionar usuarios del sistema | 
+IUseCase | CU-02
+Gestionar empresas receptoras | 
+IUseCase | CU-03
+Gestionar solicitudes de practica | 
+IUseCase | CU-04
+Consultar matriculados y seguimiento | 
+IUseCase | CU-05
+Realizar cierre formal de practica | 
+IUseCase | CU-06
+Postularse a una practica | 
+IUseCase | CU-07
+Consultar mi practica | 
+IUseCase | CU-08
+Gestionar seguimiento de practica | 
+IUseCase | CU-10
+Revisar avances y registrar observaciones | 
+IUseCase | CU-11
+Gestionar objetivos de la practica | 
+IUseCase | CU-09
+Revisar y calificar avances de practica | 
+TIPOS: IClass=203; IUseCase=12; IERModel=1; IModel=1; IERSchema=1; IEREntity=13; IPackage=26; IEnumeration=11; IComponent=17; INode=14; IArtifact=10; 
+DIAG Diagrama de Casos de Uso [IUseCaseDiagram]
+DIAG MER_JEDANIX [IERDiagram]
+DIAG Modelo_Relacional_JEDANIX [IERDiagram]
+DIAG MER_1_Cuentas [IERDiagram]
+DIAG MER_2_Postulacion [IERDiagram]
+DIAG MER_3_Seguimiento [IERDiagram]
+DIAG MER_4_Notificaciones [IERDiagram]
+DIAG REL_1_Cuentas [IERDiagram]
+DIAG REL_2_Postulacion [IERDiagram]
+DIAG REL_3_Seguimiento [IERDiagram]
+DIAG REL_4_Notificaciones [IERDiagram]
+DIAG Diagrama de Componentes - JEDANIX [IComponentDiagram]
+DIAG Diagrama de Despliegue - JEDANIX [IDeploymentDiagram]

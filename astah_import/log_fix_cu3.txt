@@ -1,0 +1,2 @@
+actor renombrado
+Diagrama de Casos de Uso.png

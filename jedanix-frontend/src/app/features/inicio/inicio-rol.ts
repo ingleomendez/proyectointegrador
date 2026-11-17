@@ -6,13 +6,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/services/auth.service';
 import { EstadoEstudianteService } from '../../core/services/estado-estudiante.service';
 import { accesosDeRol, NOMBRE_ROL } from '../../core/utils/menu-rol';
+import { ResumenInicio } from './resumen-inicio/resumen-inicio';
 
 /** Panel de inicio de los cuatro roles: las tarjetas salen del mismo menú que la
  * barra lateral (`accesosDeRol`), así los nombres y la visibilidad coinciden con
  * los casos de uso (para el Estudiante dependen de su estado de práctica). */
 @Component({
   selector: 'app-inicio-rol',
-  imports: [RouterLink, MatCardModule, MatIconModule],
+  imports: [RouterLink, MatCardModule, MatIconModule, ResumenInicio],
   templateUrl: './inicio-rol.html',
   styleUrl: './inicio-rol.scss',
 })

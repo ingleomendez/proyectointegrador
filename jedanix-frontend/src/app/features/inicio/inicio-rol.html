@@ -3,6 +3,8 @@
   <p class="subtitulo">Este es tu panel de {{ nombreRol() }}. Elige una opción para comenzar.</p>
 </section>
 
+<jx-resumen-inicio />
+
 <div class="grilla-accesos">
   @for (acceso of accesos(); track acceso.ruta) {
     @if (acceso.deshabilitado) {

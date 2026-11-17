@@ -1,0 +1,49 @@
+@if (cargando()) {
+  <section class="resumen" aria-busy="true" aria-label="Cargando resumen">
+    <div class="datos">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="dato esqueleto"></div>
+      }
+    </div>
+  </section>
+} @else if (datos().length > 0) {
+  <section class="resumen" aria-label="Resumen">
+    <div class="datos">
+      @for (d of datos(); track d.etiqueta) {
+        @if (d.ruta) {
+          <a class="dato" [class.resalta]="d.resalta" [routerLink]="d.ruta">
+            <span class="icono-dato"><mat-icon>{{ d.icono }}</mat-icon></span>
+            <span class="cifra">{{ d.valor }}</span>
+            <span class="rotulo">{{ d.etiqueta }}</span>
+          </a>
+        } @else {
+          <div class="dato" [class.resalta]="d.resalta">
+            <span class="icono-dato"><mat-icon>{{ d.icono }}</mat-icon></span>
+            <span class="cifra">{{ d.valor }}</span>
+            <span class="rotulo">{{ d.etiqueta }}</span>
+          </div>
+        }
+      }
+    </div>
+
+    @if (donas().length > 0 || barras().length > 0) {
+      <div class="graficas">
+        @for (g of donas(); track g.titulo) {
+          <article class="grafica">
+            <h2>{{ g.titulo }}</h2>
+            <jx-dona [segmentos]="g.segmentos" [centroValor]="g.centroValor" [centroTexto]="g.centroTexto" />
+          </article>
+        }
+        @for (g of barras(); track g.titulo) {
+          <article class="grafica">
+            <h2>{{ g.titulo }}</h2>
+            <jx-barras [datos]="g.datos" />
+            @if (g.nota) {
+              <p class="nota">{{ g.nota }}</p>
+            }
+          </article>
+        }
+      </div>
+    }
+  </section>
+}

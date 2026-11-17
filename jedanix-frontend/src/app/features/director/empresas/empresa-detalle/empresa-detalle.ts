@@ -14,6 +14,7 @@ import { EmpresaReceptoraOut, PreguntaBitacoraCreate } from '../../../../core/mo
 import { EmpresaEstadoEnum, TipoRespuestaEnum } from '../../../../core/models/enums.model';
 import { EmpresaService } from '../../../../core/services/empresa.service';
 import { leerConfirmacion, mensajeDeError } from '../../../../core/utils/errores';
+import { Plegable } from '../../../../shared/plegable/plegable.directive';
 
 /**
  * CU-02 (Director): detalle de una empresa receptora. Desde aquí se agregan,
@@ -36,6 +37,7 @@ type TipoItem = 'pregunta' | 'documento';
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    Plegable,
   ],
   templateUrl: './empresa-detalle.html',
   styleUrl: './empresa-detalle.scss',

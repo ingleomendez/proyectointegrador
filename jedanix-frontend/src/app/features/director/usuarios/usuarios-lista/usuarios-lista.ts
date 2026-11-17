@@ -15,6 +15,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { leerConfirmacion, mensajeDeError } from '../../../../core/utils/errores';
 import { NOMBRE_ROL } from '../../../../core/utils/menu-rol';
+import { BuscadorTabla } from '../../../../shared/buscador-tabla/buscador-tabla';
 
 interface ConfirmacionInactivar {
   usuario: UsuarioListItem;
@@ -39,6 +40,7 @@ interface ConfirmacionInactivar {
     MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    BuscadorTabla,
   ],
   templateUrl: './usuarios-lista.html',
 })

@@ -69,7 +69,7 @@
   }
 
   <div class="rejilla">
-    <mat-card class="tarjeta-pagina">
+    <mat-card class="tarjeta-pagina" jxPlegable>
       <mat-card-header><mat-card-title>Datos del estudiante</mat-card-title></mat-card-header>
       <mat-card-content>
         <dl class="datos">
@@ -86,7 +86,7 @@
     </mat-card>
 
     @if (empresa(); as e) {
-      <mat-card class="tarjeta-pagina">
+      <mat-card class="tarjeta-pagina" jxPlegable>
         <mat-card-header><mat-card-title>Empresa receptora</mat-card-title></mat-card-header>
         <mat-card-content>
           <dl class="datos">
@@ -106,7 +106,7 @@
     }
   </div>
 
-  <mat-card class="tarjeta-pagina">
+  <mat-card class="tarjeta-pagina" jxPlegable>
     <mat-card-header><mat-card-title>Cumplimiento de horas</mat-card-title></mat-card-header>
     <mat-card-content>
       <p class="horas">

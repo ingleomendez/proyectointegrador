@@ -412,3 +412,11 @@
     animation: none;
   }
 }
+
+// Botón de modo claro / oscuro, fijo en la esquina superior derecha.
+.tema-flotante {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+}

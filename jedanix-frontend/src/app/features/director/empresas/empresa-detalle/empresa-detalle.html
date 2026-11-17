@@ -50,7 +50,7 @@
     <p class="mensaje-error">{{ mensaje }}</p>
   }
 
-  <mat-card class="tarjeta-pagina">
+  <mat-card class="tarjeta-pagina" jxPlegable>
     <mat-card-header><mat-card-title>Datos generales</mat-card-title></mat-card-header>
     <mat-card-content>
       <dl class="datos">
@@ -72,7 +72,7 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="tarjeta-pagina">
+  <mat-card class="tarjeta-pagina" jxPlegable>
     <mat-card-header><mat-card-title>Bitácora</mat-card-title></mat-card-header>
     <mat-card-content>
       @if (e.preguntas_bitacora.length === 0) {
@@ -147,7 +147,7 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="tarjeta-pagina">
+  <mat-card class="tarjeta-pagina" jxPlegable>
     <mat-card-header><mat-card-title>Documentos requeridos</mat-card-title></mat-card-header>
     <mat-card-content>
       @if (e.documentos_requeridos.length === 0) {

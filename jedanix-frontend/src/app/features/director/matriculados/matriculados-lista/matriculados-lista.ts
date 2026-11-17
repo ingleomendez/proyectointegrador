@@ -13,6 +13,7 @@ import { PostulacionListItem } from '../../../../core/models/postulacion.model';
 import { PostulacionService } from '../../../../core/services/postulacion.service';
 import { mensajeDeError } from '../../../../core/utils/errores';
 import { porcentajeDeHoras } from '../horas';
+import { BuscadorTabla } from '../../../../shared/buscador-tabla/buscador-tabla';
 
 interface FilaMatriculado {
   postulacion: PostulacionListItem;
@@ -43,6 +44,7 @@ type Vista = 'todos' | 'cierre';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    BuscadorTabla,
   ],
   templateUrl: './matriculados-lista.html',
   styleUrl: './matriculados-lista.scss',

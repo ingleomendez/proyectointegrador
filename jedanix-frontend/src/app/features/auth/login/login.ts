@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { rutaInicioDeRol } from '../../../core/utils/menu-rol';
+import { BotonTema } from '../../../shared/boton-tema/boton-tema';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,7 @@ import { rutaInicioDeRol } from '../../../core/utils/menu-rol';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    BotonTema,
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',

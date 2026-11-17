@@ -29,6 +29,8 @@
       </mat-select>
     </mat-form-field>
 
+    <jx-buscador-tabla etiqueta="Buscar estudiante o empresa" />
+
     <button mat-stroked-button type="button" (click)="ordenarPorPorcentaje.set(!ordenarPorPorcentaje())">
       <mat-icon>{{ ordenarPorPorcentaje() ? 'filter_list_off' : 'sort' }}</mat-icon>
       {{ ordenarPorPorcentaje() ? 'Quitar orden' : 'Ordenar por % de horas (mayor a menor)' }}

@@ -527,6 +527,216 @@ body .mat-mdc-card {
   background: rgba(0, 229, 255, 0.35);
 }
 
+// ===== Interactividad (todas las pantallas) =====
+
+// Filas de tabla ocultas por el buscador en vivo (`jx-buscador-tabla`).
+.jx-fila-oculta {
+  display: none;
+}
+
+// Tarjetas plegables (`jxPlegable`): el encabezado se pulsa para plegar o desplegar.
+@keyframes jx-desplegar {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body .mat-mdc-card.plegable {
+  > mat-card-header {
+    position: relative;
+    padding-right: 52px;
+    border-radius: 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: rgba(0, 188, 212, 0.1);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--jx-cyan-500);
+      outline-offset: -2px;
+    }
+
+    // Flecha que gira al plegar (ícono de la fuente Material Symbols).
+    &::after {
+      content: 'expand_more';
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      font-family: 'Material Symbols Outlined';
+      font-size: 26px;
+      line-height: 1;
+      font-feature-settings: 'liga';
+      color: var(--jx-cyan-700);
+      transform: translateY(-50%);
+      transition: transform 0.25s ease;
+    }
+  }
+
+  > mat-card-content {
+    animation: jx-desplegar 0.28s ease;
+  }
+
+  &.plegada {
+    > mat-card-header::after {
+      transform: translateY(-50%) rotate(-90deg);
+    }
+
+    > mat-card-content {
+      display: none;
+    }
+  }
+}
+
+// Avisos de éxito: resaltan y se desvanecen solos a los 7 segundos.
+@keyframes jx-desaparecer {
+  0%,
+  92% {
+    opacity: 1;
+    max-height: 120px;
+  }
+  100% {
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    visibility: hidden;
+  }
+}
+
+.contenido .mensaje-exito {
+  overflow: hidden;
+  padding: 10px 14px;
+  border-left: 4px solid var(--jx-cyan-600);
+  border-radius: 10px;
+  background: rgba(0, 172, 193, 0.14);
+  animation:
+    jx-entrada 0.45s cubic-bezier(0.22, 0.8, 0.3, 1) backwards,
+    jx-desaparecer 7s ease forwards;
+}
+
+// ===== Modo oscuro =====
+html.tema-oscuro {
+  color-scheme: dark;
+
+  --jx-cyan-50: #0e2a30;
+  --jx-cyan-100: #12363e;
+  --jx-cyan-300: #26c6da;
+  --jx-cyan-500: #00bcd4;
+  --jx-cyan-600: #26c6da;
+  --jx-cyan-700: #4dd0e1;
+  --jx-cyan-800: #80deea;
+  --jx-cyan-900: #b2ebf2;
+  --jx-cyan-950: #e0f7fa;
+  --jx-fondo: #061519;
+  --jx-borde: #1f4b56;
+  --jx-superficie: #0f2a32;
+  --jx-superficie-alta: #133540;
+  --jx-superficie-hover: #163c47;
+  --jx-sombra: 0 4px 18px rgba(0, 0, 0, 0.45);
+  --jx-sombra-fuerte: 0 14px 34px rgba(0, 0, 0, 0.6);
+
+  --mat-sys-primary: #4dd0e1;
+  --mat-sys-on-primary: #00323b;
+  --mat-sys-primary-container: #00505c;
+  --mat-sys-on-primary-container: #b2ebf2;
+  --mat-sys-secondary-container: #14434d;
+  --mat-sys-on-secondary-container: #c9eef5;
+  --mat-sys-tertiary-container: #5c3a00;
+  --mat-sys-on-tertiary-container: #ffe0a8;
+  --mat-sys-surface-tint: #4dd0e1;
+  --mat-sys-outline: #6f9aa4;
+  --mat-sys-outline-variant: #24505b;
+  --mat-sys-error: #ffb4ab;
+  --mat-sys-on-error: #690005;
+  --mat-sys-error-container: #93000a;
+  --mat-sys-on-error-container: #ffdad6;
+
+  --mat-sys-background: #061519;
+  --mat-sys-on-background: #e0f4f8;
+  --mat-sys-surface: #0f2a32;
+  --mat-sys-on-surface: #e0f4f8;
+  --mat-sys-on-surface-variant: #a9cbd3;
+  --mat-sys-surface-container-lowest: #0a1f25;
+  --mat-sys-surface-container-low: #0f2a32;
+  --mat-sys-surface-container: #12303a;
+  --mat-sys-surface-container-high: #163a45;
+  --mat-sys-surface-container-highest: #1a4350;
+  --mat-sys-surface-variant: #1b3f49;
+
+  --mat-card-elevated-container-color: #0f2a32;
+  --mat-dialog-container-color: #12303a;
+  --mat-menu-container-color: #12303a;
+  --mat-select-panel-background-color: #12303a;
+}
+
+html.tema-oscuro body {
+  color-scheme: dark;
+  background:
+    radial-gradient(60% 45% at 6% 0%, rgba(0, 229, 255, 0.12), transparent 70%),
+    radial-gradient(55% 55% at 100% 100%, rgba(0, 151, 167, 0.14), transparent 70%),
+    linear-gradient(160deg, #051216 0%, #08202a 50%, #0a2630 100%);
+  background-attachment: fixed;
+  background-color: var(--jx-fondo);
+}
+
+html.tema-oscuro {
+  body .mat-mdc-card,
+  .formulario-columna {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 55%),
+      var(--jx-superficie);
+    box-shadow:
+      var(--jx-sombra),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .tabla th {
+    background: linear-gradient(180deg, #17404b, #123540);
+  }
+
+  .tabla tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .chip-aprobado {
+    background: #134e3a;
+    color: #b9f6d7;
+  }
+
+  .chip-pendiente {
+    background: #14434d;
+    color: #c9f3fa;
+  }
+
+  .chip-observado {
+    background: #5c4300;
+    color: #ffe9b8;
+  }
+
+  .aviso-confirmacion {
+    background: #4a3000;
+    color: #ffe0a8;
+  }
+
+  .tarjeta-deshabilitada {
+    background: rgba(15, 42, 50, 0.7);
+  }
+
+  .contenido .mensaje-exito {
+    background: rgba(77, 208, 225, 0.12);
+  }
+}
+
 // Quien prefiera menos movimiento no ve animaciones ni desplazamientos.
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -535,5 +745,11 @@ body .mat-mdc-card {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  // Los avisos de éxito no se desvanecen solos: quien reduce el movimiento
+  // los cierra al navegar.
+  .contenido .mensaje-exito {
+    animation: none !important;
   }
 }

@@ -1,5 +1,10 @@
 <div class="disposicion">
-  <aside class="barra-lateral" [class.abierta]="menuAbierto()" aria-label="Barra lateral">
+  <aside
+    class="barra-lateral"
+    [class.abierta]="menuAbierto()"
+    [class.colapsada]="menuColapsado()"
+    aria-label="Barra lateral"
+  >
     <a routerLink="/" class="marca" (click)="cerrarMenu()">
       <span class="logo">J</span>
       <span class="marca-texto">
@@ -7,6 +12,18 @@
         <small>Gestión de prácticas</small>
       </span>
     </a>
+
+    <button
+      type="button"
+      class="boton-colapsar"
+      (click)="alternarColapso()"
+      [attr.aria-label]="menuColapsado() ? 'Expandir menú' : 'Contraer menú'"
+      [attr.aria-pressed]="menuColapsado()"
+      [attr.title]="menuColapsado() ? 'Expandir menú' : 'Contraer menú'"
+    >
+      <mat-icon>{{ menuColapsado() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>
+      <span>Contraer menú</span>
+    </button>
 
     <nav class="menu" aria-label="Navegación principal">
       @for (item of menu(); track item.ruta) {
@@ -17,7 +34,12 @@
             <mat-icon class="candado">lock</mat-icon>
           </span>
         } @else {
-          <a class="item-menu" [routerLink]="item.ruta" routerLinkActive="activo">
+          <a
+            class="item-menu"
+            [routerLink]="item.ruta"
+            routerLinkActive="activo"
+            [attr.title]="menuColapsado() ? item.etiqueta : null"
+          >
             <mat-icon>{{ item.icono }}</mat-icon>
             <span>{{ item.etiqueta }}</span>
           </a>
@@ -26,7 +48,12 @@
     </nav>
 
     <div class="pie-lateral">
-      <a class="item-menu" routerLink="/perfil" routerLinkActive="activo">
+      <a
+        class="item-menu"
+        routerLink="/perfil"
+        routerLinkActive="activo"
+        [attr.title]="menuColapsado() ? 'Mi Perfil' : null"
+      >
         <mat-icon>account_circle</mat-icon>
         <span>Mi Perfil</span>
       </a>
@@ -41,7 +68,22 @@
         </div>
       }
 
-      <button type="button" class="item-menu salir" (click)="cerrarSesion()">
+      <button
+        type="button"
+        class="item-menu"
+        (click)="temaService.alternar()"
+        [attr.title]="temaService.tema() === 'oscuro' ? 'Modo claro' : 'Modo oscuro'"
+      >
+        <mat-icon>{{ temaService.tema() === 'oscuro' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        <span>{{ temaService.tema() === 'oscuro' ? 'Modo claro' : 'Modo oscuro' }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="item-menu salir"
+        (click)="cerrarSesion()"
+        [attr.title]="menuColapsado() ? 'Cerrar sesión' : null"
+      >
         <mat-icon>logout</mat-icon>
         <span>Cerrar sesión</span>
       </button>

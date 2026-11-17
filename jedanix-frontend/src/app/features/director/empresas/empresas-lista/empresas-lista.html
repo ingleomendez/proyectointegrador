@@ -6,6 +6,9 @@
     <mat-icon>add_business</mat-icon>
     Registrar nueva empresa
   </a>
+  @if (empresas().length > 0) {
+    <jx-buscador-tabla etiqueta="Buscar empresa" />
+  }
 </div>
 
 @if (cargando()) {

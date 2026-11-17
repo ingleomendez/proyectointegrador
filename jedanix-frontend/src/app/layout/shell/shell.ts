@@ -5,9 +5,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { filter } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
+import { TemaService } from '../../core/services/tema.service';
 import { EstadoEstudianteService } from '../../core/services/estado-estudiante.service';
 import { RolEnum } from '../../core/models/usuario.model';
 import { menuDeRol, NOMBRE_ROL } from '../../core/utils/menu-rol';
+
+const CLAVE_COLAPSO = 'jedanix-menu-colapsado';
+
+function leerColapso(): boolean {
+  try {
+    return localStorage.getItem(CLAVE_COLAPSO) === '1';
+  } catch {
+    return false;
+  }
+}
 
 /** Armazón visual compartido por todas las pantallas autenticadas: barra
  * lateral izquierda con el menú del rol activo (nombres tomados de los casos
@@ -18,7 +29,11 @@ import { menuDeRol, NOMBRE_ROL } from '../../core/utils/menu-rol';
  * Para el Estudiante, el menú depende de su estado (ver
  * `EstadoEstudianteService`): se refresca en cada navegación para que "Solicitud
  * de práctica", "Objetivos" y "Seguimiento Prácticas" aparezcan o se bloqueen
- * en cuanto cambia su matrícula. */
+ * en cuanto cambia su matrícula.
+ *
+ * En pantallas anchas la barra se puede reducir a solo íconos (botón de la
+ * parte superior) y en cualquier tamaño se puede alternar el modo claro u
+ * oscuro desde el pie de la barra. */
 @Component({
   selector: 'app-shell',
   imports: [RouterLink, RouterLinkActive, RouterOutlet, MatIconModule],
@@ -29,8 +44,12 @@ export class Shell {
   protected readonly authService = inject(AuthService);
   private readonly estadoEstudiante = inject(EstadoEstudianteService);
   private readonly router = inject(Router);
+  protected readonly temaService = inject(TemaService);
 
   protected readonly menuAbierto = signal(false);
+  /** Barra lateral reducida a solo íconos (solo en pantallas anchas). Se
+   * recuerda entre visitas. */
+  protected readonly menuColapsado = signal(leerColapso());
 
   protected readonly menu = computed(() => {
     const usuario = this.authService.usuario();
@@ -63,6 +82,15 @@ export class Shell {
   private refrescarEstado(): void {
     if (this.authService.usuario()?.rol === RolEnum.ESTUDIANTE) {
       this.estadoEstudiante.refrescar();
+    }
+  }
+
+  alternarColapso(): void {
+    this.menuColapsado.update((colapsado) => !colapsado);
+    try {
+      localStorage.setItem(CLAVE_COLAPSO, this.menuColapsado() ? '1' : '0');
+    } catch {
+      /* sin almacenamiento: la preferencia solo dura la sesión */
     }
   }
 

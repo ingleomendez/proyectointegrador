@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+
+import { TemaService } from './core/services/tema.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,8 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {}
+export class App {
+  // Se instancia al arrancar para aplicar el tema guardado en todas las pantallas
+  // (incluido el inicio de sesión).
+  protected readonly temaService = inject(TemaService);
+}

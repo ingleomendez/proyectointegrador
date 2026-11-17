@@ -8,12 +8,13 @@ import { EmpresaEstadoEnum } from '../../../../core/models/enums.model';
 import { EmpresaReceptoraListItem } from '../../../../core/models/empresa.model';
 import { EmpresaService } from '../../../../core/services/empresa.service';
 import { mensajeDeError } from '../../../../core/utils/errores';
+import { BuscadorTabla } from '../../../../shared/buscador-tabla/buscador-tabla';
 
 /** CU-02 (Director), pasos 1-3: listado completo de empresas receptoras
  * (activas e inactivas) con su Coordinador y Docente Asesor. */
 @Component({
   selector: 'app-empresas-lista-director',
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule, BuscadorTabla],
   templateUrl: './empresas-lista.html',
 })
 export class EmpresasListaDirector {

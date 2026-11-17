@@ -23,6 +23,7 @@ import { mensajeDeError } from '../../../../core/utils/errores';
 import { etiquetaEstadoAvance, semanasNoReportadas } from '../../../../core/utils/semana';
 import { detallesDeAvances } from '../../../revision/revision.util';
 import { horasAceptadas, porcentajeDeHoras } from '../horas';
+import { Plegable } from '../../../../shared/plegable/plegable.directive';
 
 interface FilaHistorial {
   /** Semana calendario (lunes, `YYYY-MM-DD`). */
@@ -51,6 +52,7 @@ interface FilaHistorial {
     MatIconModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    Plegable,
   ],
   templateUrl: './matriculado-detalle.html',
   styleUrl: './matriculado-detalle.scss',

@@ -19,6 +19,7 @@ import { EmpresaService } from '../../../../core/services/empresa.service';
 import { PostulacionService } from '../../../../core/services/postulacion.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { mensajeDeError } from '../../../../core/utils/errores';
+import { Plegable } from '../../../../shared/plegable/plegable.directive';
 
 type Decision = 'aprobar' | 'rechazar' | null;
 
@@ -41,6 +42,7 @@ type Decision = 'aprobar' | 'rechazar' | null;
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    Plegable,
   ],
   templateUrl: './solicitud-detalle.html',
 })

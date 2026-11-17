@@ -16,6 +16,7 @@ import { ObjetivoService } from '../../../core/services/objetivo.service';
 import { PostulacionService } from '../../../core/services/postulacion.service';
 import { mensajeDeError } from '../../../core/utils/errores';
 import { rutaInicioDeRol } from '../../../core/utils/menu-rol';
+import { BuscadorTabla } from '../../../shared/buscador-tabla/buscador-tabla';
 
 interface FilaEstudiante {
   postulacion: PostulacionListItem;
@@ -35,7 +36,7 @@ interface FilaEstudiante {
  */
 @Component({
   selector: 'app-estudiantes-lista',
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule, BuscadorTabla],
   templateUrl: './estudiantes-lista.html',
 })
 export class EstudiantesLista {

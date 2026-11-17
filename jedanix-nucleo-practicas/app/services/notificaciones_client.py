@@ -7,6 +7,7 @@ import time
 import httpx
 
 from app.core.config import settings
+from app.services.notificaciones_internas import registrar_aviso
 
 logger = logging.getLogger("jedanix.notificaciones")
 
@@ -95,6 +96,10 @@ def notificar(evento: str, destinatario_correo: str, datos: dict | None = None) 
     nunca antes: si notificar fallara de una forma que si se propagara, jamás
     debe poder deshacer una escritura que ya quedó confirmada en la base de
     datos transaccional del Núcleo."""
+
+    # Aviso dentro del sistema (campanita): sale de aquí para que todo evento que
+    # ya avisa por correo también quede visible en pantalla. Nunca lanza.
+    registrar_aviso(evento, destinatario_correo, datos)
 
     payload = {
         "evento": evento,

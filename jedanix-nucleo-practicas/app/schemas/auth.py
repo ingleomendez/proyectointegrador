@@ -23,3 +23,19 @@ class TokenResponse(BaseModel):
     usuario_id: int
     nombre_completo: str
     rol: RolEnum
+
+class OlvideContrasenaRequest(BaseModel):
+    """Paso 1 de "¿Olvidaste tu contraseña?": solo el correo institucional."""
+
+    correo_institucional: str = Field(min_length=1, max_length=150)
+
+
+class RestablecerContrasenaRequest(BaseModel):
+    """Paso 2: el token que llegó por correo y la contraseña nueva."""
+
+    token: str = Field(min_length=10, max_length=200)
+    password_nueva: str = Field(min_length=8, max_length=64)
+
+
+class MensajeResponse(BaseModel):
+    mensaje: str

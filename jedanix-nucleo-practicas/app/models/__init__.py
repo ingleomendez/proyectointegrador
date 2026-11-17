@@ -17,6 +17,8 @@ from app.models.avance_semanal import AvanceSemanal
 from app.models.dia_trabajado import DiaTrabajado
 from app.models.soporte_avance import SoporteAvance
 from app.models.archivo_subido import ArchivoSubido
+from app.models.restablecimiento_password import RestablecimientoPassword
+from app.models.notificacion_usuario import NotificacionUsuario
 
 __all__ = [
     "Usuario",
@@ -31,4 +33,6 @@ __all__ = [
     "DiaTrabajado",
     "SoporteAvance",
     "ArchivoSubido",
+    "RestablecimientoPassword",
+    "NotificacionUsuario",
 ]

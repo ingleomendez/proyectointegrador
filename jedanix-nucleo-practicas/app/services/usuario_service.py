@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 import secrets
 import string
+from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
 
@@ -10,6 +12,7 @@ from app.core.security import create_access_token, hash_password, verify_passwor
 from app.models.enums import RolEnum, UsuarioEstadoEnum
 from app.models.usuario import Usuario
 from app.repositories.avance_repository import AvanceSemanalRepository
+from app.repositories.restablecimiento_repository import RestablecimientoRepository
 from app.repositories.usuario_repository import UsuarioRepository
 from app.schemas.auth import LoginRequest, TokenResponse
 from app.schemas.usuario import PerfilUpdate, UsuarioCreate, UsuarioUpdateDirector
@@ -23,6 +26,17 @@ from app.services.notificaciones_client import notificar
 
 _ALFABETO_PASSWORD_TEMPORAL = string.ascii_letters + string.digits
 _ROLES_CON_ASIGNACIONES = (RolEnum.COORDINADOR, RolEnum.DOCENTE_ASESOR)
+
+# Recuperar contraseña: el enlace del correo vale 30 minutos y solo se acepta
+# una solicitud nueva por usuario cada 60 segundos.
+_MINUTOS_VIGENCIA_RESTABLECIMIENTO = 30
+_SEGUNDOS_ENTRE_SOLICITUDES = 60
+
+
+def _hash_token(token: str) -> str:
+    """En la base solo se guarda el SHA-256 del token: si alguien leyera la tabla
+    no podría armar enlaces válidos."""
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 
 def _generar_password_temporal(longitud: int = 12) -> str:
@@ -39,6 +53,7 @@ class UsuarioService:
         self.db = db
         self.repo = UsuarioRepository(db)
         self.avance_repo = AvanceSemanalRepository(db)
+        self.restablecimiento_repo = RestablecimientoRepository(db)
 
     # ---- CU-01: listar / obtener (lectura, sin reglas de negocio) ----
 
@@ -244,3 +259,51 @@ class UsuarioService:
             nombre_completo=usuario.nombre_completo,
             rol=usuario.rol,
         )
+
+    # ---- Recuperar contraseña (público, sin sesión) ----
+
+    def solicitar_restablecimiento(self, correo: str) -> None:
+        """Genera un enlace de un solo uso y lo envía por correo. Responde igual
+        exista o no la cuenta (no se revela qué correos están registrados): si la
+        cuenta no existe, está inactiva o ya pidió un enlace hace menos de un
+        minuto, simplemente no hace nada."""
+        usuario = self.repo.get_by_correo(correo.strip())
+        if usuario is None or usuario.estado != UsuarioEstadoEnum.ACTIVO:
+            return
+        if self.restablecimiento_repo.hay_solicitud_reciente(usuario.id, _SEGUNDOS_ENTRE_SOLICITUDES):
+            return
+
+        token = secrets.token_urlsafe(32)
+        self.restablecimiento_repo.invalidar_pendientes(usuario.id)
+        self.restablecimiento_repo.crear(
+            usuario.id,
+            _hash_token(token),
+            datetime.utcnow() + timedelta(minutes=_MINUTOS_VIGENCIA_RESTABLECIMIENTO),
+        )
+        self.db.commit()
+
+        notificar(
+            "usuario.restablecer_password",
+            usuario.correo_institucional,
+            {
+                "nombre_completo": usuario.nombre_completo,
+                "token": token,
+                "minutos": _MINUTOS_VIGENCIA_RESTABLECIMIENTO,
+            },
+        )
+
+    def restablecer_contrasena(self, token: str, password_nueva: str) -> None:
+        """Valida el token (existe, no usado, no vencido), guarda la contraseña
+        nueva e invalida cualquier otro enlace pendiente de esa cuenta."""
+        mensaje = "El enlace no es válido o ya venció. Solicita uno nuevo."
+        fila = self.restablecimiento_repo.get_by_token_hash(_hash_token(token))
+        if fila is None or fila.usado or fila.expira_en < datetime.utcnow():
+            raise ReglaDeNegocioError(mensaje)
+        usuario = self.repo.get_by_id(fila.usuario_id)
+        if usuario is None or usuario.estado != UsuarioEstadoEnum.ACTIVO:
+            raise ReglaDeNegocioError(mensaje)
+
+        usuario.contrasena_hash = hash_password(password_nueva)
+        self.repo.guardar(usuario)
+        self.restablecimiento_repo.invalidar_pendientes(usuario.id)
+        self.db.commit()

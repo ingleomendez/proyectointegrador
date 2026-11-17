@@ -5,7 +5,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.core.config import settings
-from app.routers import archivos, auth, avances, empresas, objetivos, postulaciones, usuarios
+from app.routers import (
+    archivos,
+    auth,
+    avances,
+    empresas,
+    mis_notificaciones,
+    objetivos,
+    postulaciones,
+    usuarios,
+)
 from app.services.exceptions import (
     ConflictoError,
     NoEncontradoError,
@@ -78,6 +87,7 @@ app.include_router(postulaciones.router)
 app.include_router(objetivos.router)
 app.include_router(avances.router)
 app.include_router(archivos.router)
+app.include_router(mis_notificaciones.router)
 # /uploads/<nombre>: descarga de los archivos guardados en la base de datos.
 app.include_router(archivos.router_publico)
 

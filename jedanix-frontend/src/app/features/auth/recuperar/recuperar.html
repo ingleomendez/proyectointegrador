@@ -1,0 +1,66 @@
+<jx-boton-tema class="tema-flotante" />
+
+<div class="login-fondo" aria-hidden="true">
+  <span class="forma forma-1"></span>
+  <span class="forma forma-2"></span>
+  <span class="forma forma-3"></span>
+  <span class="anillo anillo-1"></span>
+  <span class="anillo anillo-2"></span>
+  <span class="cuadricula"></span>
+</div>
+
+<div class="login-pagina sola">
+  <mat-card class="login-tarjeta">
+    <mat-card-header>
+      <span class="logo logo-movil">J</span>
+      <mat-card-title>Recuperar contraseña</mat-card-title>
+      <mat-card-subtitle>Te enviaremos un enlace a tu correo</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (enviado(); as mensaje) {
+        <p class="login-exito" role="status">
+          <mat-icon>mark_email_read</mat-icon>
+          <span>{{ mensaje }}</span>
+        </p>
+        <p class="pasos-texto">El enlace funciona una sola vez y vence en 30 minutos.</p>
+      } @else {
+        <p class="pasos-texto">
+          Escribe tu correo institucional. Si la cuenta existe y está activa, recibirás un enlace
+          para crear una contraseña nueva.
+        </p>
+
+        <form [formGroup]="formulario" (ngSubmit)="enviar()" class="login-formulario">
+          <mat-form-field appearance="outline">
+            <mat-label>Correo institucional</mat-label>
+            <mat-icon matPrefix>mail</mat-icon>
+            <input matInput type="email" formControlName="correo_institucional" autocomplete="username" />
+            @if (formulario.controls.correo_institucional.hasError('required')) {
+              <mat-error>El correo es obligatorio.</mat-error>
+            }
+            @if (formulario.controls.correo_institucional.hasError('email')) {
+              <mat-error>Ingresa un correo válido.</mat-error>
+            }
+          </mat-form-field>
+
+          @if (errorMensaje(); as mensaje) {
+            <p class="login-error"><mat-icon>error</mat-icon>{{ mensaje }}</p>
+          }
+
+          <button mat-flat-button color="primary" type="submit" [disabled]="cargando()" class="login-boton">
+            @if (cargando()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <span class="contenido-boton">
+                Enviar enlace
+                <mat-icon class="icono-fin">send</mat-icon>
+              </span>
+            }
+          </button>
+        </form>
+      }
+
+      <a routerLink="/login" class="volver"><mat-icon>arrow_back</mat-icon>Volver a iniciar sesión</a>
+    </mat-card-content>
+  </mat-card>
+</div>

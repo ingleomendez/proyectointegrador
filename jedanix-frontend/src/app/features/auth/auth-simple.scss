@@ -1,0 +1,64 @@
+/* Pantallas de una sola tarjeta (recuperar / restablecer contraseña). Se suma a
+ * login.scss: mismo fondo y tarjeta, sin la columna de marca. */
+.login-pagina.sola {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 24px;
+  max-width: 560px;
+}
+
+.login-pagina.sola .login-tarjeta {
+  justify-self: center;
+}
+
+.logo-movil {
+  display: grid;
+}
+
+.pasos-texto {
+  margin: 4px 0 14px;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.login-exito {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border-left: 4px solid #2e9e6b;
+  background: rgba(200, 244, 222, 0.9);
+  color: #0f4a31;
+  font-size: 0.9rem;
+
+  mat-icon {
+    flex: 0 0 auto;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--jx-cyan-800);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}

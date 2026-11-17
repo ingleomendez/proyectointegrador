@@ -95,6 +95,8 @@
           }
         </mat-form-field>
 
+        <a routerLink="/recuperar" class="olvide-enlace">¿Olvidaste tu contraseña?</a>
+
         @if (errorMensaje(); as mensaje) {
           <p class="login-error"><mat-icon>error</mat-icon>{{ mensaje }}</p>
         }

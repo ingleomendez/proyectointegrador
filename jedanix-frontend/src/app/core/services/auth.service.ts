@@ -4,7 +4,12 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { LoginRequest, TokenResponse } from '../models/auth.model';
+import {
+  LoginRequest,
+  MensajeResponse,
+  RestablecerContrasenaRequest,
+  TokenResponse,
+} from '../models/auth.model';
 import { RolEnum } from '../models/usuario.model';
 
 const CLAVE_TOKEN = 'jedanix_token';
@@ -35,6 +40,18 @@ export class AuthService {
     return this.http
       .post<TokenResponse>(`${environment.apiUrl}/auth/login`, credenciales)
       .pipe(tap((respuesta) => this.guardarSesion(respuesta)));
+  }
+
+  /** "¿Olvidaste tu contraseña?": el servidor responde igual exista o no el correo. */
+  olvideContrasena(correoInstitucional: string): Observable<MensajeResponse> {
+    return this.http.post<MensajeResponse>(`${environment.apiUrl}/auth/olvide-contrasena`, {
+      correo_institucional: correoInstitucional,
+    });
+  }
+
+  /** Crea la contraseña nueva con el enlace de un solo uso que llegó por correo. */
+  restablecerContrasena(datos: RestablecerContrasenaRequest): Observable<MensajeResponse> {
+    return this.http.post<MensajeResponse>(`${environment.apiUrl}/auth/restablecer-contrasena`, datos);
   }
 
   logout(): void {

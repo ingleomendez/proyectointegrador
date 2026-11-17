@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,6 +24,7 @@ import { BotonTema } from '../../../shared/boton-tema/boton-tema';
     MatIconModule,
     MatProgressSpinnerModule,
     BotonTema,
+    RouterLink,
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',

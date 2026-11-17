@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +7,10 @@ import { filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { TemaService } from '../../core/services/tema.service';
 import { EstadoEstudianteService } from '../../core/services/estado-estudiante.service';
+import { NotificacionesService } from '../../core/services/notificaciones.service';
+import { AvisoSemana } from '../../shared/aviso-semana/aviso-semana';
+import { Campanita } from '../../shared/campanita/campanita';
+import { instalarTablasResponsivas } from '../../shared/tablas-responsivas/tablas-responsivas';
 import { RolEnum } from '../../core/models/usuario.model';
 import { menuDeRol, NOMBRE_ROL } from '../../core/utils/menu-rol';
 
@@ -33,10 +37,13 @@ function leerColapso(): boolean {
  *
  * En pantallas anchas la barra se puede reducir a solo íconos (botón de la
  * parte superior) y en cualquier tamaño se puede alternar el modo claro u
- * oscuro desde el pie de la barra. */
+ * oscuro desde el pie de la barra.
+ *
+ * Arriba a la derecha vive la campanita de avisos; para el Estudiante, sobre el
+ * contenido aparece el recordatorio de la semana por vencer. */
 @Component({
   selector: 'app-shell',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, MatIconModule],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, MatIconModule, Campanita, AvisoSemana],
   templateUrl: './shell.html',
   styleUrl: './shell.scss',
 })
@@ -45,6 +52,7 @@ export class Shell {
   private readonly estadoEstudiante = inject(EstadoEstudianteService);
   private readonly router = inject(Router);
   protected readonly temaService = inject(TemaService);
+  private readonly notificaciones = inject(NotificacionesService);
 
   protected readonly menuAbierto = signal(false);
   /** Barra lateral reducida a solo íconos (solo en pantallas anchas). Se
@@ -67,6 +75,9 @@ export class Shell {
   });
 
   constructor() {
+    this.notificaciones.iniciar();
+    instalarTablasResponsivas();
+    inject(DestroyRef).onDestroy(() => this.notificaciones.detener());
     this.refrescarEstado();
     this.router.events
       .pipe(
@@ -104,6 +115,7 @@ export class Shell {
 
   cerrarSesion(): void {
     this.estadoEstudiante.limpiar();
+    this.notificaciones.detener();
     this.authService.logout();
   }
 }

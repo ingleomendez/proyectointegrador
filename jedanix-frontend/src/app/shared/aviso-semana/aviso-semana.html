@@ -1,0 +1,13 @@
+@if (aviso(); as a) {
+  <div class="aviso" [class.urgente]="a.urgente" role="status">
+    <mat-icon class="icono">{{ a.urgente ? 'alarm' : 'event_upcoming' }}</mat-icon>
+    <div class="texto">
+      <strong>{{ a.titulo }}</strong>
+      <span>{{ a.plazo }}</span>
+    </div>
+    <a class="accion" [routerLink]="a.accion.ruta">{{ a.accion.texto }}</a>
+    <button type="button" class="cerrar" aria-label="Ocultar este aviso por hoy" (click)="descartar()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+}

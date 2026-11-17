@@ -325,11 +325,23 @@
   display: none;
 }
 
+// Franja superior (solo pantallas anchas) donde vive la campanita.
+.barra-superior {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 14px 36px 0;
+}
+
 .contenido {
   box-sizing: border-box;
   max-width: 1180px;
   margin: 0 auto;
-  padding: 32px 36px 48px;
+  padding: 12px 36px 48px;
 }
 
 .velo {
@@ -357,6 +369,14 @@
     inset: 0;
     z-index: 15;
     background: rgba(0, 30, 36, 0.5);
+  }
+
+  .barra-superior {
+    display: none;
+  }
+
+  .campana-movil {
+    margin-left: auto;
   }
 
   .barra-movil {

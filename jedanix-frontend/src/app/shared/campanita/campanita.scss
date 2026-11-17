@@ -1,0 +1,261 @@
+:host {
+  position: relative;
+  display: inline-block;
+}
+
+@keyframes campanazo {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-12deg);
+  }
+  60% {
+    transform: rotate(8deg);
+  }
+  80% {
+    transform: rotate(-4deg);
+  }
+}
+
+@keyframes aparece {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.boton-campana {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--jx-borde);
+  border-radius: 50%;
+  background: var(--jx-superficie);
+  color: var(--jx-cyan-800);
+  cursor: pointer;
+  box-shadow: var(--jx-sombra);
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+
+  &:hover {
+    background: var(--jx-superficie-hover);
+    transform: translateY(-1px);
+  }
+
+  &.con-avisos mat-icon {
+    animation: campanazo 1.2s ease 0.4s 1;
+    transform-origin: 50% 10%;
+  }
+}
+
+.insignia {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 2px solid var(--jx-superficie);
+  background: #d9363e;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+:host(.variante-barra) {
+  .boton-campana {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    box-shadow: none;
+    width: 40px;
+    height: 40px;
+  }
+
+  .insignia {
+    border-color: #0097a7;
+  }
+}
+
+/* ===== Panel ===== */
+.panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 40;
+  width: min(380px, calc(100vw - 24px));
+  max-height: min(70vh, 520px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--jx-borde);
+  border-radius: 16px;
+  background: var(--jx-superficie);
+  color: var(--mat-sys-on-surface);
+  box-shadow: var(--jx-sombra-fuerte);
+  animation: aparece 0.16s ease;
+}
+
+.panel-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--jx-borde);
+
+  h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+
+    &::after {
+      content: none;
+    }
+  }
+}
+
+.enlace {
+  border: 0;
+  background: none;
+  padding: 4px 6px;
+  border-radius: 6px;
+  color: var(--jx-cyan-800);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--jx-superficie-hover);
+    text-decoration: underline;
+  }
+}
+
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 36px 16px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.92rem;
+
+  mat-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+    opacity: 0.6;
+  }
+}
+
+.lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border: 0;
+  border-bottom: 1px solid var(--jx-borde);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+
+  &:hover {
+    background: var(--jx-superficie-hover);
+  }
+
+  &.sin-leer {
+    background: var(--jx-superficie-alta);
+  }
+}
+
+.icono-aviso {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--jx-cyan-500), var(--jx-cyan-800));
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.texto-aviso {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  color: var(--mat-sys-on-surface-variant);
+
+  strong {
+    color: var(--mat-sys-on-surface);
+    font-size: 0.92rem;
+  }
+
+  small {
+    margin-top: 2px;
+    font-size: 0.75rem;
+    opacity: 0.85;
+  }
+}
+
+.punto {
+  flex: 0 0 10px;
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: #d9363e;
+}
+
+/* ===== Pantallas angostas: el panel ocupa el ancho de la pantalla ===== */
+@media (max-width: 900px) {
+  :host {
+    position: static;
+  }
+
+  .panel {
+    position: fixed;
+    top: 60px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+  }
+}

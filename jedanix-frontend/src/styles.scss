@@ -531,7 +531,7 @@ body .mat-mdc-card {
 
 // Filas de tabla ocultas por el buscador en vivo (`jx-buscador-tabla`).
 .jx-fila-oculta {
-  display: none;
+  display: none !important;
 }
 
 // Tarjetas plegables (`jxPlegable`): el encabezado se pulsa para plegar o desplegar.
@@ -734,6 +734,95 @@ html.tema-oscuro {
 
   .contenido .mensaje-exito {
     background: rgba(77, 208, 225, 0.12);
+  }
+}
+
+/* ===== Tablas en el celular =====
+ * En pantallas angostas cada fila de `table.tabla` se convierte en una tarjeta:
+ * el encabezado se oculta y cada celda muestra delante el nombre de su columna
+ * (el atributo `data-label` lo pone `instalarTablasResponsivas`). */
+@media (max-width: 700px) {
+  .tabla-contenedor {
+    overflow-x: visible;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  table.tabla {
+    display: block;
+
+    thead {
+      // Oculto a la vista pero disponible para lectores de pantalla.
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    tbody {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    tbody tr {
+      display: block;
+      border: 1px solid var(--jx-borde);
+      border-radius: 14px;
+      background: var(--jx-superficie);
+      box-shadow: var(--jx-sombra);
+      overflow: hidden;
+
+      &:nth-child(even) {
+        background: var(--jx-superficie);
+      }
+    }
+
+    td {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 9px 14px;
+      text-align: right;
+      border-bottom: 1px solid var(--jx-borde);
+
+      &:last-child {
+        border-bottom: 0;
+      }
+
+      &[data-label]:not([data-label=''])::before {
+        content: attr(data-label);
+        flex: 0 0 38%;
+        text-align: left;
+        font-size: 0.74rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--mat-sys-on-surface-variant);
+      }
+
+      // Celda de acciones: el rótulo ocupa su propia línea y los botones van debajo.
+      &.acciones {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 2px 4px;
+        text-align: left;
+
+        &::before {
+          flex: 0 0 100% !important;
+          margin-bottom: 2px;
+        }
+      }
+    }
+
+    // Fila de "No hay resultados": una sola celda sin rótulo.
+    td[colspan] {
+      justify-content: center;
+      text-align: center;
+    }
   }
 }
 

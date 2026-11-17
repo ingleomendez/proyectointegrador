@@ -95,14 +95,20 @@
   }
 
   <div class="principal">
+    <div class="barra-superior">
+      <jx-campanita />
+    </div>
+
     <header class="barra-movil">
       <button type="button" class="boton-menu" (click)="alternarMenu()" aria-label="Abrir menú">
         <mat-icon>menu</mat-icon>
       </button>
       <span class="marca-movil">JEDANIX</span>
+      <jx-campanita variante="barra" class="campana-movil" />
     </header>
 
     <main class="contenido">
+      <jx-aviso-semana />
       <router-outlet></router-outlet>
     </main>
   </div>

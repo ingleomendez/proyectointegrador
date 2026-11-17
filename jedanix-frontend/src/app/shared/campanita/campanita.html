@@ -1,0 +1,52 @@
+<button
+  type="button"
+  class="boton-campana"
+  [class.con-avisos]="servicio.noLeidas() > 0"
+  [attr.aria-label]="etiquetaBoton()"
+  [attr.aria-expanded]="abierto()"
+  aria-haspopup="dialog"
+  (click)="alternar()"
+>
+  <mat-icon>{{ servicio.noLeidas() > 0 ? 'notifications_active' : 'notifications' }}</mat-icon>
+  @if (servicio.noLeidas() > 0) {
+    <span class="insignia" aria-hidden="true">{{ servicio.noLeidas() > 9 ? '9+' : servicio.noLeidas() }}</span>
+  }
+</button>
+
+@if (abierto()) {
+  <section class="panel" role="dialog" aria-label="Notificaciones">
+    <header class="panel-cabecera">
+      <h2>Notificaciones</h2>
+      @if (servicio.noLeidas() > 0) {
+        <button type="button" class="enlace" (click)="servicio.marcarTodasLeidas()">
+          Marcar todas como leídas
+        </button>
+      }
+    </header>
+
+    @if (servicio.lista().length === 0) {
+      <p class="vacio">
+        <mat-icon>notifications_none</mat-icon>
+        No tienes notificaciones por ahora.
+      </p>
+    } @else {
+      <ul class="lista">
+        @for (n of servicio.lista(); track n.id) {
+          <li>
+            <button type="button" class="aviso" [class.sin-leer]="!n.leida" (click)="abrir(n)">
+              <span class="icono-aviso"><mat-icon>{{ icono(n.evento) }}</mat-icon></span>
+              <span class="texto-aviso">
+                <strong>{{ n.titulo }}</strong>
+                <span>{{ n.mensaje }}</span>
+                <small>{{ cuando(n.creada_en) }}</small>
+              </span>
+              @if (!n.leida) {
+                <span class="punto" aria-label="Sin leer"></span>
+              }
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+}
